@@ -3,15 +3,14 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import useAnimationFrame from './useAnimationFrame'
 
-import {GameModel} from './model/gameModel'
+import {GameController} from './model/gameController'
 import {GameView} from './view/gameView'
-import {initGameState} from './state/gameState'
 
 function Game() {
-  const [model, setModel] = useState(new GameModel())
+  const [model, setModel] = useState(new GameController())
   const [viewProps, setViewProps] = useState(model.viewProps)
   useAnimationFrame((ms: number) => {
-    model.updateState(ms / 1000)
+    model.onTick(ms / 1000)
     setViewProps({...model.viewProps})
   })
   return <GameView {...viewProps}/>
