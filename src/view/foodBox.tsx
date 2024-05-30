@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box } from './box'
 import { GameModel } from '../model/gameModel'
+import { ResourceType } from '../model/resources';
 
 export type FoodBoxProps = {
   foodCount: number,
@@ -10,7 +11,7 @@ export type FoodBoxProps = {
 export function foodBoxProps(model: GameModel): FoodBoxProps {
   return {
     foodCount: model.resources.food.count,
-    foodSurplus: model.population.foodSurplus
+    foodSurplus: model.production(ResourceType.Food) -  model.consumption(ResourceType.Food)
   }
 }
 

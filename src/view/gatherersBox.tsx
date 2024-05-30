@@ -1,7 +1,6 @@
 import React from 'react';
 import { Box } from './box'
 import { GameModel } from '../model/gameModel'
-import { PopTypes } from '../model/popModel';
 import { ActionButton, ActionProps, propsForAction } from './action';
 
 export type GatherersBoxProps = {
@@ -12,7 +11,7 @@ export type GatherersBoxProps = {
 }
 
 export function gatherersBoxProps(model: GameModel): GatherersBoxProps {
-  const pop = model.population.pop(PopTypes.Gatherer)
+  const pop = model.population.gatherers
   return {
     gatherersCount: pop.count,
     gatherFoodAction: propsForAction(model, model.resources.food.gatherAction, "Gather Food"),

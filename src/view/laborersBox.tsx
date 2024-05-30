@@ -1,10 +1,10 @@
 import React from 'react';
 import { Box } from './box'
 import { GameModel } from '../model/gameModel'
-import { PopTypes } from '../model/popModel';
 import { ActionButton, ActionProps, propsForAction } from './action';
 
 export type LaborersBoxProps = {
+  labor: number,
   laborersCount: number,
   laborAction: ActionProps,
   buyLaborerAction: ActionProps,
@@ -12,8 +12,9 @@ export type LaborersBoxProps = {
 }
 
 export function laborersBoxProps(model: GameModel): LaborersBoxProps {
-  const pop = model.population.pop(PopTypes.Gatherer)
+  const pop = model.population.laborers
   return {
+    labor: model.resources.labor.count,
     laborersCount: pop.count,
     laborAction: propsForAction(model, model.resources.labor.gatherAction, "Labor"),
     buyLaborerAction: propsForAction(model, pop.buyAction, "Promote new laborer")
@@ -22,6 +23,9 @@ export function laborersBoxProps(model: GameModel): LaborersBoxProps {
 
 export const LaborersBox = (p: LaborersBoxProps) =>
   <Box>
+    <div>
+      Labor: {p.labor.toFixed()}
+    </div>
     <div>
       <ActionButton {...p.laborAction}/>
     </div>

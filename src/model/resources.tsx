@@ -1,6 +1,10 @@
 import { Action, ActionParams, CostElem } from "./action"
 
-class Resources implements CostElem {
+export enum ResourceType {
+    Food, Labor
+}
+
+export class Resources implements CostElem {
     type: ResourceType
     count: number
 
@@ -10,32 +14,42 @@ class Resources implements CostElem {
     }
 }
 
-export enum ResourceType {
-    Food,
-    Labor,
+export function resources(type: ResourceType, count: number) {
+    return new Resources(type, count)
 }
 
-export class ResourceModel {
 
-    count: number = 0
+const RESOURCE_DEFINITIONS = {
+    [ResourceType.Food]: {gatherTimeout: 1},
+    [ResourceType.Labor]: {gatherTimeout: 3},
+}
 
+class ResourceModel {
     type: ResourceType
+    count: number = 0
     gatherAction: GatherResourceAction
 
-
-    constructor(type: ResourceType, gatherParams: ActionParams) {
+    constructor(type: ResourceType) {
         this.type = type
-        this.gatherAction = new GatherResourceAction(this, gatherParams)
+        this.gatherAction = new GatherResourceAction(this, {timeout: RESOURCE_DEFINITIONS[type].gatherTimeout})
     }
 
     onPlayerProduction() {
-        this.count += 1
+        this.onProduce(1)
+    }
+
+    onProduce(amount: number) {
+        this.count += amount
+    }
+
+    onConsume(amount: number) {
+        this.count = Math.max(0, this.count - amount)
     }
 }
 
 export class ResourcesModel {
-    food = new ResourceModel(ResourceType.Food, {timeout: 1})
-    labor = new ResourceModel(ResourceType.Labor, {timeout: 5})
+    food = new ResourceModel(ResourceType.Food)
+    labor = new ResourceModel(ResourceType.Labor)
 
     resource(type: ResourceType): ResourceModel {
         switch (type) {
@@ -63,11 +77,8 @@ export class ResourcesModel {
     }
 }
 
-export function resources(type: ResourceType, count: number) {
-    return new Resources(type, count)
-}
 
-export class GatherResourceAction extends Action {
+class GatherResourceAction extends Action {
     resource: ResourceModel
 
     constructor(resource: ResourceModel, params: ActionParams) {

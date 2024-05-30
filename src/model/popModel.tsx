@@ -1,70 +1,90 @@
-import { ResourceType, resources } from "./resources"
+import { ResourceType, Resources, resources } from "./resources"
 import { Action, ActionParams, CostElem } from "./action"
+import {sum } from './utils'
 
-function sum<T>(items: T[], op: (arg: T) => number) {
-  let total = 0
-  items.forEach(i => {
-    total += op(i)
-  })
-  return total
+export enum PopType {
+  Gatherer, Laborer
 }
 
-interface PopType {
-  foodProduction: number,
-  buyCost: CostElem[]
+class Pops implements CostElem {
+  type: PopType
+  count: number
+
+  constructor(type: PopType, count: number) {
+    this.type = type
+    this.count = count
+  }
 }
 
-export const PopTypes = {
-  Gatherer: {
-    foodProduction: 1.01,
-    buyCost: [resources(ResourceType.Food, 5)]
+export function pops(type: PopType, count: number) {
+  return new Pops(type, count)
+}
+
+const POP_TYPE_DEFINITIONS = {
+  [PopType.Gatherer]: {
+    buyCost: [resources(ResourceType.Food, 5)],
+    production: [
+      resources(ResourceType.Food, 1.02)
+    ],
+    consumption: [
+      resources(ResourceType.Food, 1)
+    ]  
   },
-  Laborer: {
-    foodProduction: 0,
-    buyCost: [resources(ResourceType.Food, 5)]
+  [PopType.Laborer]: {
+    buyCost: [
+      resources(ResourceType.Food, 5),
+      pops(PopType.Gatherer, 1)
+      ],
+    production: [
+      resources(ResourceType.Labor, 1)
+    ],
+    consumption: [
+      resources(ResourceType.Food, 1)
+    ]  
   },
 }
 
-export class PopModel {
+
+class PopModel {
 
   type: PopType
   count: number = 0
   buyAction: BuyPopAction
 
-  constructor(type: PopType,
-count: number = 0) {
-    this.buyAction = new BuyPopAction(this, { costs: type.buyCost })
+  constructor(type: PopType, count: number = 0) {
+    this.buyAction = new BuyPopAction(this, { costs: POP_TYPE_DEFINITIONS[type].buyCost })
     this.type = type
     this.count = count
+  }
+
+  get definition() {
+    return POP_TYPE_DEFINITIONS[this.type]
   }
 
   onBuy() {
     this.count++
   }
 
-  get foodProduction() {
-    return this.count * this.type.foodProduction
+  get production(): Resources[] {
+    return this.definition.production.map(r => resources(r.type, r.count * this.count))
   }
 
-  get foodConsumption() {
-    return this.count * CONSUMPTION_PER_POP
+  get consumption(): Resources[] {
+    return this.definition.consumption.map(r => resources(r.type, r.count * this.count))
   }
 
 }
 
-const CONSUMPTION_PER_POP = 1
-
 export class PopulationModel {
 
-  gatherers = new PopModel(PopTypes.Gatherer, 10)
-  laborers = new PopModel(PopTypes.Laborer)
-
+  gatherers = new PopModel(PopType.Gatherer, 10)
+  laborers = new PopModel(PopType.Laborer)
 
   pop(type: PopType): PopModel {
     switch (type) {
-      case PopTypes.Gatherer:
+      case PopType.Gatherer:
         return this.gatherers
-      case PopTypes.Laborer:
+      case PopType.Laborer:
         return this.laborers
       default: throw `Can't find pop of type: ${type}`
 
@@ -75,16 +95,30 @@ export class PopulationModel {
     return [this.gatherers, this.laborers]
   }
 
-  get foodSurplus() {
-    return this.foodProduction - this.foodConsumption
+  filterUnsatisfiableCosts(costs: CostElem[]): CostElem[] {
+    return costs.filter(c => (c instanceof Pops) &&
+        c.count > this.pop(c.type).count
+    )
   }
 
-  get foodProduction() {
-    return sum(this.allPops, p => p.foodProduction)
+  payCosts(costs: CostElem[]) {
+    costs.forEach(c => {
+        if (c instanceof Pops) {
+            this.pop(c.type).count -= c.count
+        }
+    })
   }
 
-  get foodConsumption() {
-    return sum(this.allPops, p => p.foodConsumption)
+  production(resourceType: ResourceType): number {
+    return sum(this.allPops, pop =>
+      sum(pop.production.filter(p => p.type === resourceType), r => r.count)
+    )
+  }
+
+  consumption(resourceType: ResourceType): number {
+    return sum(this.allPops, pop =>
+      sum(pop.consumption.filter(p => p.type === resourceType), r => r.count)
+    )
   }
 }
 
