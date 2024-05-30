@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Action } from '../model/gameModel'
-
+import { GameModel } from '../model/gameModel';
+import { Action } from '../model/action'
 
 export type ActionProps = {
   title: string
@@ -12,13 +12,13 @@ export type ActionProps = {
 }
 
 
-export function propsForAction(a: Action, title: string): ActionProps {
+export function propsForAction(model: GameModel, a: Action, title: string): ActionProps {
   return {
     title: title,
-    action: () => a.onAction(),
+    action: () => a.onAction(model),
     timeout: a.timeout, 
     timeoutLeft: a.timeoutLeft,
-    disabled: a.disabled
+    disabled: a.disabled(model)
   }
 }
 
