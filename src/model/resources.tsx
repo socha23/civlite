@@ -16,11 +16,16 @@ export enum ResourceType {
 }
 
 export class ResourceModel {
-    type: ResourceType
+
     count: number = 0
 
-    constructor(type: ResourceType) {
+    type: ResourceType
+    gatherAction: GatherResourceAction
+
+
+    constructor(type: ResourceType, gatherParams: ActionParams) {
         this.type = type
+        this.gatherAction = new GatherResourceAction(this, gatherParams)
     }
 
     onPlayerProduction() {
@@ -29,8 +34,8 @@ export class ResourceModel {
 }
 
 export class ResourcesModel {
-    food = new ResourceModel(ResourceType.Food)
-    labor = new ResourceModel(ResourceType.Labor)
+    food = new ResourceModel(ResourceType.Food, {timeout: 1})
+    labor = new ResourceModel(ResourceType.Labor, {timeout: 5})
 
     resource(type: ResourceType): ResourceModel {
         switch (type) {
@@ -58,7 +63,7 @@ export class ResourcesModel {
     }
 }
 
-export function resources(type: ResourceT   ype, count: number) {
+export function resources(type: ResourceType, count: number) {
     return new Resources(type, count)
 }
 

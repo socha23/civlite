@@ -8,8 +8,6 @@ export class GameModel implements ActionCostChecker {
   resources = new ResourcesModel()
   population = new PopulationModel()
 
-  gatherFoodAction = new GatherResourceAction(this.resources.food, {timeout: 1, costs: []})
-
   filterUnsatisfiableCosts(costs: CostElem[]): CostElem[] {
     return this.resources.filterUnsatisfiableCosts(costs)
   }

@@ -1,4 +1,4 @@
-import { ResourcesModel, ResourceType, resources } from "./resources"
+import { ResourceType, resources } from "./resources"
 import { Action, ActionParams, CostElem } from "./action"
 
 function sum<T>(items: T[], op: (arg: T) => number) {
@@ -15,9 +15,14 @@ interface PopType {
 }
 
 export const PopTypes = {
-  Gatherer: { 
-    foodProduction: 1.01,     
-    buyCost: [resources(ResourceType.Food, 5)]},
+  Gatherer: {
+    foodProduction: 1.01,
+    buyCost: [resources(ResourceType.Food, 5)]
+  },
+  Laborer: {
+    foodProduction: 0,
+    buyCost: [resources(ResourceType.Food, 5)]
+  },
 }
 
 export class PopModel {
@@ -26,9 +31,8 @@ export class PopModel {
   count: number = 0
   buyAction: BuyPopAction
 
-  constructor(
-    type: PopType,
-    count: number) {
+  constructor(type: PopType,
+count: number = 0) {
     this.buyAction = new BuyPopAction(this, { costs: type.buyCost })
     this.type = type
     this.count = count
@@ -53,18 +57,22 @@ const CONSUMPTION_PER_POP = 1
 export class PopulationModel {
 
   gatherers = new PopModel(PopTypes.Gatherer, 10)
+  laborers = new PopModel(PopTypes.Laborer)
+
 
   pop(type: PopType): PopModel {
     switch (type) {
       case PopTypes.Gatherer:
         return this.gatherers
+      case PopTypes.Laborer:
+        return this.laborers
       default: throw `Can't find pop of type: ${type}`
 
     }
   }
 
   get allPops() {
-    return [this.gatherers]
+    return [this.gatherers, this.laborers]
   }
 
   get foodSurplus() {

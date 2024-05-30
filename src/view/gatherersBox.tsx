@@ -15,7 +15,7 @@ export function gatherersBoxProps(model: GameModel): GatherersBoxProps {
   const pop = model.population.pop(PopTypes.Gatherer)
   return {
     gatherersCount: pop.count,
-    gatherFoodAction: propsForAction(model, model.gatherFoodAction, "Gather Food"),
+    gatherFoodAction: propsForAction(model, model.resources.food.gatherAction, "Gather Food"),
     buyGathererAction: propsForAction(model, pop.buyAction, "Add Gatherer")
   }
 }

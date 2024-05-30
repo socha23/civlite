@@ -2,7 +2,7 @@ import { addTickListener } from "./timer"
 
 export type ActionParams = {
     timeout?: number
-    costs: CostElem[]
+    costs?: CostElem[]
 }
 
 
