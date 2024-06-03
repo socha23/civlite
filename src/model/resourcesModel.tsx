@@ -1,14 +1,6 @@
 import { Action, ActionParams } from "./action"
-import { CostElem, Resources } from './costs'
-
-export enum ResourceType {
-    Food, Labor
-}
-
-export const ResourceDefinitions = {
-    [ResourceType.Food]: {gatherTimeout: 1},
-    [ResourceType.Labor]: {gatherTimeout: 3},
-}
+import { ResourceType, ResourceDefinitions } from "./resources"
+import { CostElem, Resources } from "./costs"
 
 class ResourceModel {
     type: ResourceType

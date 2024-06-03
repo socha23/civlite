@@ -1,8 +1,8 @@
-import { ActionCostChecker, CostElem } from "./action"
+import { ActionCostChecker } from "./action"
+import { CostElem } from "./costs"
 import { ResourcesModel, ResourceType } from "./resources"
 import { PopulationModel } from "./popModel"
 import { onTick } from "./timer"
-import { sum } from './utils'
 
 export class GameModel implements ActionCostChecker {
   tick: number = 0

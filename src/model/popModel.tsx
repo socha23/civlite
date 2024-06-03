@@ -1,49 +1,8 @@
-import { ResourceType, Resources, resources } from "./resources"
-import { Action, ActionParams, CostElem } from "./action"
-import {sum } from './utils'
-
-export enum PopType {
-  Gatherer, Laborer
-}
-
-class Pops implements CostElem {
-  type: PopType
-  count: number
-
-  constructor(type: PopType, count: number) {
-    this.type = type
-    this.count = count
-  }
-}
-
-export function pops(type: PopType, count: number) {
-  return new Pops(type, count)
-}
-
-const POP_TYPE_DEFINITIONS = {
-  [PopType.Gatherer]: {
-    buyCost: [resources(ResourceType.Food, 5)],
-    production: [
-      resources(ResourceType.Food, 1.02)
-    ],
-    consumption: [
-      resources(ResourceType.Food, 1)
-    ]  
-  },
-  [PopType.Laborer]: {
-    buyCost: [
-      resources(ResourceType.Food, 5),
-      pops(PopType.Gatherer, 1)
-      ],
-    production: [
-      resources(ResourceType.Labor, 1)
-    ],
-    consumption: [
-      resources(ResourceType.Food, 1)
-    ]  
-  },
-}
-
+import { ResourceType,  } from "./resources"
+import { Action, ActionParams } from "./action"
+import { sum } from './utils'
+import { PopTypeDefinitions, PopType } from "./pops"
+import { CostElem, Pops, Resources, resources } from "./costs"
 
 class PopModel {
 
@@ -51,14 +10,14 @@ class PopModel {
   count: number = 0
   buyAction: BuyPopAction
 
-  constructor(type: PopType, count: number = 0) {
-    this.buyAction = new BuyPopAction(this, { costs: POP_TYPE_DEFINITIONS[type].buyCost })
+  constructor(type: PopType) {
+    this.buyAction = new BuyPopAction(this, { costs: PopTypeDefinitions[type].buyCost })
     this.type = type
-    this.count = count
+    this.count = PopTypeDefinitions[type].initialCount
   }
 
   get definition() {
-    return POP_TYPE_DEFINITIONS[this.type]
+    return PopTypeDefinitions[this.type]
   }
 
   onBuy() {
@@ -77,7 +36,7 @@ class PopModel {
 
 export class PopulationModel {
 
-  gatherers = new PopModel(PopType.Gatherer, 10)
+  gatherers = new PopModel(PopType.Gatherer)
   laborers = new PopModel(PopType.Laborer)
 
   pop(type: PopType): PopModel {

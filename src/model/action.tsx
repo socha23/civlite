@@ -1,12 +1,9 @@
 import { addTickListener } from "./timer"
+import { CostElem } from "./costs"
 
 export type ActionParams = {
     timeout?: number
     costs?: CostElem[]
-}
-
-
-export interface CostElem {
 }
 
 export interface ActionCostChecker {
