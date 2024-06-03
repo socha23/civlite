@@ -17,11 +17,15 @@ class ResourceModel {
     }
 
     onProduce(amount: number) {
-        this.count += amount
+        this.count = Math.min(this.count + amount, this.cap)
     }
 
     onConsume(amount: number) {
         this.count = Math.max(0, this.count - amount)
+    }
+
+    get cap() {
+        return ResourceDefinitions[this.type].initialCap
     }
 }
 

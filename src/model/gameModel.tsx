@@ -1,7 +1,8 @@
 import { ActionCostChecker } from "./action"
 import { CostElem } from "./costs"
-import { ResourcesModel, ResourceType } from "./resources"
+import { ResourceType } from "./resources"
 import { PopulationModel } from "./popModel"
+import { ResourcesModel } from "./resourcesModel"
 import { onTick } from "./timer"
 
 export class GameModel implements ActionCostChecker {
@@ -23,7 +24,7 @@ export class GameModel implements ActionCostChecker {
   onTick(deltaS: number) {
     this.tick += deltaS
     onTick(deltaS)
-    this.applyProductionAndConsumption(deltaS)
+    this.applyConsumptionAndProduction(deltaS)
   }
 
   production(resourceType: ResourceType): number {
@@ -35,13 +36,13 @@ export class GameModel implements ActionCostChecker {
   }
 
 
-  applyProductionAndConsumption(deltaS: number) {
+  applyConsumptionAndProduction(deltaS: number) {
     this.population.pops.forEach(pop => {
-      pop.production.forEach(res => {
-        this.resources.resource(res.type).onProduce(res.count * deltaS)
-      })
       pop.consumption.forEach(res => {
         this.resources.resource(res.type).onConsume(res.count * deltaS)
+      })
+      pop.production.forEach(res => {
+        this.resources.resource(res.type).onProduce(res.count * deltaS)
       })
     })
   }
