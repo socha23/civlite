@@ -31,27 +31,14 @@ class PopModel {
   get consumption(): Resources[] {
     return this.definition.consumption.map(r => resources(r.type, r.count * this.count))
   }
-
 }
 
 export class PopulationModel {
 
-  gatherers = new PopModel(PopType.Gatherer)
-  laborers = new PopModel(PopType.Laborer)
+  pops = Object.values(PopType).map(type => new PopModel(PopType[type]))
 
   pop(type: PopType): PopModel {
-    switch (type) {
-      case PopType.Gatherer:
-        return this.gatherers
-      case PopType.Laborer:
-        return this.laborers
-      default: throw `Can't find pop of type: ${type}`
-
-    }
-  }
-
-  get allPops() {
-    return [this.gatherers, this.laborers]
+    return this.pops.find(m => m.type === type)!
   }
 
   filterUnsatisfiableCosts(costs: CostElem[]): CostElem[] {
@@ -69,13 +56,13 @@ export class PopulationModel {
   }
 
   production(resourceType: ResourceType): number {
-    return sum(this.allPops, pop =>
+    return sum(this.pops, pop =>
       sum(pop.production.filter(p => p.type === resourceType), r => r.count)
     )
   }
 
   consumption(resourceType: ResourceType): number {
-    return sum(this.allPops, pop =>
+    return sum(this.pops, pop =>
       sum(pop.consumption.filter(p => p.type === resourceType), r => r.count)
     )
   }

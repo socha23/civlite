@@ -2,6 +2,7 @@ import React from 'react';
 import { Box } from './box'
 import { GameModel } from '../model/gameModel'
 import { ActionButton, ActionProps, propsForAction } from './action';
+import { PopType } from '../model/pops';
 
 export type LaborersBoxProps = {
   labor: number,
@@ -12,12 +13,12 @@ export type LaborersBoxProps = {
 }
 
 export function laborersBoxProps(model: GameModel): LaborersBoxProps {
-  const pop = model.population.laborers
+  const pop = model.population.pop(PopType.Laborer)
   return {
     labor: model.resources.labor.count,
     laborersCount: pop.count,
     laborAction: propsForAction(model, model.resources.labor.gatherAction, "Labor"),
-    buyLaborerAction: propsForAction(model, pop.buyAction, "Promote new laborer")
+    buyLaborerAction: propsForAction(model, pop.buyAction, "Promote Laborer")
   }
 }
 

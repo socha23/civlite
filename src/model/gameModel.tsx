@@ -36,7 +36,7 @@ export class GameModel implements ActionCostChecker {
 
 
   applyProductionAndConsumption(deltaS: number) {
-    this.population.allPops.forEach(pop => {
+    this.population.pops.forEach(pop => {
       pop.production.forEach(res => {
         this.resources.resource(res.type).onProduce(res.count * deltaS)
       })
