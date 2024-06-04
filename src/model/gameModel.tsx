@@ -7,6 +7,7 @@ import { onTick } from "./timer"
 
 export class GameModel implements ActionCostChecker {
   tick: number = 0
+  civName: string = "The Tribe"
   resources = new ResourcesModel()
   population = new PopulationModel()
 
@@ -34,7 +35,6 @@ export class GameModel implements ActionCostChecker {
   consumption(resourceType: ResourceType): number {
     return this.population.consumption(resourceType)
   }
-
 
   applyConsumptionAndProduction(deltaS: number) {
     this.population.pops.forEach(pop => {

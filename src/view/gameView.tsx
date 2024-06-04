@@ -1,28 +1,28 @@
 import React from 'react';
 import { ActionProps, ActionButton } from './action'
 import { GameModel } from '../model/gameModel'
-import { FoodBox, FoodBoxProps, foodBoxProps } from './foodBox';
-import { GatherersBox, GatherersBoxProps, gatherersBoxProps } from './gatherersBox';
-import { LaborersBox, LaborersBoxProps, laborersBoxProps } from './laborersBox';
-import { FarmersBox, FarmersBoxProps, farmersBoxProps } from './farmersBox';
+import { SummaryBox, SummaryBoxProps, summaryBoxProps } from './summaryBox';
+import { FontSizes } from './icons';
+import { ResourceGatheringBox, ResourceGatheringProps, resourceGatheringProps } from './resourceGatheringBox';
+import { PopBox, PopBoxProps, popBoxProps } from './popBox';
 
 
 export type GameViewProps = {
+  civName: string,
   tick: number
+  summary: SummaryBoxProps
   reset: ActionProps
-  food: FoodBoxProps
-  gatherers: GatherersBoxProps
-  laborers: LaborersBoxProps
-  farmers: FarmersBoxProps
+  pops: PopBoxProps[]
+  resourceGathering: ResourceGatheringProps,
 }
 
 export function gameViewProps(model: GameModel, onReset: () => void): GameViewProps {
   return {
+    civName: model.civName,
     tick: model.tick,
-    food: foodBoxProps(model),
-    gatherers: gatherersBoxProps(model),
-    laborers: laborersBoxProps(model),
-    farmers: farmersBoxProps(model),
+    summary: summaryBoxProps(model),
+    pops: model.population.pops.map(p => popBoxProps(model, p.type)),
+    resourceGathering: resourceGatheringProps(model),
     reset: {
       title: "Reset",
       action: onReset
@@ -30,12 +30,21 @@ export function gameViewProps(model: GameModel, onReset: () => void): GameViewPr
   }
 }
 
-
 export const GameView = (p: GameViewProps) =>
-  <div>
-    <FoodBox {...p.food}/>
-    <GatherersBox {...p.gatherers}/>
-    <LaborersBox {...p.laborers}/>
-    <FarmersBox {...p.farmers}/>
-    <ActionButton {...p.reset} />
+  <div style={{
+    display: "flex",
+    padding: 10,
+    fontSize: FontSizes.normal,
+  }}>
+    <div style={{
+      display: "flex",
+      flexDirection: "column",
+    }}>
+      <SummaryBox {...p.summary}/>
+      <div>
+        {p.pops.map((pop, idx) => <PopBox key={idx} {...pop}/>)}
+      </div>
+      <ResourceGatheringBox {...p.resourceGathering}/>
+      <ActionButton {...p.reset} />
+    </div>
   </div>

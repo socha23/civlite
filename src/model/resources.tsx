@@ -2,7 +2,8 @@ import { Action, ActionParams } from "./action"
 import { CostElem, Resources } from './costs'
 
 export enum ResourceType {
-    Food, Labor
+    Food = "Food", 
+    Labor = "Labor",
 }
 
 export const ResourceDefinitions = {
@@ -10,3 +11,6 @@ export const ResourceDefinitions = {
     [ResourceType.Labor]: {gatherTimeout: 1, initialCap: 10},
 }
 
+export function allResourceTypes(): ResourceType[] {
+    return Object.values(ResourceType)
+}

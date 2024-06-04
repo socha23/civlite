@@ -24,12 +24,34 @@ class PopModel {
     this.count++
   }
 
+  get singlePopProduction(): Resources[] {
+    return this.definition.production.map(r => resources(r.type, r.count))
+  }
+
   get production(): Resources[] {
-    return this.definition.production.map(r => resources(r.type, r.count * this.count))
+    return this.singlePopProduction.map(r => resources(r.type, r.count * this.count))
+  }
+
+  get singlePopConsumption(): Resources[] {
+    return this.definition.consumption.map(r => resources(r.type, r.count))
   }
 
   get consumption(): Resources[] {
-    return this.definition.consumption.map(r => resources(r.type, r.count * this.count))
+    return this.singlePopConsumption.map(r => resources(r.type, r.count * this.count))
+  }
+
+  get singlePopBalance(): Resources[] {
+    const result: Record<string, number> = {}
+    this.singlePopConsumption.forEach(c => {
+      result[c.type] = -c.count
+    })
+    this.singlePopProduction.forEach(c => {
+      result[c.type] = (result[c.type] || 0) + c.count 
+    }) 
+    return Object
+      .values(ResourceType)
+      .map(t => resources(t, result[t]))
+      .filter(r => r.count && Math.abs(r.count) >= 0.1)
   }
 }
 
@@ -66,6 +88,11 @@ export class PopulationModel {
       sum(pop.consumption.filter(p => p.type === resourceType), r => r.count)
     )
   }
+
+  get total() {
+    return sum(this.pops, pop => pop.count)
+  }
+
 }
 
 class BuyPopAction extends Action {

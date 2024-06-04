@@ -1,13 +1,17 @@
 import React from 'react';
+import { DividerColors } from './icons';
 
 type BoxProps = { children?: React.ReactNode }
 
+
+
 export const Box = ({children}: BoxProps) =>
-  <div style={{
+  <div className="dividers" style={{
     borderWidth: 1,
-    borderColor: "black",
-    borderStyle: "solid",
-    padding: 10
+    width: 250,
+    borderColor: DividerColors.mid,
+    paddingTop: 10,
+    paddingBottom: 10,
   }}>
     {children}
   </div>
