@@ -25,9 +25,7 @@ export function summaryBoxProps(model: GameModel): SummaryBoxProps {
       count: res.count,
       cap: res.cap,
       trend: model.production(t) - model.consumption(t)
-    }})
-  
-  
+    }})  
   return {
     civName: model.civName,
     inventory: [totalPopulation].concat(resources)
@@ -54,16 +52,6 @@ const Inventory = (p: {items: LineProps[]}) => <div
   }
 </div>
 
-const ResourceTrend = (p: {delta: number}) => p.delta === 0 ? <span/> : <span style={{
-  color: p.delta > 0 ? "#0a0": "#a00"
-}}>{p.delta > 0 ? "+" : ""}{p.delta.toFixed(1)}</span>
-
-export const CivName = (p: {civName: string}) => <div style={{
-  fontSize: FontSizes.xbig,
-  color: Colors.captions,
-}}>{p.civName}</div>
-
-
 export const SummaryBox = (p: SummaryBoxProps) =>
   <Box>
     <div style={{
@@ -73,8 +61,6 @@ export const SummaryBox = (p: SummaryBoxProps) =>
       flexDirection: "column",
       gap: 8,
     }}>
-
-      <CivName civName={p.civName}/>
       <Inventory items={p.inventory}/>
     </div>
   </Box>

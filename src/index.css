@@ -23,8 +23,10 @@ code {
 
 .dividers:not(:last-child) {
   border-bottom-style: solid;
+  border-width: 1px;
 }
 
 .dottedDividers:not(:last-child) {
   border-bottom-style: dotted;
+  border-width: 1px;
 }
