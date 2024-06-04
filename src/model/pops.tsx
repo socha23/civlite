@@ -2,15 +2,27 @@ import { ResourceType } from "./resources"
 import { pops, resources } from "./costs"
 
 export enum PopType {
+  Idler = "Idler", 
   Gatherer = "Gatherer", 
   Laborer = "Laborer", 
   Farmer = "Farmer"
 }
 
 export const PopTypeDefinitions = {
+  [PopType.Idler]: {
+    initialCount: 1,
+    buyCost: [resources(ResourceType.Food, 2)],
+    production: [
+    ],
+    consumption: [
+      resources(ResourceType.Food, 0.5)
+    ]  
+  },
   [PopType.Gatherer]: {
-    initialCount: 50,
-    buyCost: [resources(ResourceType.Food, 5)],
+    initialCount: 9,
+    buyCost: [
+      pops(PopType.Idler, 1)
+    ],
     production: [
       resources(ResourceType.Food, 0.1)
     ],
@@ -20,9 +32,9 @@ export const PopTypeDefinitions = {
   [PopType.Laborer]: {
     initialCount: 0,
     buyCost: [
-      resources(ResourceType.Food, 10),
-      pops(PopType.Gatherer, 1)
-      ],
+      pops(PopType.Idler, 1),
+      resources(ResourceType.Food, 5),
+    ],
     production: [
       resources(ResourceType.Labor, 1)
     ],
@@ -33,9 +45,9 @@ export const PopTypeDefinitions = {
   [PopType.Farmer]: {
     initialCount: 0,
     buyCost: [
+      pops(PopType.Idler, 1),
       resources(ResourceType.Food, 10),
       resources(ResourceType.Labor, 5),
-      pops(PopType.Gatherer, 1)
       ],
     production: [
       resources(ResourceType.Food, 0.5)

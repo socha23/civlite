@@ -22,6 +22,7 @@ export const FontSizes = {
 }
 
 export const Icons = {
+    [PopType.Idler]: 'fa-solid fa-person',
     [PopType.Gatherer]: 'fa-solid fa-person-hiking',
     [PopType.Laborer]: 'fa-solid fa-person-digging',
     [PopType.Farmer]: 'fa-solid fa-person-arrow-up-from-line',
@@ -38,10 +39,17 @@ export const Labels = {
     PerSecond: "/ s",
     Recruitment: "Recruitment",
     Assign: {
+        [PopType.Idler]: 'Spawn Idler',
         [PopType.Gatherer]: 'Assign Gatherer',
         [PopType.Laborer]: 'Assign Laborer',
         [PopType.Farmer]: 'Build Farm',
-    }
+    },
+    Plural: {
+        [PopType.Idler]: 'Idlers',
+        [PopType.Gatherer]: 'Gatherers',
+        [PopType.Laborer]: 'Laborers',
+        [PopType.Farmer]: 'Farmers',
+    },
 }
 
 export const GatherActionLabels = {
@@ -52,12 +60,6 @@ export const GatherActionLabels = {
 export const ResourceLabels = {
     [ResourceType.Food]: 'Food',
     [ResourceType.Labor]: 'Labor',
-}
-
-export const PopLabels = {
-    [PopType.Gatherer]: 'Gatherers',
-    [PopType.Laborer]: 'Laborers',
-    [PopType.Farmer]: 'Farmers',
 }
 
 export const TrendColors = {

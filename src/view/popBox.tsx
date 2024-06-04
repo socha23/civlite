@@ -3,7 +3,7 @@ import { Box } from './box'
 import { GameModel } from '../model/gameModel'
 import { ActionProps, ActionCostRow, ActionButton, propsForAction } from './action';
 import { PopType } from '../model/pops';
-import { FontSizes, PopLabels, TrendColors, Labels, DividerColors, Icons, Colors } from './icons';
+import { FontSizes, TrendColors, DividerColors, Icons, Colors, Labels } from './icons';
 import { Resources } from '../model/costs';
 import { formatNumber } from '../model/utils';
 
@@ -20,7 +20,7 @@ export function popBoxProps(model: GameModel, type: PopType): PopBoxProps {
   const pop = model.population.pop(type)
   return {
     popType: type,
-    popLabel: PopLabels[type],
+    popLabel: Labels.Plural[type],
     count: pop.count,
     buyAction: propsForAction(model, pop.buyAction, Labels.Assign[type]),
     resourceBalance: pop.resourceBalance,
@@ -74,7 +74,7 @@ export const PopBox = (p: PopBoxProps) =>
       alignItems: 'center',
       color: Colors.captions,
     }}>
-      <div style={{width: 24, fontSize: FontSizes.normal, textAlign: 'center'}}>
+      <div style={{width: 28, fontSize: FontSizes.normal, textAlign: 'center'}}>
         <i className={Icons[p.popType]}/>
       </div>
       <div style={{flexGrow: 1}}>{p.popLabel}</div>
