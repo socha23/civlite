@@ -38,6 +38,7 @@ export const Icons = {
 }
 
 export const Labels = {
+    Execute: "Execute",
     TotalPopulation: "Total population",
     PerPop: "/ pop",
     PerSecond: "/ s",

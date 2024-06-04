@@ -23,8 +23,8 @@ export function popBoxProps(model: GameModel, type: PopType): PopBoxProps {
     popType: type,
     popLabel: Labels.Plural[type],
     count: pop.count,
-    assignAction: propsForAction(model, pop.assignAction, Labels.Assign[type]),
-    unassignAction: propsForAction(model, pop.unassignAction, Labels.Unassign[type]),
+    assignAction: propsForAction(model, pop.assignAction, {title: Labels.Assign[type]}),
+    unassignAction: propsForAction(model, pop.unassignAction, {title: Labels.Unassign[type]}),
     resourceBalance: pop.resourceBalance,
     singlePopBalance: pop.singlePopBalance,
   }
@@ -74,44 +74,48 @@ export const RecruitRow = (p: PopBoxProps) => <div style={{
 
 export const PopBox = (p: PopBoxProps) =>
   <Box>
-    <div className="dottedDividers" style={{
-      display: "flex",
-      borderColor: DividerColors.light,
-      fontSize: FontSizes.big,
-      paddingBottom: 4,
-      alignItems: 'center',
-      color: Colors.captions,
-    }}>
-      <div style={{width: 28, fontSize: FontSizes.normal, textAlign: 'center'}}>
-        <i className={Icons[p.popType]}/>
-      </div>
-      <div style={{flexGrow: 1}}>{p.popLabel}</div>
-        
-      <div style={{
-        width: 80,
-        textAlign: 'right',
-      }}>
-        {p.count}
-      </div>
-      <div style={{width: 60, display: 'flex', justifyContent: 'flex-end'}}>
-      </div>
-    </div>
-    <div className='dottedDividers' style={{
-      borderColor: DividerColors.light,
-      paddingTop: 4,
-      paddingBottom: 4,
-      display: "flex",
-    }}>
-      <ResourcesList items={p.singlePopBalance} caption={Labels.PerPop} color={Colors.default}/>
-      <div style={{flexGrow: 1}}/>
-      <ResourcesList items={p.resourceBalance} caption={Labels.PerSecond}/>
-    </div>
     <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      marginTop: 6
+      paddingTop: 8,
+      paddingBottom: 12,
     }}>
-        <RecruitRow {...p}/>
+      <div style={{
+        display: "flex",
+        borderColor: DividerColors.light,
+        fontSize: FontSizes.big,
+        alignItems: 'center',
+        color: Colors.captions,
+      }}>
+        <div style={{width: 28, fontSize: FontSizes.normal, textAlign: 'center'}}>
+          <i className={Icons[p.popType]}/>
+        </div>
+        <div style={{flexGrow: 1}}>{p.popLabel}</div>
+          
+        <div style={{
+          width: 80,
+          textAlign: 'right',
+        }}>
+          {p.count}
+        </div>
+        <div style={{width: 60, display: 'flex', justifyContent: 'flex-end'}}>
+        </div>
+      </div>
+      <div style={{
+        borderColor: DividerColors.light,
+        paddingTop: 2,
+        paddingBottom: 4,
+        display: "flex",
+      }}>
+        <ResourcesList items={p.singlePopBalance} caption={Labels.PerPop} color={Colors.default}/>
+        <div style={{flexGrow: 1}}/>
+        <ResourcesList items={p.resourceBalance} caption={Labels.PerSecond}/>
+      </div>
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        marginTop: 6
+      }}>
+          <RecruitRow {...p}/>
+      </div>
     </div>
   </Box>
 

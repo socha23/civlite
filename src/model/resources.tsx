@@ -1,6 +1,6 @@
 export enum ResourceType {
-    Food = "Food", 
     Insight = "Insight",
+    Food = "Food", 
     Labor = "Labor",
     Forest = "Forest",
     Grassland = "Grassland",

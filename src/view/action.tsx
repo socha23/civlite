@@ -1,18 +1,22 @@
-import React, { PropsWithChildren } from 'react';
+import React, { PropsWithChildren, ReactNode } from 'react';
 
 import { GameModel } from '../model/gameModel';
 import { Action } from '../model/action'
 import { CostElem } from '../model/costs';
-import { Colors, FontSizes, Icons } from './icons';
+import { Colors, FontSizes, Icons, Labels, DividerColors } from './icons';
 
 type ActionCost = {
   cost: CostElem
   canPay: boolean
 }
 
-export type ActionProps = {
-  title: string,
-  buttonLabel?: string,
+interface ActionParms {
+  title?: string,
+  buttonLabel?: string
+  description?: ReactNode | string
+}
+
+export interface ActionProps extends ActionParms {
   action: () => void
   costs: ActionCost[]
   timeout?: number
@@ -21,9 +25,9 @@ export type ActionProps = {
 }
 
 
-export function propsForAction(model: GameModel, a: Action, title: string): ActionProps {
+export function propsForAction(model: GameModel, a: Action, params: ActionParms = {}): ActionProps {
   return {
-    title: title,
+    ...params,
     action: () => a.onAction(model),
     costs: a.costs.map(c => ({cost: c, canPay: model.canPay(c)})),
     timeout: a.timeout, 
@@ -145,3 +149,28 @@ export const ActionCostRow = (p: {costs: ActionCost[]}) => <div style={{
 </div>
 
 
+export const ActionRow = (p: ActionProps) => <div className="dottedDividers" style={{
+  display: "flex",
+  borderColor: DividerColors.light,
+  fontSize: FontSizes.small,
+  flexDirection: "column",
+  paddingTop: 8,
+  paddingBottom: 8,
+}}>
+  <div style={{
+    display: "flex",
+    alignItems: "center",
+    gap: 4,
+  }}>
+    <div style={{
+      width: 120,
+    }}>
+      <ActionButton {...p} title={p.title}/>
+    </div>
+    <div style={{
+      width: 120,
+    }}>
+    </div>
+  </div>
+  
+</div>

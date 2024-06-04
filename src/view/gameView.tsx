@@ -1,7 +1,8 @@
 import React from 'react';
-import { ActionProps, ActionButton } from './action'
+import { ActionProps, ActionButton, ActionRow } from './action'
 import { GameModel } from '../model/gameModel'
-import { SummaryBox, SummaryBoxProps, summaryBoxProps } from './summaryBox';
+import { PopType } from '../model/pops'
+import { InventoryBox, InventoryBoxProps, summaryBoxProps } from './inventoryBox';
 import { Colors, FontSizes } from './icons';
 import { ResourceGatheringBox, ResourceGatheringProps, resourceGatheringProps } from './resourceGatheringBox';
 import { PopBox, PopBoxProps, popBoxProps } from './popBox';
@@ -10,7 +11,7 @@ import { PopBox, PopBoxProps, popBoxProps } from './popBox';
 export type GameViewProps = {
   civName: string,
   tick: number
-  summary: SummaryBoxProps
+  summary: InventoryBoxProps
   reset: ActionProps
   pops: PopBoxProps[]
   resourceGathering: ResourceGatheringProps,
@@ -36,6 +37,24 @@ export const CivName = (p: {civName: string}) => <div style={{
   color: Colors.captions,
 }}>{p.civName}</div>
 
+
+const PopColums = {
+  [PopType.Idler]: 0,
+  [PopType.Gatherer]: 1,
+  [PopType.Laborer]: 1,
+  [PopType.Herder]: 1,
+  [PopType.Farmer]: 1,
+}
+
+export const PopsView = (p: {pops: PopBoxProps[], column: number}) => <div style={{
+  display: "flex",
+  flexDirection: "column",
+}}>
+    {p.pops
+      .filter(pop => PopColums[pop.popType] === p.column)
+      .map((pop, idx) => <PopBox key={idx} {...pop}/>)}
+</div>
+
 export const GameView = (p: GameViewProps) =>
   <div style={{
     display: "flex",
@@ -52,24 +71,19 @@ export const GameView = (p: GameViewProps) =>
         display: "flex",
         gap: 20,
       }}>
-        <div style={{
+        <div className="dividersParent" style={{
           display: "flex",
           flexDirection: "column",
+          paddingTop: 4,
         }}>
-          <SummaryBox {...p.summary}/>
+          <InventoryBox {...p.summary}/>
           <ResourceGatheringBox {...p.resourceGathering}/>
-          <div>
-            <ActionButton {...p.reset} />
-          </div>
+          <PopsView pops={p.pops} column={0}/>
+          <ActionRow {...p.reset}/>
 
         </div>
-        <div style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 12,
-        }}>
-            {p.pops.map((pop, idx) => <PopBox key={idx} {...pop}/>)}
-        </div>
+        <PopsView pops={p.pops} column={1}/>
       </div>
     </div>
   </div>
+

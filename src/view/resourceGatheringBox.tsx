@@ -3,7 +3,7 @@ import { Box } from './box'
 import { GameModel } from '../model/gameModel'
 import { ResourceType } from '../model/resources';
 import { GatherActionLabels } from './icons';
-import { ActionButton, ActionProps, propsForAction } from './action';
+import { ActionButton, ActionProps, ActionRow, propsForAction } from './action';
 
 export type ResourceGatheringProps = {
   actions: ActionProps[]
@@ -15,7 +15,7 @@ export function resourceGatheringProps(model: GameModel): ResourceGatheringProps
 
   return {
     actions: gatherableResources.map(t => propsForAction(
-      model, model.resources.resource(t).gatherAction, GatherActionLabels[t]
+      model, model.resources.resource(t).gatherAction, {title: GatherActionLabels[t]}
     ))
   }
 }
@@ -25,9 +25,8 @@ export const ResourceGatheringBox = (p: ResourceGatheringProps) =>
     <div style={{
       display: "flex",
       flexDirection: "column",
-      gap: 8,
     }}> {
-      p.actions.map((a, idx) => <ActionButton key={idx} {...a}/>)
+      p.actions.map((a, idx) => <ActionRow key={idx} {...a}/>)
     }
     </div>
   </Box>

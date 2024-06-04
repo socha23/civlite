@@ -10,8 +10,6 @@ export const Box = ({children}: BoxProps) =>
     borderWidth: 1,
     width: 250,
     borderColor: DividerColors.mid,
-    paddingTop: 10,
-    paddingBottom: 10,
   }}>
     {children}
   </div>
