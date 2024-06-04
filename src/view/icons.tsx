@@ -7,6 +7,13 @@ export const DividerColors = {
     light: "#ccc"
 }
 
+export const Colors = {
+    default: "#222",
+    grayedOut: "#bbb",
+    captions: "#000"
+}
+
+
 export const FontSizes = {
     small: 10,
     normal: 16,
@@ -15,22 +22,31 @@ export const FontSizes = {
 }
 
 export const Icons = {
-    population: "fa-solid fa-people-group"
+    [PopType.Gatherer]: 'fa-solid fa-person-hiking',
+    [PopType.Laborer]: 'fa-solid fa-person-digging',
+    [PopType.Farmer]: 'fa-solid fa-person-arrow-up-from-line',
+    // herder: 'fa-solid fa-person-walking-with-cane',
+    [ResourceType.Food]: 'fa-solid fa-wheat-awn',
+    [ResourceType.Labor]: 'fa-solid fa-hand',
+    
+    population: "fa-solid fa-people-group",
 }
 
 export const Labels = {
     TotalPopulation: "Total population",
-    PerPop: "per pop",
+    PerPop: "/ pop",
+    PerSecond: "/ s",
+    Recruitment: "Recruitment",
+    Assign: {
+        [PopType.Gatherer]: 'Assign Gatherer',
+        [PopType.Laborer]: 'Assign Laborer',
+        [PopType.Farmer]: 'Build Farm',
+    }
 }
 
 export const GatherActionLabels = {
     [ResourceType.Food]: 'Gather Food',
     [ResourceType.Labor]: 'Perform Labor'
-}
-
-export const ResourceIcons = {
-    [ResourceType.Food]: 'fa-solid fa-wheat-awn',
-    [ResourceType.Labor]: 'fa-solid fa-hand',
 }
 
 export const ResourceLabels = {
@@ -47,10 +63,4 @@ export const PopLabels = {
 export const TrendColors = {
     positive: "#0a0",
     negative: "#a00",
-}
-
-export const BuyPopLabels = {
-    [PopType.Gatherer]: 'Add Gatherer',
-    [PopType.Laborer]: 'Promote Laborer',
-    [PopType.Farmer]: 'Promote Farmer',
 }

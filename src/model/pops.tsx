@@ -12,10 +12,9 @@ export const PopTypeDefinitions = {
     initialCount: 50,
     buyCost: [resources(ResourceType.Food, 5)],
     production: [
-      resources(ResourceType.Food, 1.1)
+      resources(ResourceType.Food, 0.1)
     ],
     consumption: [
-      resources(ResourceType.Food, 1)
     ]  
   },
   [PopType.Laborer]: {
@@ -39,10 +38,9 @@ export const PopTypeDefinitions = {
       pops(PopType.Gatherer, 1)
       ],
     production: [
-      resources(ResourceType.Food, 1.5)
+      resources(ResourceType.Food, 0.5)
     ],
     consumption: [
-      resources(ResourceType.Food, 1)
     ]  
   },
 }

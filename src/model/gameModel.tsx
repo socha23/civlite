@@ -22,6 +22,11 @@ export class GameModel implements ActionCostChecker {
     this.population.payCosts(costs)
   }
 
+  canPay(elem: CostElem) {
+    return this.resources.filterUnsatisfiableCosts([elem]).length === 0
+      && this.population.filterUnsatisfiableCosts([elem]).length === 0
+  }
+
   onTick(deltaS: number) {
     this.tick += deltaS
     onTick(deltaS)

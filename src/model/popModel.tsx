@@ -53,7 +53,14 @@ class PopModel {
       .map(t => resources(t, result[t]))
       .filter(r => r.count && Math.abs(r.count) >= 0.1)
   }
+
+  get resourceBalance(): Resources[] {
+    return this.consumption.map(r => resources(r.type, -r.count))
+    .concat(this.production)
+    .filter(c => c.count !== 0)
+  }
 }
+
 
 export class PopulationModel {
 

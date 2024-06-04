@@ -1,11 +1,20 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 
 import { GameModel } from '../model/gameModel';
 import { Action } from '../model/action'
+import { CostElem } from '../model/costs';
+import { Colors, FontSizes, Icons } from './icons';
+
+type ActionCost = {
+  cost: CostElem
+  canPay: boolean
+}
 
 export type ActionProps = {
-  title: string
+  title: string,
+  buttonLabel?: string,
   action: () => void
+  costs: ActionCost[]
   timeout?: number
   timeoutLeft?: number
   disabled?: any
@@ -16,6 +25,7 @@ export function propsForAction(model: GameModel, a: Action, title: string): Acti
   return {
     title: title,
     action: () => a.onAction(model),
+    costs: a.costs.map(c => ({cost: c, canPay: model.canPay(c)})),
     timeout: a.timeout, 
     timeoutLeft: a.timeoutLeft,
     disabled: a.disabled(model)
@@ -31,17 +41,17 @@ const BUTTON_STYLE_ENABLED = {
 
 const BUTTON_STYLE_DISABLED = {
   color: "#bbb",
-  borderColor: "#bbb",
-  backgroundColor: "#eee",
+  borderColor: "#ddd",
+  backgroundColor: "#fff",
   cursor: "not-allowed",
 }
 
-export const ActionButton = (a: ActionProps) =>
+export const _ActionButton = (a: PropsWithChildren<ActionProps>) =>
   <div style={{
-      display: "inline-block",
       zIndex: 0,
-      position: "relative",
-      margin: 3,
+      width: "100%",
+      height: "100%",
+    position: "relative",
       userSelect: "none",
       cursor: (a.disabled || a.timeoutLeft ? BUTTON_STYLE_DISABLED.cursor : BUTTON_STYLE_ENABLED.cursor)
     }}
@@ -56,6 +66,7 @@ export const ActionButton = (a: ActionProps) =>
         position: "absolute",
         width: "100%",
         height: "100%",
+        borderWidth: 1,
         borderStyle: "solid",
         borderRadius: 4,
         zIndex: 3,
@@ -64,11 +75,10 @@ export const ActionButton = (a: ActionProps) =>
       <div style={{
         borderRadius: 4,
         zIndex: 3,
-        ...(a.disabled ? BUTTON_STYLE_DISABLED : BUTTON_STYLE_ENABLED)
+        height: "100%",
+        width: "100%",
+      ...(a.disabled ? BUTTON_STYLE_DISABLED : BUTTON_STYLE_ENABLED)
       }}>
-
-          
-
         {
           a.timeout != undefined && a.timeoutLeft != undefined && <div style={{
             zIndex: 2,
@@ -81,10 +91,53 @@ export const ActionButton = (a: ActionProps) =>
         }
         <div style={{
           position: "relative",
+          height: "100%",
+          width: "100%",
           zIndex: 1,
           padding: 3,
-        }}>
-          {a.title}
-        </div>
+        }}>{a.children}</div>
       </div>
   </div>
+
+
+
+export const ActionButton = (a: ActionProps) => <_ActionButton {...a}>
+ <div style={{display: "flex", flexDirection: "column", alignItems: "center", gap: 4}}>
+    <div>{a.title}</div>
+    <ActionCostRow costs={a.costs}/>
+ </div>
+</_ActionButton>
+
+export const SmallIconButton = (a: ActionProps) => <div style={{
+  width: 16,
+  height: 16,
+}}>
+  <_ActionButton {...a}>
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}>
+      <i style={{fontSize: 8}} className='fa-solid fa-plus'/>
+    </div>
+    
+  </_ActionButton>
+</div>
+
+export const ActionCostRow = (p: {costs: ActionCost[]}) => <div style={{
+  display: 'flex',
+  gap: 4,
+  fontSize: FontSizes.small,
+}}>
+  {p.costs.map((c, idx) => <div key={idx} style={{
+      display: "flex",
+      color: c.canPay ? Colors.default : Colors.grayedOut,
+      gap: 2,
+    }}>
+      <div>{c.cost.count}</div>
+      <div style={{
+      }}><i className={Icons[c.cost.type]}/></div>
+    </div>)}
+</div>
+
+

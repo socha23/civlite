@@ -2,7 +2,7 @@ import React from 'react';
 import { Box } from './box'
 import { GameModel } from '../model/gameModel'
 import { ResourceType, allResourceTypes } from '../model/resources';
-import { FontSizes, ResourceIcons, ResourceLabels, Icons, DividerColors } from './icons';
+import { FontSizes, ResourceLabels, Icons, DividerColors, Colors } from './icons';
 import { Line, LineProps } from './line';
 
 export type SummaryBoxProps = {
@@ -20,7 +20,7 @@ export function summaryBoxProps(model: GameModel): SummaryBoxProps {
   const resources = allResourceTypes().map(t => {
     const res = model.resources.resource(ResourceType[t])
     return {
-      icon: ResourceIcons[t],
+      icon: Icons[t],
       label: ResourceLabels[t],
       count: res.count,
       cap: res.cap,
@@ -56,10 +56,11 @@ const Inventory = (p: {items: LineProps[]}) => <div
 
 const ResourceTrend = (p: {delta: number}) => p.delta === 0 ? <span/> : <span style={{
   color: p.delta > 0 ? "#0a0": "#a00"
-}}>{p.delta > 0 ? "+" : "-"}{p.delta.toFixed(1)}</span>
+}}>{p.delta > 0 ? "+" : ""}{p.delta.toFixed(1)}</span>
 
 export const CivName = (p: {civName: string}) => <div style={{
   fontSize: FontSizes.xbig,
+  color: Colors.captions,
 }}>{p.civName}</div>
 
 
@@ -67,6 +68,8 @@ export const SummaryBox = (p: SummaryBoxProps) =>
   <Box>
     <div style={{
       display: "flex",
+      color: Colors.captions,
+      fontSize: FontSizes.normal,
       flexDirection: "column",
       gap: 8,
     }}>

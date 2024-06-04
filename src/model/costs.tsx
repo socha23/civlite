@@ -2,6 +2,8 @@ import { PopType } from "./pops"
 import { ResourceType } from "./resources"
 
 export interface CostElem {
+  type: PopType | ResourceType
+  count: number
 }
 
 export class Pops implements CostElem {
