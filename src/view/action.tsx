@@ -102,7 +102,11 @@ export const _ActionButton = (a: PropsWithChildren<ActionProps>) =>
 
 
 export const ActionButton = (a: ActionProps) => <_ActionButton {...a}>
- <div style={{display: "flex", flexDirection: "column", alignItems: "center", gap: 4}}>
+ <div style={{
+    display: "flex", 
+    flexDirection: "column", 
+    alignItems: "center", 
+    gap: 4}}>
     <div>{a.title}</div>
     <ActionCostRow costs={a.costs}/>
  </div>

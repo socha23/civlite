@@ -11,7 +11,8 @@ export type PopBoxProps = {
   popType: PopType,
   popLabel: string,
   count: number,
-  buyAction: ActionProps,
+  assignAction: ActionProps,
+  unassignAction: ActionProps,
   resourceBalance: Resources[], 
   singlePopBalance: Resources[],
 }
@@ -22,7 +23,8 @@ export function popBoxProps(model: GameModel, type: PopType): PopBoxProps {
     popType: type,
     popLabel: Labels.Plural[type],
     count: pop.count,
-    buyAction: propsForAction(model, pop.buyAction, Labels.Assign[type]),
+    assignAction: propsForAction(model, pop.assignAction, Labels.Assign[type]),
+    unassignAction: propsForAction(model, pop.unassignAction, Labels.Unassign[type]),
     resourceBalance: pop.resourceBalance,
     singlePopBalance: pop.singlePopBalance,
   }
@@ -52,12 +54,18 @@ export const RecruitRow = (p: PopBoxProps) => <div style={{
   <div style={{
     display: "flex",
     fontSize: FontSizes.small,
-    alignItems: "center",
+    gap: 4,
   }}>
     <div style={{
-      width: 100,
+      width: 120,
     }}>
-      <ActionButton {...p.buyAction}/>
+      <ActionButton {...p.assignAction}/>
+    </div>
+    <div style={{
+      width: 20,
+      height: 20,
+    }}>
+      <ActionButton {...p.unassignAction} title='-'/>
     </div>
   </div>
   

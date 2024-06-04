@@ -50,7 +50,7 @@ export const GameView = (p: GameViewProps) =>
       <CivName civName={p.civName}/>
       <div style={{
         display: "flex",
-        gap: 12,
+        gap: 20,
       }}>
         <div style={{
           display: "flex",
@@ -66,7 +66,7 @@ export const GameView = (p: GameViewProps) =>
         <div style={{
           display: "flex",
           flexDirection: "column",
-          gap: 4,
+          gap: 12,
         }}>
             {p.pops.map((pop, idx) => <PopBox key={idx} {...pop}/>)}
         </div>

@@ -2,7 +2,7 @@ import React from 'react';
 import { Box } from './box'
 import { GameModel } from '../model/gameModel'
 import { ResourceType, allResourceTypes } from '../model/resources';
-import { FontSizes, ResourceLabels, Icons, DividerColors, Colors } from './icons';
+import { FontSizes, Icons, DividerColors, Colors, Labels } from './icons';
 import { Line, LineProps } from './line';
 
 export type SummaryBoxProps = {
@@ -21,7 +21,7 @@ export function summaryBoxProps(model: GameModel): SummaryBoxProps {
     const res = model.resources.resource(ResourceType[t])
     return {
       icon: Icons[t],
-      label: ResourceLabels[t],
+      label: Labels[t],
       count: res.count,
       cap: res.cap,
       trend: model.production(t) - model.consumption(t)
@@ -40,6 +40,7 @@ const Inventory = (p: {items: LineProps[]}) => <div
   {
     p.items.map((i, idx) => 
     <div
+    key={idx}
     className="dottedDividers"
     style={{
       borderWidth: 1,
@@ -47,7 +48,7 @@ const Inventory = (p: {items: LineProps[]}) => <div
       paddingBottom: 6,
       borderColor: DividerColors.light,
     }}>
-    <Line key={idx} {...i}/>
+    <Line {...i}/>
     </div>)
   }
 </div>

@@ -9,6 +9,7 @@ class ResourceModel {
 
     constructor(type: ResourceType) {
         this.type = type
+        this.count = ResourceDefinitions[type].initialCount
         this.gatherAction = new GatherResourceAction(this, {timeout: ResourceDefinitions[type].gatherTimeout})
     }
 
@@ -30,18 +31,11 @@ class ResourceModel {
 }
 
 export class ResourcesModel {
-    food = new ResourceModel(ResourceType.Food)
-    labor = new ResourceModel(ResourceType.Labor)
+
+    resources = Object.values(ResourceType).map(type => new ResourceModel(type))
 
     resource(type: ResourceType): ResourceModel {
-        switch (type) {
-            case ResourceType.Food:
-                return this.food
-            case ResourceType.Labor:
-                return this.labor
-            default:
-                throw `Unknown resource type ${type}`
-        }
+        return this.resources.find(m => m.type === type)!
     }
 
     filterUnsatisfiableCosts(costs: CostElem[]): CostElem[] {
@@ -50,10 +44,18 @@ export class ResourcesModel {
         )
     }
 
-    payCosts(costs: CostElem[]) {
+    onConsume(costs: CostElem[]) {
         costs.forEach(c => {
             if (c instanceof Resources) {
                 this.resource(c.type).count -= c.count
+            }
+        })
+    }
+
+    onProduce(values: CostElem[]) {
+        values.forEach(v => {
+            if (v instanceof Resources) {
+                this.resource(v.type).onProduce(v.count)
             }
         })
     }

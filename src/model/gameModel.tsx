@@ -1,11 +1,11 @@
-import { ActionCostChecker } from "./action"
+import { GameModelInterface } from "./action"
 import { CostElem } from "./costs"
 import { ResourceType } from "./resources"
 import { PopulationModel } from "./popModel"
 import { ResourcesModel } from "./resourcesModel"
 import { onTick } from "./timer"
 
-export class GameModel implements ActionCostChecker {
+export class GameModel implements GameModelInterface {
   tick: number = 0
   civName: string = "The Tribe"
   resources = new ResourcesModel()
@@ -17,9 +17,14 @@ export class GameModel implements ActionCostChecker {
       .concat(this.population.filterUnsatisfiableCosts(costs))
   }
 
-  payCosts(costs: CostElem[]) {
-    this.resources.payCosts(costs)
-    this.population.payCosts(costs)
+  onConsume(costs: CostElem[]) {
+    this.resources.onConsume(costs)
+    this.population.onConsume(costs)
+  }
+
+  onProduce(value: CostElem[]) {
+    this.resources.onProduce(value)
+    this.population.onProduce(value)
   }
 
   canPay(elem: CostElem) {

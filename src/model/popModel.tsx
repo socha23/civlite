@@ -1,5 +1,5 @@
 import { ResourceType,  } from "./resources"
-import { Action, ActionParams } from "./action"
+import { Action, action } from "./action"
 import { sum } from './utils'
 import { PopTypeDefinitions, PopType } from "./pops"
 import { CostElem, Pops, Resources, resources } from "./costs"
@@ -8,10 +8,20 @@ class PopModel {
 
   type: PopType
   count: number = 0
-  buyAction: BuyPopAction
+  assignAction: Action
+  unassignAction: Action
 
   constructor(type: PopType) {
-    this.buyAction = new BuyPopAction(this, { costs: PopTypeDefinitions[type].buyCost })
+    this.assignAction = action({
+      costs: PopTypeDefinitions[type].buyCost,
+      action: () => {this.count++}
+    })
+    this.unassignAction = action({
+      gains: PopTypeDefinitions[type].sellValue,
+      action: () => {this.count--},
+      disabled: () => this.count === 0
+    })
+
     this.type = type
     this.count = PopTypeDefinitions[type].initialCount
   }
@@ -20,7 +30,11 @@ class PopModel {
     return PopTypeDefinitions[this.type]
   }
 
-  onBuy() {
+  onAssign() {
+    this.count++
+  }
+
+  onUnassign() {
     this.count++
   }
 
@@ -41,17 +55,9 @@ class PopModel {
   }
 
   get singlePopBalance(): Resources[] {
-    const result: Record<string, number> = {}
-    this.singlePopConsumption.forEach(c => {
-      result[c.type] = -c.count
-    })
-    this.singlePopProduction.forEach(c => {
-      result[c.type] = (result[c.type] || 0) + c.count 
-    }) 
-    return Object
-      .values(ResourceType)
-      .map(t => resources(t, result[t]))
-      .filter(r => r.count && Math.abs(r.count) >= 0.1)
+    return this.singlePopConsumption.map(r => resources(r.type, -r.count))
+    .concat(this.singlePopProduction)
+    .filter(c => c.count !== 0)
   }
 
   get resourceBalance(): Resources[] {
@@ -76,10 +82,18 @@ export class PopulationModel {
     )
   }
 
-  payCosts(costs: CostElem[]) {
+  onConsume(costs: CostElem[]) {
     costs.forEach(c => {
         if (c instanceof Pops) {
             this.pop(c.type).count -= c.count
+        }
+    })
+  }
+
+  onProduce(costs: CostElem[]) {
+    costs.forEach(c => {
+        if (c instanceof Pops) {
+            this.pop(c.type).count += c.count
         }
     })
   }
@@ -100,17 +114,4 @@ export class PopulationModel {
     return sum(this.pops, pop => pop.count)
   }
 
-}
-
-class BuyPopAction extends Action {
-  model: PopModel
-
-  constructor(model: PopModel, params: ActionParams) {
-    super(params)
-    this.model = model
-  }
-
-  _onAction() {
-    this.model.onBuy()
-  }
 }

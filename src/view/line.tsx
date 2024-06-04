@@ -11,7 +11,7 @@ export type LineProps = {
 
 export const ResourceTrend = (p: {delta: number}) => p.delta === 0 ? <span/> : <span style={{
   color: p.delta > 0 ? TrendColors.positive: TrendColors.negative
-}}>{p.delta > 0 ? "+" : "-"}{p.delta.toFixed(1)}</span>
+}}>{p.delta > 0 ? "+" : ""}{p.delta.toFixed(1)}</span>
 
 export const Line = (p: {icon?: string, label: string, count: number, cap?: number, trend?: number }) => <div 
 className="line"

@@ -26,9 +26,13 @@ export const Icons = {
     [PopType.Gatherer]: 'fa-solid fa-person-hiking',
     [PopType.Laborer]: 'fa-solid fa-person-digging',
     [PopType.Farmer]: 'fa-solid fa-person-arrow-up-from-line',
-    // herder: 'fa-solid fa-person-walking-with-cane',
+    [PopType.Herder]: 'fa-solid fa-person-walking-with-cane',
+    [ResourceType.Herds]: 'fa-solid fa-horse',
     [ResourceType.Food]: 'fa-solid fa-wheat-awn',
     [ResourceType.Labor]: 'fa-solid fa-hand',
+    [ResourceType.Insight]: 'fa-regular fa-lightbulb',
+    [ResourceType.Forest]: 'fa-solid fa-tree',
+    [ResourceType.Grassland]: 'fa-solid fa-seedling',
     
     population: "fa-solid fa-people-group",
 }
@@ -42,24 +46,38 @@ export const Labels = {
         [PopType.Idler]: 'Spawn Idler',
         [PopType.Gatherer]: 'Assign Gatherer',
         [PopType.Laborer]: 'Assign Laborer',
+        [PopType.Herder]: 'Build Pasture',
         [PopType.Farmer]: 'Build Farm',
+    },
+    Unassign: {
+        [PopType.Idler]: 'Destroy Idler',
+        [PopType.Gatherer]: 'Unassign',
+        [PopType.Laborer]: 'Unassign',
+        [PopType.Herder]: 'Destroy Pasture',
+        [PopType.Farmer]: 'Destroy Farm',
     },
     Plural: {
         [PopType.Idler]: 'Idlers',
         [PopType.Gatherer]: 'Gatherers',
         [PopType.Laborer]: 'Laborers',
+        [PopType.Herder]: 'Herders',
         [PopType.Farmer]: 'Farmers',
     },
+    [ResourceType.Food]: 'Food',
+    [ResourceType.Herds]: 'Herds',
+    [ResourceType.Labor]: 'Labor',
+    [ResourceType.Insight]: 'Insight',
+    [ResourceType.Forest]: 'Forest',
+    [ResourceType.Grassland]: 'Grassland',
 }
 
 export const GatherActionLabels = {
+    [ResourceType.Herds]: 'Spawn Herd',
     [ResourceType.Food]: 'Gather Food',
-    [ResourceType.Labor]: 'Perform Labor'
-}
-
-export const ResourceLabels = {
-    [ResourceType.Food]: 'Food',
-    [ResourceType.Labor]: 'Labor',
+    [ResourceType.Insight]: 'Think',
+    [ResourceType.Labor]: 'Perform Labor',
+    [ResourceType.Forest]: 'Spawn Forest',
+    [ResourceType.Grassland]: 'Spawn Grasslands',
 }
 
 export const TrendColors = {

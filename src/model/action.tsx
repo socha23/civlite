@@ -4,34 +4,44 @@ import { CostElem } from "./costs"
 export type ActionParams = {
     timeout?: number
     costs?: CostElem[]
+    gains?: CostElem[]
 }
 
-export interface ActionCostChecker {
+export interface GameModelInterface {
     filterUnsatisfiableCosts(cost: CostElem[]): CostElem[]
-    payCosts(cost: CostElem[]): void
+    onProduce(cost: CostElem[]): void
+    onConsume(cost: CostElem[]): void
 }
+
 
 export abstract class Action {
     timeout?: number
     timeoutLeft: number = 0
     costs: CostElem[]
+    gains: CostElem[]
 
-    constructor({timeout, costs = []}: ActionParams) {
+    constructor({timeout, costs = [], gains=[]}: ActionParams) {
         this.timeout = timeout      
         this.costs = costs  
+        this.gains = gains
         addTickListener(this)
     }
 
     abstract _onAction(): void
 
-    onAction(checker: ActionCostChecker) {
+    _isDisabled(): any {
+        return false
+    }
+
+    onAction(checker: GameModelInterface) {
         if (this.timeoutLeft > 0) {
             return
         }
         if (checker.filterUnsatisfiableCosts(this.costs).length > 0) {
             return
         }
-        checker.payCosts(this.costs)
+        checker.onConsume(this.costs)
+        checker.onProduce(this.gains)
         this._onAction()
         if (this.timeout) {
             this.timeoutLeft = this.timeout
@@ -42,11 +52,43 @@ export abstract class Action {
         this.timeoutLeft = Math.max(0, this.timeoutLeft - deltaS)
     }
 
-    disabled(checker: ActionCostChecker): any {
+    disabled(checker: GameModelInterface): any {
         if (checker.filterUnsatisfiableCosts(this.costs).length > 0) {
             return "Cost can't be paid"
         }
-        return false
+        return this._isDisabled()
     }
+}
+
+class InlineAction extends Action {
+    action: () => void
+    _disabled?: () => any
+    
+    constructor(p: ActionParams & {
+        action: () => void,
+        disabled?: () => any,
+    }) {
+        super(p)
+        this.action = p.action
+        this._disabled = p.disabled
+    }
+
+    _onAction(): void {
+        this.action()
+    }
+
+    _isDisabled() {
+        if (!this._disabled) {
+            return false
+        }
+        return this._disabled()
+    }
+}
+
+export function action(p: ActionParams & {
+    action: () => void,
+    disabled?: () => any,
+}): Action {
+    return new InlineAction(p);
 }
 
