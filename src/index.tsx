@@ -1,18 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import useAnimationFrame from './useAnimationFrame'
 
 import {GameController} from './model/gameController'
 import {GameView} from './view/gameView'
 
+const TIME_RESOULTION_MS = 50
+
 function Game() {
-  const [model, setModel] = useState(() => new GameController())
+  const [model, ] = useState(() => new GameController())
   const [viewProps, setViewProps] = useState(model.viewProps)
-  useAnimationFrame((ms: number) => {
-    model.onTick(ms / 1000)
-    setViewProps({...model.viewProps})
+  useEffect(() => {
+    const interval = setInterval(() => {
+      model.update()
+      setViewProps({...model.viewProps})
+    }, TIME_RESOULTION_MS)
+    return () => clearInterval(interval);
   })
+  
   return <GameView {...viewProps}/>
 }
 

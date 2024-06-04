@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActionProps, ActionButton, ActionRow } from './action'
+import { ActionProps, ActionRow } from './action'
 import { GameModel } from '../model/gameModel'
 import { PopType } from '../model/pops'
 import { InventoryBox, InventoryBoxProps, summaryBoxProps } from './inventoryBox';

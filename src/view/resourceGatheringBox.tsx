@@ -3,7 +3,7 @@ import { Box } from './box'
 import { GameModel } from '../model/gameModel'
 import { ResourceType } from '../model/resources';
 import { GatherActionLabels } from './icons';
-import { ActionButton, ActionProps, ActionRow, propsForAction } from './action';
+import { ActionProps, ActionRow, propsForAction } from './action';
 
 export type ResourceGatheringProps = {
   actions: ActionProps[]

@@ -3,7 +3,7 @@ import React, { PropsWithChildren, ReactNode } from 'react';
 import { GameModel } from '../model/gameModel';
 import { Action } from '../model/action'
 import { CostElem } from '../model/costs';
-import { Colors, FontSizes, Icons, Labels, DividerColors } from './icons';
+import { Colors, FontSizes, Icons, DividerColors } from './icons';
 
 type ActionCost = {
   cost: CostElem
@@ -50,7 +50,7 @@ const BUTTON_STYLE_DISABLED = {
   cursor: "not-allowed",
 }
 
-export const _ActionButton = (a: PropsWithChildren<ActionProps>) =>
+const ActionButtonInner = (a: PropsWithChildren<ActionProps>) =>
   <div style={{
       zIndex: 0,
       width: "100%",
@@ -84,7 +84,7 @@ export const _ActionButton = (a: PropsWithChildren<ActionProps>) =>
       ...(a.disabled ? BUTTON_STYLE_DISABLED : BUTTON_STYLE_ENABLED)
       }}>
         {
-          a.timeout != undefined && a.timeoutLeft != undefined && <div style={{
+          a.timeout !== undefined && a.timeoutLeft !== undefined && <div style={{
             zIndex: 2,
             position: "absolute",
             backgroundColor: "white",
@@ -105,7 +105,7 @@ export const _ActionButton = (a: PropsWithChildren<ActionProps>) =>
 
 
 
-export const ActionButton = (a: ActionProps) => <_ActionButton {...a}>
+export const ActionButton = (a: ActionProps) => <ActionButtonInner {...a}>
  <div style={{
     display: "flex", 
     flexDirection: "column", 
@@ -114,13 +114,13 @@ export const ActionButton = (a: ActionProps) => <_ActionButton {...a}>
     <div>{a.title}</div>
     <ActionCostRow costs={a.costs}/>
  </div>
-</_ActionButton>
+</ActionButtonInner>
 
 export const SmallIconButton = (a: ActionProps) => <div style={{
   width: 16,
   height: 16,
 }}>
-  <_ActionButton {...a}>
+  <ActionButtonInner {...a}>
     <div style={{
       display: 'flex',
       alignItems: 'center',
@@ -129,7 +129,7 @@ export const SmallIconButton = (a: ActionProps) => <div style={{
       <i style={{fontSize: 8}} className='fa-solid fa-plus'/>
     </div>
     
-  </_ActionButton>
+  </ActionButtonInner>
 </div>
 
 export const ActionCostRow = (p: {costs: ActionCost[]}) => <div style={{

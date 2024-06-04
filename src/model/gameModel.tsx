@@ -12,7 +12,6 @@ export class GameModel implements GameModelInterface {
   population = new PopulationModel()
 
   filterUnsatisfiableCosts(costs: CostElem[]): CostElem[] {
-    const result: CostElem[] = []
     return this.resources.filterUnsatisfiableCosts(costs)
       .concat(this.population.filterUnsatisfiableCosts(costs))
   }

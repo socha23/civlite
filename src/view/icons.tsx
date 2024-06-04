@@ -1,4 +1,3 @@
-import React from 'react';
 import { ResourceType } from '../model/resources';
 import { PopType } from '../model/pops';
 

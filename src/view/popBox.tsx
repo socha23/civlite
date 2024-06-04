@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box } from './box'
 import { GameModel } from '../model/gameModel'
-import { ActionProps, ActionCostRow, ActionButton, propsForAction } from './action';
+import { ActionProps, ActionButton, propsForAction } from './action';
 import { PopType } from '../model/pops';
 import { FontSizes, TrendColors, DividerColors, Icons, Colors, Labels } from './icons';
 import { Resources } from '../model/costs';

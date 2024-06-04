@@ -4,13 +4,11 @@ import { GameModel } from '../model/gameModel'
 import { ResourceType, allResourceTypes } from '../model/resources';
 import { FontSizes, Icons, DividerColors, Colors, Labels } from './icons';
 import { Line, LineProps } from './line';
-import { group } from 'console';
 
 export type InventoryBoxProps = {
   civName: string
   inventory: (LineProps & {group: number})[]
 }
-
 
 const ResourceGroups = {
   [ResourceType.Herds]: 0,  
@@ -44,11 +42,6 @@ export function summaryBoxProps(model: GameModel): InventoryBoxProps {
     inventory: [totalPopulation].concat(resources)
   }
 }
-
-
-const POPULATION_RESOURCE_GROUP = 0
-
-
 
 const Inventory = (p: {items: ({group: number} & LineProps)[], group: number}) => <div 
   style={{
