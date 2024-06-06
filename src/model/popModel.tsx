@@ -8,15 +8,15 @@ class PopModel {
 
   type: PopType
   count: number = 0
-  assignAction: Action
-  unassignAction: Action
+  buyAction: Action
+  sellAction: Action
 
   constructor(type: PopType) {
-    this.assignAction = action({
+    this.buyAction = action({
       costs: PopTypeDefinitions[type].buyCost,
       action: () => {this.count++}
     })
-    this.unassignAction = action({
+    this.sellAction = action({
       gains: PopTypeDefinitions[type].sellValue,
       action: () => {this.count--},
       disabled: () => this.count === 0
@@ -28,14 +28,6 @@ class PopModel {
 
   get definition() {
     return PopTypeDefinitions[this.type]
-  }
-
-  onAssign() {
-    this.count++
-  }
-
-  onUnassign() {
-    this.count++
   }
 
   get singlePopProduction(): Resources[] {
