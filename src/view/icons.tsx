@@ -44,8 +44,8 @@ export const Labels = {
     Recruitment: "Recruitment",
     Assign: {
         [PopType.Idler]: 'Spawn Idler',
-        [PopType.Gatherer]: 'Assign Gatherer',
-        [PopType.Laborer]: 'Assign Laborer',
+        [PopType.Gatherer]: 'Add Gatherer',
+        [PopType.Laborer]: 'Add Laborer',
         [PopType.Herder]: 'Build Pasture',
         [PopType.Farmer]: 'Build Farm',
     },

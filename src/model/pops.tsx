@@ -9,7 +9,20 @@ export enum PopType {
   Farmer = "Farmer",
 }
 
-export const PopTypeDefinitions = {
+const DEFAULT_POP_DEFINITION = {
+  initialCount: 0,
+  buyCost: [
+    pops(PopType.Idler, 1),
+  ],
+  sellValue: [
+    pops(PopType.Idler, 1),
+  ],
+  production: [],
+  consumption: [],
+}
+
+
+const PopTypeDefinitions = {
   [PopType.Idler]: {
     initialCount: 1,
     buyCost: [resources(ResourceType.Food, 2)],
@@ -33,12 +46,9 @@ export const PopTypeDefinitions = {
     ],
     production: [
       resources(ResourceType.Food, 0.1)
-    ],
-    consumption: [
     ]  
   },
   [PopType.Laborer]: {
-    initialCount: 0,
     buyCost: [
       pops(PopType.Idler, 1),
       resources(ResourceType.Food, 5),
@@ -52,11 +62,9 @@ export const PopTypeDefinitions = {
     ]  
   },
   [PopType.Herder]: {
-    initialCount: 0,
     buyCost: [
       pops(PopType.Idler, 1),
       resources(ResourceType.Herds, 1),
-      resources(ResourceType.Food, 5),
       resources(ResourceType.Labor, 3),
       resources(ResourceType.Grassland, 1),
     ],
@@ -68,14 +76,10 @@ export const PopTypeDefinitions = {
     production: [
       resources(ResourceType.Food, 0.6)
     ],
-    consumption: [
-    ]  
   },
   [PopType.Farmer]: {
-    initialCount: 0,
     buyCost: [
       pops(PopType.Idler, 1),
-      resources(ResourceType.Food, 10),
       resources(ResourceType.Labor, 5),
       resources(ResourceType.Grassland, 1),
     ],
@@ -86,8 +90,9 @@ export const PopTypeDefinitions = {
     production: [
       resources(ResourceType.Food, 0.4)
     ],
-    consumption: [
-    ]  
   },
 }
 
+export function popTypeDefinition(t: PopType) {
+  return {...DEFAULT_POP_DEFINITION, ...PopTypeDefinitions[t]}
+}

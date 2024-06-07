@@ -1,7 +1,7 @@
 import { ResourceType,  } from "./resources"
 import { Action, action } from "./action"
 import { sum } from './utils'
-import { PopTypeDefinitions, PopType } from "./pops"
+import { popTypeDefinition, PopType } from "./pops"
 import { CostElem, Pops, Resources, resources } from "./costs"
 
 class PopModel {
@@ -13,21 +13,21 @@ class PopModel {
 
   constructor(type: PopType) {
     this.buyAction = action({
-      costs: PopTypeDefinitions[type].buyCost,
+      costs: popTypeDefinition(type).buyCost,
       action: () => {this.count++}
     })
     this.sellAction = action({
-      gains: PopTypeDefinitions[type].sellValue,
+      gains: popTypeDefinition(type).sellValue,
       action: () => {this.count--},
       disabled: () => this.count === 0
     })
 
     this.type = type
-    this.count = PopTypeDefinitions[type].initialCount
+    this.count = popTypeDefinition(type).initialCount
   }
 
   get definition() {
-    return PopTypeDefinitions[this.type]
+    return popTypeDefinition(this.type)
   }
 
   get singlePopProduction(): Resources[] {
