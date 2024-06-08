@@ -7,6 +7,7 @@ import { Colors, FontSizes } from './icons';
 import { ResourceGatheringBox, ResourceGatheringProps, resourceGatheringProps } from './resourceGatheringBox';
 import { PopBox, PopBoxProps, popBoxProps } from './popBox';
 import { MilitaryProps, MilitaryView, militaryProps } from './military';
+import { CivilizationsView, CivsProps, civsProps } from './civs';
 
 
 export type GameViewProps = {
@@ -17,6 +18,7 @@ export type GameViewProps = {
   pops: PopBoxProps[]
   resourceGathering: ResourceGatheringProps,
   military: MilitaryProps,
+  civilizations: CivsProps,
 }
 
 export function gameViewProps(model: GameModel, onReset: () => void): GameViewProps {
@@ -32,6 +34,7 @@ export function gameViewProps(model: GameModel, onReset: () => void): GameViewPr
       action: onReset
     },
     military: militaryProps(model),
+    civilizations: civsProps(model),
   }
 }
 
@@ -87,9 +90,12 @@ export const GameView = (p: GameViewProps) =>
 
         </div>
         <PopsView pops={p.pops} column={1}/>
-        <div>
+        <div className='dividersParent'>
           <PopsView pops={p.pops} column={2}/>
           <MilitaryView {...p.military}/>
+        </div>
+        <div>
+          <CivilizationsView {...p.civilizations}/>
         </div>
       </div>
     </div>

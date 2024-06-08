@@ -12,7 +12,7 @@ type ActionCost = {
 
 interface ActionParms {
   title?: string,
-  buttonLabel?: string
+  buttonLabel?: ReactNode | string
   description?: ReactNode | string
 }
 
@@ -111,7 +111,7 @@ export const ActionButton = (a: ActionProps) => <ActionButtonInner {...a}>
     flexDirection: "column", 
     alignItems: "center", 
     gap: 4}}>
-    <div>{a.title}</div>
+    <div>{a.buttonLabel || a.title}</div>
     <ActionCostRow costs={a.costs}/>
  </div>
 </ActionButtonInner>

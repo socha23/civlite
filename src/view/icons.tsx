@@ -9,7 +9,8 @@ export const DividerColors = {
 export const Colors = {
     default: "#222",
     grayedOut: "#bbb",
-    captions: "#000"
+    captions: "#000",
+    selected: "#f88",
 }
 
 
@@ -36,9 +37,13 @@ export const Icons = {
     [ResourceType.Grassland]: 'fa-solid fa-seedling',
     
     population: "fa-solid fa-people-group",
+    strength: "fa-solid fa-hand-fist",
+    target: "fa-solid fa-crosshairs"
 }
 
 export const Labels = {
+    Target: "Target",
+
     StartWar: "Go fight",
     CompleteWar: "OK",
 

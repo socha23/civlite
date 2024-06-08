@@ -1,6 +1,7 @@
 import { Labels } from "../view/icons"
 import { Action, action } from "./action"
 import { Assignable } from "./assignable"
+import CivilizationsModel, { CivModel } from "./civsModel"
 import { PopulationModel, PopModel } from "./popModel"
 import { popTypesAssignableToArmy, PopType } from "./pops"
 
@@ -49,12 +50,14 @@ class War {
     durationLeft: number
     state: WarState = WarState.InProgress
     army: ArmyModel
+    against: CivModel
     completeAction: Action
 
-    constructor(p: WarParams, army: ArmyModel) {
+    constructor(p: WarParams, army: ArmyModel, against: CivModel) {
         this.duration = p.duration
         this.durationLeft = this.duration
         this.army = army
+        this.against = against
         this.completeAction = action({
             action: () => {
                 this.state = WarState.Completed
@@ -94,16 +97,19 @@ export class ArmyModel extends Assignable {
 
     war?: War
 
-    constructor(title: string, population: PopulationModel) {
+    constructor(title: string, population: PopulationModel, civModel: CivilizationsModel) {
         super(popTypesAssignableToArmy())
         this.title = title
         this.elements = popTypesAssignableToArmy().map(t => new ArmyElementModel(population.pop(t), this))
 
         this.startWarAction = action({
-            action: () => this.startWar(),
+            action: () => this.startWar(civModel.targetted!),
             disabled: () => {
                 if (this.war) {
                     return "War already in progress"
+                }
+                if (!civModel.targetted) {
+                    return "No target selected"
                 }
             }
         })
@@ -119,8 +125,8 @@ export class ArmyModel extends Assignable {
         }
     }
 
-    startWar() {
-        this.war = new War({duration: 10}, this)
+    startWar(against: CivModel) {
+        this.war = new War({duration: 10}, this, against)
     }
 
     onWarCompleted() {
@@ -135,8 +141,8 @@ export default class MilitaryModel {
     armies: ArmyModel[]
     population: PopulationModel
 
-    constructor(population: PopulationModel) {
-        this.armies = [new ArmyModel(Labels.WarParty, population)]
+    constructor(population: PopulationModel, civilizations: CivilizationsModel) {
+        this.armies = [new ArmyModel(Labels.WarParty, population, civilizations)]
         this.population = population
     }
 

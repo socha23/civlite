@@ -25,6 +25,7 @@ export type ArmyProps = {
 
 export type WarProps = {
   state: WarState,
+  againstTitle: string,
   duration: number,
   durationLeft: number,
   completeAction: ActionProps,
@@ -43,6 +44,7 @@ export function militaryProps(model: GameModel): MilitaryProps {
         title: Labels.StartWar
       }),
       currentWar: a.war ? {
+        againstTitle: a.war.against.title,
         state: a.war.state,
         duration: a.war.duration,
         durationLeft: a.war.durationLeft,
@@ -89,8 +91,9 @@ const WarView = (w: WarProps) => <div style={{
   display: "flex",
   flexDirection: "column",
 }}>
+  <div>War against {w.againstTitle}</div>
   <div>
-    War duration left: {formatNumber(w.durationLeft)} state: {w.state}
+    Duration left: {formatNumber(w.durationLeft)} state: {w.state}
   </div>
   <div>
     <ActionButton {...w.completeAction}/>
@@ -101,6 +104,7 @@ const ArmyView = (a: ArmyProps) => <div style={{
   display: "flex",
   flexDirection: "column",
   gap: 4,
+  marginTop: 8,
 }}>
   <div style={{
     fontSize: FontSizes.big
