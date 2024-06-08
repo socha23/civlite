@@ -3,27 +3,33 @@ import { Action, action } from "./action"
 import { sum } from './utils'
 import { popTypeDefinition, PopType } from "./pops"
 import { CostElem, Pops, Resources, resources } from "./costs"
+import { Assignable } from "./assignable"
 
-class PopModel {
+export class PopModel {
 
   type: PopType
-  count: number = 0
+  _count: number = 0
   buyAction: Action
   sellAction: Action
+  _assignables: Set<Assignable> = new Set()
 
   constructor(type: PopType) {
     this.buyAction = action({
       costs: popTypeDefinition(type).buyCost,
-      action: () => {this.count++}
+      action: () => {this.incCount(1)}
     })
     this.sellAction = action({
       gains: popTypeDefinition(type).sellValue,
-      action: () => {this.count--},
-      disabled: () => this.count === 0
+      action: () => {this.decCount(1)},
+      disabled: () => !this.decCountEnabled(1)
     })
 
     this.type = type
-    this.count = popTypeDefinition(type).initialCount
+    this._count = popTypeDefinition(type).initialCount
+  }
+
+  get count() {
+    return this._count
   }
 
   get definition() {
@@ -57,6 +63,51 @@ class PopModel {
     .concat(this.production)
     .filter(c => c.count !== 0)
   }
+
+  get unassignedCount() {
+    let all = this.count
+    this._assignables.forEach(a => {
+      all -= a.assignedCount(this.type)
+    })
+    return all
+  }
+
+  assignedCount(to: Assignable): number {
+    return to.assignedCount(this.type)
+  }
+
+  assign(to: Assignable) {
+    this._assignables.add(to)
+    if (this.unassignedCount === 0) {
+      throw `No unassigned pops of type ${this.type}`
+    }
+    to.assign(this.type)
+  }
+
+  canAssign() {
+    return this.unassignedCount > 0
+  }
+
+  unassign(to: Assignable) {
+    to.unassign(this.type)
+  }
+
+  incCount(howMuch: number) {
+    this._count += howMuch
+  }
+
+  decCountEnabled(howMuch: number) {
+    if (howMuch > this.count) {
+      return false
+    }
+    return true
+  }
+
+  decCount(howMuch: number) {
+    for (let i = 0; i < howMuch; i++) {
+      this._count--
+    }
+  }
 }
 
 
@@ -77,7 +128,7 @@ export class PopulationModel {
   onConsume(costs: CostElem[]) {
     costs.forEach(c => {
         if (c instanceof Pops) {
-            this.pop(c.type).count -= c.count
+            this.pop(c.type).decCount(c.count)
         }
     })
   }
@@ -85,7 +136,7 @@ export class PopulationModel {
   onProduce(costs: CostElem[]) {
     costs.forEach(c => {
         if (c instanceof Pops) {
-            this.pop(c.type).count += c.count
+            this.pop(c.type).incCount(c.count)
         }
     })
   }

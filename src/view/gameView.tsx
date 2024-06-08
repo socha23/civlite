@@ -6,6 +6,7 @@ import { InventoryBox, InventoryBoxProps, summaryBoxProps } from './inventoryBox
 import { Colors, FontSizes } from './icons';
 import { ResourceGatheringBox, ResourceGatheringProps, resourceGatheringProps } from './resourceGatheringBox';
 import { PopBox, PopBoxProps, popBoxProps } from './popBox';
+import { MilitaryProps, MilitaryView, militaryProps } from './military';
 
 
 export type GameViewProps = {
@@ -15,6 +16,7 @@ export type GameViewProps = {
   reset: ActionProps
   pops: PopBoxProps[]
   resourceGathering: ResourceGatheringProps,
+  military: MilitaryProps,
 }
 
 export function gameViewProps(model: GameModel, onReset: () => void): GameViewProps {
@@ -29,6 +31,7 @@ export function gameViewProps(model: GameModel, onReset: () => void): GameViewPr
       costs: [],
       action: onReset
     },
+    military: militaryProps(model),
   }
 }
 
@@ -44,6 +47,7 @@ const PopColums = {
   [PopType.Laborer]: 1,
   [PopType.Herder]: 1,
   [PopType.Farmer]: 1,
+  [PopType.Brave]: 2,
 }
 
 export const PopsView = (p: {pops: PopBoxProps[], column: number}) => <div style={{
@@ -83,6 +87,10 @@ export const GameView = (p: GameViewProps) =>
 
         </div>
         <PopsView pops={p.pops} column={1}/>
+        <div>
+          <PopsView pops={p.pops} column={2}/>
+          <MilitaryView {...p.military}/>
+        </div>
       </div>
     </div>
   </div>

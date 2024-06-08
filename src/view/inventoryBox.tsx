@@ -71,7 +71,7 @@ export const InventoryBox = (p: InventoryBoxProps) =>
     <div className="dividersParent" style={{
       display: "flex",
       color: Colors.captions,
-      fontSize: FontSizes.normal,
+      fontSize: FontSizes.normalPlus,
       flexDirection: "column",
       paddingBottom: 8,
     }}>

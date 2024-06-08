@@ -4,12 +4,14 @@ import { ResourceType } from "./resources"
 import { PopulationModel } from "./popModel"
 import { ResourcesModel } from "./resourcesModel"
 import { onTick } from "./timer"
+import MilitaryModel from "./militaryModel"
 
 export class GameModel implements GameModelInterface {
   tick: number = 0
   civName: string = "The Tribe"
   resources = new ResourcesModel()
   population = new PopulationModel()
+  military = new MilitaryModel(this.population)
 
   filterUnsatisfiableCosts(costs: CostElem[]): CostElem[] {
     return this.resources.filterUnsatisfiableCosts(costs)

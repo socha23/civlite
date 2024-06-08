@@ -27,12 +27,12 @@ export interface ActionProps extends ActionParms {
 
 export function propsForAction(model: GameModel, a: Action, params: ActionParms = {}): ActionProps {
   return {
-    ...params,
     action: () => a.onAction(model),
     costs: a.costs.map(c => ({cost: c, canPay: model.canPay(c)})),
     timeout: a.timeout, 
     timeoutLeft: a.timeoutLeft,
-    disabled: a.disabled(model)
+    disabled: a.disabled(model),
+    ...params,
   }
 }
 

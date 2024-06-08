@@ -7,6 +7,7 @@ export enum PopType {
   Laborer = "Laborer", 
   Herder = "Herder",
   Farmer = "Farmer",
+  Brave = "Brave",
 }
 
 const DEFAULT_POP_DEFINITION = {
@@ -19,6 +20,7 @@ const DEFAULT_POP_DEFINITION = {
   ],
   production: [],
   consumption: [],
+  assignableToArmy: false,
 }
 
 
@@ -91,8 +93,21 @@ const PopTypeDefinitions = {
       resources(ResourceType.Food, 0.4)
     ],
   },
+  [PopType.Brave]: {
+    initialCount: 5,
+    assignableToArmy: true,
+  }
 }
 
 export function popTypeDefinition(t: PopType) {
   return {...DEFAULT_POP_DEFINITION, ...PopTypeDefinitions[t]}
+}
+
+export function popTypesAssignableToArmy(): PopType[] {
+  return Object.values(PopType).filter(t => popTypeDefinition(PopType[t]).assignableToArmy)
+}
+
+export function isAssignable(t: PopType) {
+  const def = popTypeDefinition(t)
+  return def.assignableToArmy
 }

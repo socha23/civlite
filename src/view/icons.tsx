@@ -15,7 +15,8 @@ export const Colors = {
 
 export const FontSizes = {
     small: 10,
-    normal: 16,
+    normal: 12,
+    normalPlus: 16,
     big: 20,
     xbig: 26
 }
@@ -26,6 +27,7 @@ export const Icons = {
     [PopType.Laborer]: 'fa-solid fa-person-digging',
     [PopType.Farmer]: 'fa-solid fa-person-arrow-up-from-line',
     [PopType.Herder]: 'fa-solid fa-person-walking-with-cane',
+    [PopType.Brave]: 'fa-solid fa-person-walking',
     [ResourceType.Herds]: 'fa-solid fa-horse',
     [ResourceType.Food]: 'fa-solid fa-wheat-awn',
     [ResourceType.Labor]: 'fa-solid fa-hand',
@@ -37,6 +39,7 @@ export const Icons = {
 }
 
 export const Labels = {
+    WarParty: "War party",
     Execute: "Execute",
     TotalPopulation: "Total population",
     PerPop: "/ pop",
@@ -48,6 +51,7 @@ export const Labels = {
         [PopType.Laborer]: 'Add Laborer',
         [PopType.Herder]: 'Build Pasture',
         [PopType.Farmer]: 'Build Farm',
+        [PopType.Brave]: 'Mobilize a Brave',
     },
     Unassign: {
         [PopType.Idler]: 'Destroy Idler',
@@ -55,6 +59,7 @@ export const Labels = {
         [PopType.Laborer]: 'Unassign',
         [PopType.Herder]: 'Destroy Pasture',
         [PopType.Farmer]: 'Destroy Farm',
+        [PopType.Brave]: 'Demobilize',
     },
     Plural: {
         [PopType.Idler]: 'Idlers',
@@ -62,6 +67,7 @@ export const Labels = {
         [PopType.Laborer]: 'Laborers',
         [PopType.Herder]: 'Herders',
         [PopType.Farmer]: 'Farmers',
+        [PopType.Brave]: 'Braves',
     },
     [ResourceType.Food]: 'Food',
     [ResourceType.Herds]: 'Herds',

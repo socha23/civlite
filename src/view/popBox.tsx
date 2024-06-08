@@ -2,7 +2,7 @@ import React from 'react';
 import { Box } from './box'
 import { GameModel } from '../model/gameModel'
 import { ActionProps, ActionButton, propsForAction } from './action';
-import { PopType } from '../model/pops';
+import { PopType, isAssignable } from '../model/pops';
 import { FontSizes, TrendColors, DividerColors, Icons, Colors, Labels } from './icons';
 import { Resources } from '../model/costs';
 import { formatNumber } from '../model/utils';
@@ -11,6 +11,7 @@ export type PopBoxProps = {
   popType: PopType,
   popLabel: string,
   count: number,
+  unassignedCount: number,
   buyAction: ActionProps,
   sellAction: ActionProps,
   resourceBalance: Resources[], 
@@ -23,6 +24,7 @@ export function popBoxProps(model: GameModel, type: PopType): PopBoxProps {
     popType: type,
     popLabel: Labels.Plural[type],
     count: pop.count,
+    unassignedCount: pop.unassignedCount,
     buyAction: propsForAction(model, pop.buyAction, {title: Labels.Assign[type]}),
     sellAction: propsForAction(model, pop.sellAction, {title: Labels.Unassign[type]}),
     resourceBalance: pop.resourceBalance,
@@ -94,7 +96,7 @@ export const PopBox = (p: PopBoxProps) =>
           width: 80,
           textAlign: 'right',
         }}>
-          {p.count}
+          {isAssignable(p.popType) ? p.unassignedCount + " / " + p.count : p.count}
         </div>
         <div style={{width: 60, display: 'flex', justifyContent: 'flex-end'}}>
         </div>
