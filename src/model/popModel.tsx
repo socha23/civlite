@@ -21,7 +21,7 @@ export class PopModel {
     this.sellAction = action({
       gains: popTypeDefinition(type).sellValue,
       action: () => {this.decCount(1)},
-      disabled: () => !this.decCountEnabled(1)
+      disabled: () => this.decCountDisabled(1)
     })
 
     this.type = type
@@ -84,29 +84,49 @@ export class PopModel {
     to.assign(this.type)
   }
 
-  canAssign() {
-    return this.unassignedCount > 0
+  assignDisabled() {
+    if (this.unassignedCount === 0) {
+      return `No unassigned ${this.type}`
+    } 
   }
 
   unassign(to: Assignable) {
-    to.unassign(this.type)
+    to.unassign(this.type, 1)
+  }
+
+  unassignDisabled(to: Assignable) {
+    return to.unassignDisabled(this.type)
   }
 
   incCount(howMuch: number) {
     this._count += howMuch
   }
 
-  decCountEnabled(howMuch: number) {
-    if (howMuch > this.count) {
-      return false
+  decCountDisabled(howMuch: number) {
+    let decreasable = this.count
+    this._assignables.forEach((a => {
+      if (a.locked) {
+        decreasable -= a.assignedCount(this.type)
+      }
+    }))
+    if (decreasable < howMuch) {
+      return `${this.type} too low`
     }
-    return true
   }
 
   decCount(howMuch: number) {
-    for (let i = 0; i < howMuch; i++) {
-      this._count--
+    let leftToUnassign = howMuch
+    leftToUnassign = Math.max(0, leftToUnassign - this.unassignedCount)
+    if (leftToUnassign > 0) {
+      this._assignables.forEach(a => {
+        if (!a.locked) {
+          const numberToUnassign = Math.min(a.assignedCount(this.type), leftToUnassign)
+          a.unassign(this.type, numberToUnassign)
+          leftToUnassign -= numberToUnassign
+        }
+      })
     }
+    this._count -= howMuch
   }
 }
 

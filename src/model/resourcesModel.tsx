@@ -1,16 +1,19 @@
-import { Action, ActionParams } from "./action"
+import { Action, ActionParams, action } from "./action"
 import { ResourceType, ResourceDefinitions } from "./resources"
-import { CostElem, Resources } from "./costs"
+import { CostElem, Resources, resources } from "./costs"
 
 class ResourceModel {
     type: ResourceType
     count: number = 0
-    gatherAction: GatherResourceAction
+    gatherAction: Action
 
     constructor(type: ResourceType) {
         this.type = type
         this.count = ResourceDefinitions[type].initialCount
-        this.gatherAction = new GatherResourceAction(this, {timeout: ResourceDefinitions[type].gatherTimeout})
+        this.gatherAction = action({
+            gains: [resources(type, 1)],
+            timeout: ResourceDefinitions[type].gatherTimeout
+        })
     }
 
     onPlayerProduction() {
@@ -60,18 +63,3 @@ export class ResourcesModel {
         })
     }
 }
-
-
-class GatherResourceAction extends Action {
-    resource: ResourceModel
-
-    constructor(resource: ResourceModel, params: ActionParams) {
-        super(params)
-        this.resource = resource
-    }
-
-    _onAction() {
-        this.resource.onPlayerProduction()
-    }
-}
-

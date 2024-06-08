@@ -27,17 +27,23 @@ export class Assignable {
         this.assignedPops[PopType[popType]]++
     }
 
-    canUnassign(t: PopType) {
-        return this.assignedCount(t) > 0
+    unassignDisabled(t: PopType) {
+        if (this.assignedCount(t) === 0) {
+            return `No assigned ${t}`
+        }
     }
 
-    unassign(popType: PopType) {
+    unassign(popType: PopType, count: number) {
         const typeS = PopType[popType]
         if (typeS in this.assignedPops) {
-            this.assignedPops[typeS]--
+            this.assignedPops[typeS] -= count
         } else {
             throw `No pops of type ${popType} assigned`
         }
+    }
+
+    get locked() {
+        return false
     }
 
     assignedCount(popType: PopType): number {

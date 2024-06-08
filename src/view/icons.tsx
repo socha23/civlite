@@ -39,6 +39,9 @@ export const Icons = {
 }
 
 export const Labels = {
+    StartWar: "Go fight",
+    CompleteWar: "OK",
+
     WarParty: "War party",
     Execute: "Execute",
     TotalPopulation: "Total population",
@@ -51,7 +54,7 @@ export const Labels = {
         [PopType.Laborer]: 'Add Laborer',
         [PopType.Herder]: 'Build Pasture',
         [PopType.Farmer]: 'Build Farm',
-        [PopType.Brave]: 'Mobilize a Brave',
+        [PopType.Brave]: 'Recruit a Brave',
     },
     Unassign: {
         [PopType.Idler]: 'Destroy Idler',

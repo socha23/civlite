@@ -19,6 +19,8 @@ export abstract class Action {
     timeoutLeft: number = 0
     costs: CostElem[]
     gains: CostElem[]
+    inProgress: boolean = false
+    checker?: GameModelInterface
 
     constructor({timeout, costs = [], gains=[]}: ActionParams) {
         this.timeout = timeout      
@@ -33,6 +35,10 @@ export abstract class Action {
         return false
     }
 
+    _onComplete(): void {
+
+    }
+
     onAction(checker: GameModelInterface) {
         if (this.timeoutLeft > 0) {
             return
@@ -40,16 +46,33 @@ export abstract class Action {
         if (checker.filterUnsatisfiableCosts(this.costs).length > 0) {
             return
         }
-        checker.onConsume(this.costs)
-        checker.onProduce(this.gains)
+        this.checker = checker
+        this.onStart()
         this._onAction()
         if (this.timeout) {
             this.timeoutLeft = this.timeout
+        } else {
+            this.onComplete()
         }
     }
 
     onTick(deltaS: number) {
         this.timeoutLeft = Math.max(0, this.timeoutLeft - deltaS)
+        if (this.inProgress && this.timeoutLeft === 0) {
+            this.onComplete()
+        }
+    }
+
+    onStart() {
+        this.checker!.onConsume(this.costs)
+        this.inProgress = true
+    }
+
+    onComplete() {
+        this.checker!.onProduce(this.gains)
+        this.inProgress = false
+        this._onComplete()
+
     }
 
     disabled(checker: GameModelInterface): any {
@@ -61,20 +84,31 @@ export abstract class Action {
 }
 
 class InlineAction extends Action {
-    action: () => void
+    action?: () => void
+    __onComplete?: () => void
     _disabled?: () => any
     
     constructor(p: ActionParams & {
-        action: () => void,
+        action?: () => void,
+        onComplete?: () => void,
         disabled?: () => any,
     }) {
         super(p)
         this.action = p.action
+        this.__onComplete = p.onComplete
         this._disabled = p.disabled
     }
 
     _onAction(): void {
-        this.action()
+        if (this.action) {
+            this.action()
+        }
+    }
+
+    _onComplete(): void {
+        if (this.__onComplete) {
+            this.__onComplete()
+        }
     }
 
     _isDisabled() {
@@ -86,7 +120,8 @@ class InlineAction extends Action {
 }
 
 export function action(p: ActionParams & {
-    action: () => void,
+    action?: () => void,
+    onComplete?: () => void,
     disabled?: () => any,
 }): Action {
     return new InlineAction(p);

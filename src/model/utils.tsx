@@ -7,6 +7,9 @@ export function sum<T>(items: T[], op: (arg: T) => number) {
   }
 
 export function formatNumber(n: number) {
+  if (Math.abs(n) < 0.001) {
+    return 0
+  }
   const val = n
   let fixed = 0
   n = Math.abs(n)

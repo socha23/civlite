@@ -5,7 +5,7 @@ import './index.css';
 import {GameController} from './model/gameController'
 import {GameView} from './view/gameView'
 
-const TIME_RESOULTION_MS = 50
+const TIME_RESOULTION_MS = 20
 
 function Game() {
   const [model, ] = useState(() => new GameController())
