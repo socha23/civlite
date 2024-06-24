@@ -1,5 +1,6 @@
 import { ResourceType } from '../model/resources';
 import { PopType } from '../model/pops';
+import { WarType } from '../model/wars';
 
 export const DividerColors = {
     mid: "#888",
@@ -83,6 +84,12 @@ export const Labels = {
     [ResourceType.Insight]: 'Insight',
     [ResourceType.Forest]: 'Forest',
     [ResourceType.Grassland]: 'Grassland',
+    [WarType.BeatemUp]: "Beat'em up",
+    [WarType.CattleRaid]: "Cattle raid",
+    [WarType.SlaveRaid]: "Slave raid",
+    [WarType.Subjugation]: "Subjugation",
+    
+
 }
 
 export const GatherActionLabels = {

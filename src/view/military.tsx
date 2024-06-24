@@ -3,9 +3,10 @@ import { Box } from './box'
 import { GameModel } from '../model/gameModel'
 import { PopType } from '../model/pops';
 import { FontSizes, Icons, Labels } from './icons';
-import { ActionProps, propsForAction, ActionButton } from './action';
+import { ActionProps, propsForAction, ActionButton, ActionRow } from './action';
 import { WarState } from '../model/militaryModel';
 import { formatNumber } from '../model/utils';
+
 
 
 
@@ -19,7 +20,7 @@ export type ArmyElement = {
 export type ArmyProps = {
   title: string,
   elements: ArmyElement[],
-  startWarAction: ActionProps,
+  startWarActions: ActionProps[],
   currentWar?: WarProps
 }
 
@@ -35,14 +36,16 @@ export type MilitaryProps = {
   armies: ArmyProps[]
 }
 
-
 export function militaryProps(model: GameModel): MilitaryProps {
   return {
      armies: model.military.armies.map(a => ({
       title: a.title,
-      startWarAction: propsForAction(model, a.startWarAction, {
-        title: Labels.StartWar
-      }),
+
+      startWarActions: a.warGoals.map(g => propsForAction(
+        model, g.startWarAction, {
+          title: Labels[g.type]
+        }
+      )),
       currentWar: a.war ? {
         againstTitle: a.war.against.title,
         state: a.war.state,
@@ -114,9 +117,7 @@ const ArmyView = (a: ArmyProps) => <div style={{
   <div>
     {a.elements.map(e => <ArmyElementView key={e.type} {...e}/>)}
   </div>
-  <div>
-    <ActionButton {...a.startWarAction}/>
-  </div>
+  {a.startWarActions.map((a, idx) => <ActionRow key={idx} {...a}/>)}
   {a.currentWar && <WarView {...a.currentWar}/>}
 </div>
 

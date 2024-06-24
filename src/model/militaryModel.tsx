@@ -4,6 +4,7 @@ import { Assignable } from "./assignable"
 import CivilizationsModel, { CivModel } from "./civsModel"
 import { PopulationModel, PopModel } from "./popModel"
 import { popTypesAssignableToArmy, PopType } from "./pops"
+import { WarType, warTypeDefinition } from "./wars"
 
 class ArmyElementModel {
     type: PopType
@@ -88,12 +89,33 @@ class War {
 
 }
 
+export class WarGoal {
+    type: WarType
+    startWarAction: Action 
+
+    constructor(goalType: WarType, army: ArmyModel, civModel: CivilizationsModel) {
+       this.type = goalType 
+       this.startWarAction = action({
+        action: () => army.startWar(civModel.targetted!, this),
+        disabled: () => {
+            if (army.war) {
+                return "War already in progress"
+            }
+            if (!civModel.targetted) {
+                return "No target selected"
+            }
+        }
+
+       })
+    }
+
+}
+
 
 export class ArmyModel extends Assignable {    
     title: string
     elements: ArmyElementModel[]
-
-    startWarAction: Action
+    warGoals: WarGoal[]
 
     war?: War
 
@@ -102,17 +124,7 @@ export class ArmyModel extends Assignable {
         this.title = title
         this.elements = popTypesAssignableToArmy().map(t => new ArmyElementModel(population.pop(t), this))
 
-        this.startWarAction = action({
-            action: () => this.startWar(civModel.targetted!),
-            disabled: () => {
-                if (this.war) {
-                    return "War already in progress"
-                }
-                if (!civModel.targetted) {
-                    return "No target selected"
-                }
-            }
-        })
+        this.warGoals = Object.values(WarType).map(t => new WarGoal(t, this, civModel))
     }
 
     get locked() {
@@ -125,15 +137,13 @@ export class ArmyModel extends Assignable {
         }
     }
 
-    startWar(against: CivModel) {
-        this.war = new War({duration: 10}, this, against)
+    startWar(against: CivModel, goal: WarGoal) {
+        this.war = new War(warTypeDefinition(goal.type), this, against)
     }
 
     onWarCompleted() {
         this.war = undefined
     }
-
-
 }
 
 
