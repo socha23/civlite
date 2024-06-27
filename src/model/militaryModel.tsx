@@ -138,12 +138,14 @@ export class ArmyModel extends Assignable {
     }
 
     startWar(against: CivModel, goal: WarGoal) {
-        this.war = new War(warTypeDefinition(goal.type), this, against)
+        this.war = new War({duration: 10}, this, against)
     }
 
     onWarCompleted() {
         this.war = undefined
     }
+
+
 }
 
 

@@ -19,3 +19,8 @@ export function formatNumber(n: number) {
   }
   return val.toFixed(fixed)
 }
+
+export function gaussRandom(from: number, to: number) {
+  return from +
+   (to - from) * (Math.random() + Math.random()) / 2 
+}
