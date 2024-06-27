@@ -1,6 +1,7 @@
 import { ResourceType } from '../model/resources';
 import { PopType } from '../model/pops';
 import { WarType } from '../model/wars';
+import { formatNumber } from '../model/utils';
 
 export const DividerColors = {
     mid: "#888",
@@ -42,7 +43,19 @@ export const Icons = {
     target: "fa-solid fa-crosshairs"
 }
 
+
+export const LogMessages = {
+    BattleRoundBegins: (i: number) => `Round ${i} begins`,
+    CombatantDescription: (ownership: string, type: PopType) => `${ownership} ${Labels.Plural[type]}`,
+    RolledInitiative: (combatant: string, initiative: number) => `${combatant} rolls ${formatNumber(initiative)}`,
+    CombatantAttacks: (attacker: string, defender: string, roll: number, casulties: number) => `${attacker} roll ${formatNumber(roll)} attacking ${defender}. ${casulties} perish.`,
+    OwnershipOurs: "Ours",
+    OwnershipEnemy: "Enemy",
+}
+
 export const Labels = {
+
+
     Target: "Target",
 
     StartWar: "Go fight",

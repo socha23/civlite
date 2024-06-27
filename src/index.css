@@ -36,3 +36,13 @@ code {
   border-bottom-style: dotted;
   border-width: 1px;
 } 
+
+.dottedDividersParent > :not(:last-child) {
+  border-bottom-style: dotted;
+  border-width: 1px;
+}
+
+.dottedHorizontalDividersParent > :not(:last-child) {
+  border-right-style: dotted;
+  border-width: 1px;
+}
