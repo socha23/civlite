@@ -54,22 +54,21 @@ export class Combatant {
         return Math.random()
     }
 
-    rollSingleDamage(defender: Combatant) {
-        if (Math.random()< DAMAGE_ROLL) {
-            return 1
-        } else {
-            return 0
-        }
+    singleCloseAttack(defender: Combatant) {
+        return popTypeDefinition(this.type).closeAttack
     }
 
     rollMorale(): number {
         return Math.floor(Math.random() * 100)
     }
 
-    rollDamage(defender: Combatant) {        
+
+    rollCloseAttackDamage(defender: Combatant) {        
         let result = 0
         for (let i = 0; i < this.count; i++) {
-            result += this.rollSingleDamage(defender)
+            if (Math.random()< DAMAGE_ROLL) {
+                result += this.singleCloseAttack(defender)
+            } 
         }
         return result
     }
@@ -179,12 +178,16 @@ class Battle {
         const opposingForce = c.force === this.attacker ? this.defender : this.attacker
         const defender = opposingForce.findDefender(c)
         if (defender) {
-            const roll = c.rollDamage(defender)
-            const casulties = defender.receiveDamage(c, roll)
-            this.log.info(<BattleMessages.CombatantAttacks 
-                attacker={c.description}
-                defender={defender.description}
-                casulties={casulties}/>)
+            const closeAttack = true
+            const rangedAttack = false
+            if (closeAttack) {
+                const roll = c.rollCloseAttackDamage(defender)
+                const casulties = defender.receiveDamage(c, roll)
+                this.log.info(<BattleMessages.CombatantAttacks 
+                    attacker={c.description}
+                    defender={defender.description}
+                    casulties={casulties}/>)    
+            }
             if (defender.state === CombatantState.WipedOut) {
                 this.log.info(<BattleMessages.CombatantWipedOut combatant={defender.description}/>)
             }
@@ -246,13 +249,11 @@ export function testBattleModel() {
             "Test battle",
             new Force("War party", Colors.OurArmy, [
                 {type: PopType.Brave, count: 15},
-                {type: PopType.Brave, count: 10},
-                {type: PopType.Brave, count: 5},
+                {type: PopType.Slinger, count: 10},
             ]),
             new Force("Opposing Force", Colors.EnemyArmy, [
                 {type: PopType.Brave, count: 5},
-                {type: PopType.Brave, count: 15},
-                {type: PopType.Brave, count: 10},
+                {type: PopType.Brave, count: 40},
             ]),
         )
     )

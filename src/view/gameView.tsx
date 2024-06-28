@@ -54,6 +54,7 @@ const PopColums = {
   [PopType.Herder]: 1,
   [PopType.Farmer]: 1,
   [PopType.Brave]: 2,
+  [PopType.Slinger]: 2,
 }
 
 export const PopsView = (p: {pops: PopBoxProps[], column: number}) => <div style={{

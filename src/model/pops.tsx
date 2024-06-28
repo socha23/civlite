@@ -7,7 +7,9 @@ export enum PopType {
   Laborer = "Laborer", 
   Herder = "Herder",
   Farmer = "Farmer",
+
   Brave = "Brave",
+  Slinger = "Slinger",
 }
 
 const DEFAULT_POP_DEFINITION = {
@@ -23,6 +25,10 @@ const DEFAULT_POP_DEFINITION = {
   
   assignableToArmy: false,
   battleOrder: 1,
+
+  closeAttack: 1,
+  rangedAttack: 0,
+  hp: 1,
 }
 
 
@@ -98,7 +104,18 @@ const PopTypeDefinitions = {
   [PopType.Brave]: {
     initialCount: 5,
     assignableToArmy: true,
-  }
+    battleOrder: 10,
+    closeAttack: 2,
+    hp: 2,
+  },
+  [PopType.Slinger]: {
+    initialCount: 5,
+    assignableToArmy: true,
+    battleOrder: 20,
+    closeAttack: 1,
+    rangedAttack: 3,
+    hp: 2,
+  },
 }
 
 export function popTypeDefinition(t: PopType) {

@@ -34,6 +34,7 @@ export const Icons = {
     [PopType.Farmer]: 'fa-solid fa-person-arrow-up-from-line',
     [PopType.Herder]: 'fa-solid fa-person-walking-with-cane',
     [PopType.Brave]: 'fa-solid fa-person-walking',
+    [PopType.Slinger]: 'fa-solid fa-person-walking-arrow-right',
     [ResourceType.Herds]: 'fa-solid fa-horse',
     [ResourceType.Food]: 'fa-solid fa-wheat-awn',
     [ResourceType.Labor]: 'fa-solid fa-hand',
@@ -67,6 +68,7 @@ export const Labels = {
         [PopType.Herder]: 'Build Pasture',
         [PopType.Farmer]: 'Build Farm',
         [PopType.Brave]: 'Recruit a Brave',
+        [PopType.Slinger]: 'Recruit a Slinger',
     },
     Unassign: {
         [PopType.Idler]: 'Destroy Idler',
@@ -75,6 +77,7 @@ export const Labels = {
         [PopType.Herder]: 'Destroy Pasture',
         [PopType.Farmer]: 'Destroy Farm',
         [PopType.Brave]: 'Demobilize',
+        [PopType.Slinger]: 'Demobilize',
     },
     Plural: {
         [PopType.Idler]: 'Idlers',
@@ -83,6 +86,7 @@ export const Labels = {
         [PopType.Herder]: 'Herders',
         [PopType.Farmer]: 'Farmers',
         [PopType.Brave]: 'Braves',
+        [PopType.Slinger]: 'Slingers',
     },
     [ResourceType.Food]: 'Food',
     [ResourceType.Herds]: 'Herds',
