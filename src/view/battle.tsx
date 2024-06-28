@@ -148,31 +148,37 @@ export const BattleView = (p: BattleProps) =>
         fontSize: FontSizes.normalPlus,
         textAlign: "center",
       }}>
-        {p.title}
+          <div>{p.title}</div>
       </div>
       <div style={{
         paddingTop: 4,
         paddingBottom: 4,
+        display: "flex",
+        alignItems: "center",
       }}>
-        Round: {p.round}
+        <div>
+          Round: {p.round}
+        </div>
+        <div style={{flexGrow: 1}}/>
+          <div style={{width: 80}}>
+            <ActionButton title="Next Round" {...p.nextRound}/>
+          </div>
       </div>
       <div 
         className='dottedHorizontalDividersParent'
         style={{
-          display: "flex"
+          display: "flex",
         }}>
         <ForceView {...p.attacker}/>
         <ForceView {...p.defender}/>
       </div>
-    </div>
-    <div style={{paddingTop: 4}}>
-      <ActionButton title="Next Round" {...p.nextRound}/>
-    </div>
-    <div style={{
+      <div style={{
       width: "100%",
       height: 100,
+      paddingTop: 4,
     }}>
       <LogView {...p.log}/>
+    </div>
     </div>
   </Box>
 
