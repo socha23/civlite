@@ -29,6 +29,7 @@ export class Combatant {
     force: Force
     state = CombatantState.Fighting
     color: string = Colors.default
+    closeAttackedBy: Combatant[] = []
 
     constructor(type: PopType, count: number, force: Force) {
         this.type = type
@@ -54,12 +55,78 @@ export class Combatant {
         return Math.random()
     }
 
-    singleCloseAttack(defender: Combatant) {
+    get hasRangedAttack() {
+        return popTypeDefinition(this.type).rangedAttack > 0 
+    }
+
+    get hasCloseAttack() {
+        return popTypeDefinition(this.type).closeAttack > 0 
+    }
+
+    get singleHp() {
+        return popTypeDefinition(this.type).hp
+    }
+
+    singleCloseAttackDamage(defender: Combatant) {
         return popTypeDefinition(this.type).closeAttack
+    }
+
+    singleRangedAttackDamage(defender: Combatant) {
+        return popTypeDefinition(this.type).rangedAttack
     }
 
     rollMorale(): number {
         return Math.floor(Math.random() * 100)
+    }
+
+    takeRound(opposingForce: Force, log: Log) {
+        if (this.state !== CombatantState.Fighting) {
+            return;
+        }
+
+        let defender: Combatant | undefined
+        
+        let rangedAttack = false
+        let closeAttack = false
+
+        const closeAttackersAlive = this.closeAttackedBy.filter(c => c.active)
+
+        if (closeAttackersAlive.length > 0) {
+            closeAttack = true
+            defender = closeAttackersAlive[0]
+        }
+
+        if (!closeAttack && this.hasRangedAttack && opposingForce.activeCombatants.length > 0) {
+            rangedAttack = true
+            defender = opposingForce.activeCombatants[0]
+        }
+
+        if (!rangedAttack && this.hasCloseAttack && opposingForce.activeCombatants.length > 0) {
+            closeAttack = true
+            defender = opposingForce.activeCombatants[0]
+        }
+
+        if (rangedAttack && defender) {
+            const roll = this.rollRangedAttackDamage(defender)
+            const casulties = defender.receiveRangedDamage(this, roll)
+            log.info(<BattleMessages.CombatantRangedAttacks 
+                attacker={this.description}
+                defender={defender.description}
+                casulties={casulties}/>)    
+        }
+
+        if (closeAttack && defender) {
+            const roll = this.rollCloseAttackDamage(defender)
+            const casulties = defender.receiveCloseDamage(this, roll)
+            log.info(<BattleMessages.CombatantCloseAttacks 
+                attacker={this.description}
+                defender={defender.description}
+                casulties={casulties}/>)    
+        }
+
+        if (defender && defender.state === CombatantState.WipedOut) {
+            log.info(<BattleMessages.CombatantWipedOut combatant={defender.description}/>)
+        }
     }
 
 
@@ -67,11 +134,22 @@ export class Combatant {
         let result = 0
         for (let i = 0; i < this.count; i++) {
             if (Math.random()< DAMAGE_ROLL) {
-                result += this.singleCloseAttack(defender)
+                result += this.singleCloseAttackDamage(defender)
             } 
         }
         return result
     }
+
+    rollRangedAttackDamage(defender: Combatant) {        
+        let result = 0
+        for (let i = 0; i < this.count; i++) {
+            if (Math.random()< DAMAGE_ROLL) {
+                result += this.singleRangedAttackDamage(defender)
+            } 
+        }
+        return result
+    }
+
 
     applyMoraleEffects(log: Log) {
         if (!this.active) {
@@ -90,9 +168,17 @@ export class Combatant {
         }
     }
 
+    receiveCloseDamage(attacker: Combatant, damage: number) {
+        this.closeAttackedBy.push(attacker)
+        return this._receiveDamage(attacker, damage)
+    }
 
-    receiveDamage(attacker: Combatant, damage: number) {
-        const perished = damage // scaling here
+    receiveRangedDamage(attacker: Combatant, damage: number) {
+        return this._receiveDamage(attacker, damage)
+    }
+
+    _receiveDamage(attacker: Combatant, damage: number) {
+        const perished = Math.ceil(damage / this.singleHp) // scaling here
         const actuallyPerished = Math.min(this.count, perished)
         this.count -= actuallyPerished
         if (this.count === 0) {
@@ -127,14 +213,6 @@ export class Force {
 
     get description() {
         return <BattleMessages.ForceDescription force={this}/>
-    }
-
-    findDefender(attacker: Combatant): Combatant | undefined {
-        const a = this.activeCombatants
-        if (a.length === 0) {
-            return undefined
-        }
-        return a[0]
     }
 
     get hasActiveCombatants() {
@@ -172,27 +250,8 @@ class Battle {
     }
 
     combatantTakesRound(c: Combatant) {
-        if (c.state !==CombatantState.Fighting) {
-            return;
-        }
         const opposingForce = c.force === this.attacker ? this.defender : this.attacker
-        const defender = opposingForce.findDefender(c)
-        if (defender) {
-            const closeAttack = true
-            const rangedAttack = false
-            if (closeAttack) {
-                const roll = c.rollCloseAttackDamage(defender)
-                const casulties = defender.receiveDamage(c, roll)
-                this.log.info(<BattleMessages.CombatantAttacks 
-                    attacker={c.description}
-                    defender={defender.description}
-                    casulties={casulties}/>)    
-            }
-            if (defender.state === CombatantState.WipedOut) {
-                this.log.info(<BattleMessages.CombatantWipedOut combatant={defender.description}/>)
-            }
-        }
-
+        c.takeRound(opposingForce, this.log)
     }
 
     nextRound() {
@@ -248,12 +307,11 @@ export function testBattleModel() {
         new Battle(
             "Test battle",
             new Force("War party", Colors.OurArmy, [
-                {type: PopType.Brave, count: 15},
-                {type: PopType.Slinger, count: 10},
+                {type: PopType.Brave, count: 5},
+                {type: PopType.Slinger, count: 3},
             ]),
             new Force("Opposing Force", Colors.EnemyArmy, [
-                {type: PopType.Brave, count: 5},
-                {type: PopType.Brave, count: 40},
+                {type: PopType.Brave, count: 8},
             ]),
         )
     )
