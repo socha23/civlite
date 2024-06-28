@@ -4,7 +4,6 @@ import { GameModel } from '../model/gameModel'
 import { PopType } from '../model/pops';
 import { FontSizes, Icons, Labels } from './icons';
 import { ActionProps, propsForAction, ActionButton, ActionRow } from './action';
-import { WarState } from '../model/militaryModel';
 import { formatNumber } from '../model/utils';
 
 
@@ -20,16 +19,6 @@ export type ArmyElement = {
 export type ArmyProps = {
   title: string,
   elements: ArmyElement[],
-  startWarActions: ActionProps[],
-  currentWar?: WarProps
-}
-
-export type WarProps = {
-  state: WarState,
-  againstTitle: string,
-  duration: number,
-  durationLeft: number,
-  completeAction: ActionProps,
 }
 
 export type MilitaryProps = {
@@ -40,21 +29,6 @@ export function militaryProps(model: GameModel): MilitaryProps {
   return {
      armies: model.military.armies.map(a => ({
       title: a.title,
-
-      startWarActions: a.warGoals.map(g => propsForAction(
-        model, g.startWarAction, {
-          title: Labels[g.type]
-        }
-      )),
-      currentWar: a.war ? {
-        againstTitle: a.war.against.title,
-        state: a.war.state,
-        duration: a.war.duration,
-        durationLeft: a.war.durationLeft,
-        completeAction: propsForAction(model, a.war.completeAction, {
-          title: Labels.CompleteWar
-        })
-      } : undefined,
       elements: a.elements.map(e => ({
         type: e.type,
         count: a.assignedCount(e.type),
@@ -90,19 +64,6 @@ const ArmyElementView = (e: ArmyElement) => <div style={{
   </div>
 </div>
 
-const WarView = (w: WarProps) => <div style={{
-  display: "flex",
-  flexDirection: "column",
-}}>
-  <div>War against {w.againstTitle}</div>
-  <div>
-    Duration left: {formatNumber(w.durationLeft)} state: {w.state}
-  </div>
-  <div>
-    <ActionButton {...w.completeAction}/>
-  </div>
-</div>
-
 const ArmyView = (a: ArmyProps) => <div style={{
   display: "flex",
   flexDirection: "column",
@@ -117,8 +78,6 @@ const ArmyView = (a: ArmyProps) => <div style={{
   <div>
     {a.elements.map(e => <ArmyElementView key={e.type} {...e}/>)}
   </div>
-  {a.startWarActions.map((a, idx) => <ActionRow key={idx} {...a}/>)}
-  {a.currentWar && <WarView {...a.currentWar}/>}
 </div>
 
 export const MilitaryView = (p: MilitaryProps) =>

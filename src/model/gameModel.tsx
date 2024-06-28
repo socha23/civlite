@@ -14,7 +14,7 @@ export class GameModel implements GameModelInterface {
   resources = new ResourcesModel()
   population = new PopulationModel()
   civilizations = new CivilizationsModel()
-  military = new MilitaryModel(this.population, this.civilizations)
+  military = new MilitaryModel(this.population)
   testBattle = testBattleModel()
 
   filterUnsatisfiableCosts(costs: CostElem[]): CostElem[] {

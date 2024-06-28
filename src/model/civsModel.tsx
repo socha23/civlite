@@ -1,4 +1,6 @@
 import { Action, action } from "./action"
+import WarModel from "./warModel"
+import { WarType } from "./wars"
 
 const DEFAULT_CIV_DEFINITION = {
     population: 20,
@@ -21,13 +23,21 @@ export class CivModel {
     title: string
     population: number
     strength: number
+    currentWar: WarModel | undefined 
 
+    startWarActions = Object.values(WarType).map(t => action({
+        action: () => {} 
+    }))
 
     constructor(params: CivParams) {
         const def = civDefinition(params)
         this.title = def.title
         this.strength = def.strength
         this.population = def.population
+    }
+
+    startWarAsAttacker() {
+
     }
 }
 

@@ -4,7 +4,6 @@ import { GameModel } from '../model/gameModel'
 import { PopType } from '../model/pops';
 import { Colors, FontSizes, Icons, Labels } from './icons';
 import { ActionProps, propsForAction, ActionButton } from './action';
-import { WarState } from '../model/militaryModel';
 import { formatNumber } from '../model/utils';
 
 

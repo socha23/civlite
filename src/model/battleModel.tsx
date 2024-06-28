@@ -226,7 +226,7 @@ enum BattleState {
     BattleOver = 1,
 }
 
-class Battle {
+export class Battle {
     state = BattleState.Active
     title: string
     attacker: Force
@@ -289,7 +289,7 @@ class Battle {
 }
 
 
-class BattleModel {
+export class BattleModel {
     battle: Battle
     nextRoundAction: Action
     
