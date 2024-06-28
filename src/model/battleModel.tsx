@@ -39,11 +39,16 @@ class Combatant {
     }
 
     rollDamage(defender: Combatant) {
+        
+//        return Math.ceil(this.count * Math.random() * 0.1)
+        // separate roll per combatant
+        
         let result = 0
         for (let i = 0; i < this.count; i++) {
             result += this.rollSingleDamage(defender)
         }
         return result
+        
     }
 
 
