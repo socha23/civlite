@@ -9,11 +9,23 @@ type CombatantParams = {
     count: number
 }
 
+
+enum CombatantState {
+    Fighting = 0,
+    Retreat = 1,
+    WipedOut = 2,
+}
+
+const INITIAL_MORALE = 80
+const MORALE_CHECK_TRESHOLD = 0.8
+
 class Combatant {
     type: PopType
+    morale = INITIAL_MORALE
     initialCount: number
     count: number
     force: Force
+    state = CombatantState.Fighting
 
     constructor(type: PopType, count: number, force: Force) {
         this.type = type
@@ -24,6 +36,10 @@ class Combatant {
 
     get description() {
         return LogMessages.CombatantDescription(this.force.ours ? LogMessages.OwnershipOurs : LogMessages.OwnershipEnemy, this.type)
+    }
+
+    get active() {
+        return this.state === CombatantState.Fighting
     }
 
     rollInitiative(): number {
@@ -38,17 +54,27 @@ class Combatant {
         }
     }
 
-    rollDamage(defender: Combatant) {
-        
-//        return Math.ceil(this.count * Math.random() * 0.1)
-        // separate roll per combatant
-        
+    rollMorale(): number {
+        return Math.floor(Math.random() * 100)
+    }
+
+    rollDamage(defender: Combatant) {        
         let result = 0
         for (let i = 0; i < this.count; i++) {
             result += this.rollSingleDamage(defender)
         }
         return result
-        
+    }
+
+    applyMoraleEffects(log: Log) {
+        if (this.count / this.initialCount < MORALE_CHECK_TRESHOLD) {
+            const roll = this.rollMorale()
+            log.trace(LogMessages.MoraleCheck(this.description, this.morale, roll))
+            if (this.morale < roll) {
+                log.info(LogMessages.RunsAway(this.description))
+                this.state = CombatantState.Retreat
+            }
+        }
     }
 
 
@@ -56,6 +82,9 @@ class Combatant {
         const perished = damage // scaling here
         const actuallyPerished = Math.min(this.count, perished)
         this.count -= actuallyPerished
+        if (this.count === 0) {
+            this.state = CombatantState.WipedOut
+        }
         return actuallyPerished
     }
 }
@@ -72,7 +101,7 @@ export class Force {
     }
 
     get activeCombatants() {
-        return this.combatants.filter(c => c.count > 0)
+        return this.combatants.filter(c => c.active)
     }
 
     findDefender(attacker: Combatant): Combatant | undefined {
@@ -83,9 +112,19 @@ export class Force {
         return a[0]
     }
 
+    get hasActiveCombatants() {
+        return this.combatants.find(c => c.active) !== undefined
+    }
+
+}
+
+enum BattleState {
+    Active = 0,
+    BattleOver = 1,
 }
 
 class Battle {
+    state = BattleState.Active
     title: string
     attacker: Force
     defender: Force
@@ -130,13 +169,30 @@ class Battle {
         combatants.forEach(c => {
             this.combatantTakesRound(c)
         })
+        combatants.forEach(c => {
+            c.applyMoraleEffects(this.log)
+        })
+
+        if (!this.attacker.hasActiveCombatants) {
+            this.victory(this.defender)
+        } else if (!this.defender.hasActiveCombatants) {
+            this.victory(this.attacker)
+        }
+    }
+
+    victory(force: Force) {
+        this.state = BattleState.BattleOver
+        this.log.info("------------------------------")
+        this.log.info(LogMessages.SideWon(force.title))
+        this.log.info("------------------------------")
 
     }
 
+
     get activeCombatants() {
         return [
-            ...this.attacker.combatants,
-            ...this.defender.combatants,
+            ...this.attacker.activeCombatants,
+            ...this.defender.activeCombatants,
         ]
     }
 }
@@ -149,7 +205,8 @@ class BattleModel {
     constructor(battle: Battle) {
       this.battle = battle
       this.nextRoundAction = action({
-        action:() => {this.battle.nextRound()}
+            action: () => {this.battle.nextRound()},
+            disabled: () => {return this.battle.state !== BattleState.Active},
         })  
     }
 }

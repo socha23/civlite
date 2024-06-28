@@ -49,6 +49,10 @@ export const LogMessages = {
     CombatantDescription: (ownership: string, type: PopType) => `${ownership} ${Labels.Plural[type]}`,
     RolledInitiative: (combatant: string, initiative: number) => `${combatant} rolls ${formatNumber(initiative)}`,
     CombatantAttacks: (attacker: string, defender: string, roll: number, casulties: number) => `${attacker} roll ${formatNumber(roll)} attacking ${defender}. ${casulties} perish.`,
+    SideWon: (force: String) => `Battle won by ${force}!`,
+    MoraleCheck: (combatant: String, morale: number, roll: number) => `${combatant} (morale: ${morale}) make a morale check and roll ${formatNumber(roll)}`,
+    RunsAway: (combatant: String) => `${combatant} break and run away!`,
+    
     OwnershipOurs: "Ours",
     OwnershipEnemy: "Enemy",
 }
