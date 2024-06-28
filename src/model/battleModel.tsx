@@ -165,6 +165,9 @@ class Battle {
     }
 
     combatantTakesRound(c: Combatant) {
+        if (c.state !==CombatantState.Fighting) {
+            return;
+        }
         const opposingForce = c.force === this.attacker ? this.defender : this.attacker
         const defender = opposingForce.findDefender(c)
         if (defender) {
@@ -174,6 +177,9 @@ class Battle {
                 attacker={c.description}
                 defender={defender.description}
                 casulties={casulties}/>)
+            if (defender.state === CombatantState.WipedOut) {
+                this.log.info(<BattleMessages.CombatantWipedOut combatant={defender.description}/>)
+            }
         }
 
     }

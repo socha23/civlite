@@ -10,6 +10,9 @@ export const BattleMessages = {
     CombatantAttacks: (p: {attacker: ReactNode, defender: ReactNode, casulties: number}) => <span>
         {p.attacker} attack {p.defender}. {p.casulties > 0 ? p.casulties + " perish." : ""}
     </span>,
+    CombatantWipedOut: (p: {combatant: ReactNode}) => <span>
+        {p.combatant} are wiped out!
+    </span>,
     CombatantRetreats: (p: {combatant: ReactNode}) => <span>
         {p.combatant} break and retreat!
     </span>,
