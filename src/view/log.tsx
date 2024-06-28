@@ -1,9 +1,16 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Log } from '../model/log';
 
 
+export type MessageProps = {
+  message: ReactNode,
+  idx: number,
+}
+
+
 export type LogProps = {
-  messages: string[],
+  messages: MessageProps[],
+
 }
 
 export function logProps(log: Log): LogProps {
@@ -16,8 +23,8 @@ export const LogView = (p: LogProps) => <div style={{
   display: "flex",
   flexDirection: "column",
 }}>
-  {p.messages.map((m, idx) => <div>
-    {m}
+  {p.messages.map((m, idx) => <div key={m.idx}>
+    {m.message}
   </div>
   
   )}

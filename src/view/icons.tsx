@@ -2,6 +2,7 @@ import { ResourceType } from '../model/resources';
 import { PopType } from '../model/pops';
 import { WarType } from '../model/wars';
 import { formatNumber } from '../model/utils';
+import { ReactNode } from 'react';
 
 export const DividerColors = {
     mid: "#888",
@@ -13,6 +14,8 @@ export const Colors = {
     grayedOut: "#bbb",
     captions: "#000",
     selected: "#f88",
+    OurArmy: "#080",
+    EnemyArmy: "#800",
 }
 
 
@@ -41,20 +44,6 @@ export const Icons = {
     population: "fa-solid fa-people-group",
     strength: "fa-solid fa-hand-fist",
     target: "fa-solid fa-crosshairs"
-}
-
-
-export const LogMessages = {
-    BattleRoundBegins: (i: number) => `Round ${i} begins`,
-    CombatantDescription: (ownership: string, type: PopType) => `${ownership} ${Labels.Plural[type]}`,
-    RolledInitiative: (combatant: string, initiative: number) => `${combatant} rolls ${formatNumber(initiative)}`,
-    CombatantAttacks: (attacker: string, defender: string, roll: number, casulties: number) => `${attacker} roll ${formatNumber(roll)} attacking ${defender}. ${casulties} perish.`,
-    SideWon: (force: String) => `Battle won by ${force}!`,
-    MoraleCheck: (combatant: String, morale: number, roll: number) => `${combatant} (morale: ${morale}) make a morale check and roll ${formatNumber(roll)}`,
-    RunsAway: (combatant: String) => `${combatant} break and run away!`,
-    
-    OwnershipOurs: "Ours",
-    OwnershipEnemy: "Enemy",
 }
 
 export const Labels = {

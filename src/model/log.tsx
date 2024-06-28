@@ -1,36 +1,24 @@
-enum LogLevel {
-    Trace = 0,
-    Info = 1,
-}
-
-
+import { ReactNode } from "react"
 
 export type LogMessage = {
-    level: LogLevel
-    message: string
+    message: ReactNode
+    idx: number
 }
 
 export class Log {
+    nextMessageId = 0    
     _messages: LogMessage[]
 
     constructor() {
         this._messages = []
     }
 
-    info(message: string) {
-        this.log(message, LogLevel.Info)
-    }
-
-    trace(message: string) {
-        this.log(message, LogLevel.Trace)
-    }
-
-    log(message: string, level: LogLevel) {
-        this._messages.push({message: message, level: level})
+    info(message: ReactNode) {
+        this._messages.push({message: message, idx: this.nextMessageId++})
     }
 
     get messages() {
-        return this._messages.map(m => m.message)
+        return this._messages
     }
 
 }

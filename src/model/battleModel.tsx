@@ -1,4 +1,5 @@
-import { Labels, LogMessages } from "../view/icons"
+import { Colors } from "../view/icons"
+import { BattleMessages } from "../view/logMessages"
 import { Action, action } from "./action"
 import { Log } from "./log"
 import { PopType } from "./pops"
@@ -16,26 +17,29 @@ enum CombatantState {
     WipedOut = 2,
 }
 
-const INITIAL_MORALE = 80
+const INITIAL_MORALE = 75
 const MORALE_CHECK_TRESHOLD = 0.8
+const DAMAGE_ROLL = 0.1
 
-class Combatant {
+export class Combatant {
     type: PopType
     morale = INITIAL_MORALE
     initialCount: number
     count: number
     force: Force
     state = CombatantState.Fighting
+    color: string = Colors.default
 
     constructor(type: PopType, count: number, force: Force) {
         this.type = type
         this.initialCount = count
         this.count = count
         this.force = force
+        this.color = force.color
     }
 
     get description() {
-        return LogMessages.CombatantDescription(this.force.ours ? LogMessages.OwnershipOurs : LogMessages.OwnershipEnemy, this.type)
+        return <BattleMessages.CombatantDescription combatant={this}/>
     }
 
     get active() {
@@ -47,7 +51,7 @@ class Combatant {
     }
 
     rollSingleDamage(defender: Combatant) {
-        if (Math.random() > 0.9) {
+        if (Math.random()< DAMAGE_ROLL) {
             return 1
         } else {
             return 0
@@ -67,11 +71,17 @@ class Combatant {
     }
 
     applyMoraleEffects(log: Log) {
+        if (!this.active) {
+            // broken and wiped out units suffer no further morale effects
+            return
+        }
+
         if (this.count / this.initialCount < MORALE_CHECK_TRESHOLD) {
             const roll = this.rollMorale()
-            log.trace(LogMessages.MoraleCheck(this.description, this.morale, roll))
             if (this.morale < roll) {
-                log.info(LogMessages.RunsAway(this.description))
+                log.info(
+                    <BattleMessages.CombatantRetreats combatant={this.description}/>
+                )
                 this.state = CombatantState.Retreat
             }
         }
@@ -91,17 +101,25 @@ class Combatant {
 
 export class Force {
     title: string
-    ours: boolean
+    color: string = Colors.default
     combatants: Combatant[]
 
-    constructor(title: string, ours: boolean, combatants: CombatantParams[]) {
+    constructor(title: string, color: string, combatants: CombatantParams[]) {
         this.title = title
-        this.ours = ours
+        this.color = color
         this.combatants = combatants.map(p => new Combatant(p.type, p.count, this))
     }
 
     get activeCombatants() {
         return this.combatants.filter(c => c.active)
+    }
+
+    get inactiveCombatants() {
+        return this.combatants.filter(c =>!c.active)
+    }
+
+    get description() {
+        return <BattleMessages.ForceDescription force={this}/>
     }
 
     findDefender(attacker: Combatant): Combatant | undefined {
@@ -141,7 +159,6 @@ class Battle {
         const initiative = new Map<Combatant, number>()
         this.activeCombatants.forEach(c => {
             const i = c.rollInitiative()
-            this.log.trace(LogMessages.RolledInitiative(c.description, i))  
             initiative.set(c, i)
         })
         combatants.sort((a, b) => initiative.get(b)!! - initiative.get(a)!!)
@@ -153,16 +170,17 @@ class Battle {
         if (defender) {
             const roll = c.rollDamage(defender)
             const casulties = defender.receiveDamage(c, roll)
-            this.log.info(LogMessages.CombatantAttacks(c.description, defender.description, roll, casulties))
+            this.log.info(<BattleMessages.CombatantAttacks 
+                attacker={c.description}
+                defender={defender.description}
+                casulties={casulties}/>)
         }
 
     }
 
     nextRound() {
         this.round++
-        this.log.info("------------------------------")
-        this.log.info(LogMessages.BattleRoundBegins(this.round))
-        this.log.info("------------------------------")
+        this.log.info(<BattleMessages.RoundBegins round={this.round}/>)
 
         let combatants = this.activeCombatants
         this.rollInitiative(combatants)
@@ -182,10 +200,7 @@ class Battle {
 
     victory(force: Force) {
         this.state = BattleState.BattleOver
-        this.log.info("------------------------------")
-        this.log.info(LogMessages.SideWon(force.title))
-        this.log.info("------------------------------")
-
+        this.log.info(<BattleMessages.SideWon side={force.description}/>)
     }
 
 
@@ -215,11 +230,11 @@ export function testBattleModel() {
     return new BattleModel(
         new Battle(
             "Test battle",
-            new Force("War party", true, [
-                {type: PopType.Brave, count: 50}
+            new Force("War party", Colors.OurArmy, [
+                {type: PopType.Brave, count: 5}
             ]),
-            new Force("Opposing Force", false, [
-                {type: PopType.Brave, count: 45}
+            new Force("Opposing Force", Colors.EnemyArmy, [
+                {type: PopType.Brave, count: 4}
             ]),
         )
     )

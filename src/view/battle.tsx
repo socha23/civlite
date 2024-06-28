@@ -5,11 +5,12 @@ import { PopType } from '../model/pops';
 import { Colors, FontSizes, Icons, Labels } from './icons';
 import { ActionProps, propsForAction, ActionButton, ActionRow } from './action';
 import { formatNumber } from '../model/utils';
-import { Force } from '../model/battleModel';
+import { Force, Combatant } from '../model/battleModel';
 import { LogProps, LogView, logProps } from './log';
 
 
 type CombatantProps = {
+  facingRight: boolean,
   type: PopType,
   count: number,
   initialCount: number,
@@ -17,8 +18,10 @@ type CombatantProps = {
 
 type ForceProps = {
   title: string,
-  attacker: boolean,
-  combatants: CombatantProps[],
+  color: string,
+  facingRight: boolean,
+  attacking: CombatantProps[],
+  retreating: CombatantProps[],
 }
 
 export type BattleProps = {
@@ -30,15 +33,22 @@ export type BattleProps = {
   log: LogProps,
 }
 
-function forceProps(force: Force, attacker: boolean): ForceProps {
+function combatantProps(c: Combatant, facingRight: boolean) {
+  return {
+    facingRight: facingRight,
+    type: c.type,
+    count: c.count,
+    initialCount: c.initialCount
+  }
+}
+
+function forceProps(force: Force, facingRight: boolean): ForceProps {
   return {
     title: force.title,
-    attacker: attacker,
-    combatants: force.combatants.map(c => ({
-      type: c.type,
-      count: c.count,
-      initialCount: c.initialCount
-    }))
+    color: force.color,
+    facingRight: facingRight,
+    attacking: force.activeCombatants.map(c => combatantProps(c, facingRight)),
+    retreating: force.inactiveCombatants.map(c => combatantProps(c, !facingRight)),
   }
 }
 
@@ -56,7 +66,9 @@ export function battleProps(model: GameModel): BattleProps {
   }
 }
 
+
 type DudeProps = {
+  facingRight: boolean,
   type: PopType, 
   alive: boolean,
 }
@@ -65,19 +77,23 @@ export const SingleDudeView = (p: DudeProps) => <div style={{
   color: p.alive ? Colors.default : Colors.grayedOut,
   width: 12,
 }}>
-  <i className={Icons[p.type]}/>
+  <i className={Icons[p.type] + (p.facingRight ? "" : " fa-flip-horizontal")}/>
 </div>
 
-const DUDES_PER_ROW = 10
+const DUDES_PER_COLUMN = 10
 
 function dudeProps(p: CombatantProps): DudeProps[][] {
-  let currentRow: DudeProps[] = []
-  const result = [currentRow]
+  let currentColumn: DudeProps[] = []
+  const result = [currentColumn]
   for (let i = 0; i < p.initialCount; i++) {
-    currentRow.push({type: p.type, alive: i < p.count})
-    if ((i + 1) % DUDES_PER_ROW === 0) {
-      currentRow = []
-      result.push(currentRow)
+
+    const alive = p.facingRight ? i >= (p.initialCount -  p.count)
+      : i < p.count
+
+    currentColumn.push({type: p.type, alive: alive, facingRight: p.facingRight})
+    if ((i + 1) % DUDES_PER_COLUMN === 0) {
+      currentColumn = []
+      result.push(currentColumn)
     }
   }
   return result
@@ -85,11 +101,12 @@ function dudeProps(p: CombatantProps): DudeProps[][] {
 
 const CombatantView = (p: CombatantProps) => <div style={{
   display: "flex",
-  flexDirection: "column",
 }}>
   {
     dudeProps(p).map((r, rIdx) => <div key={rIdx} style ={{
       display: "flex",
+      flexDirection: "column",
+
     }}> 
       {r.map((d, idx) => <SingleDudeView key={idx} {...d}/>)}
       </div>)
@@ -101,13 +118,22 @@ const ForceView = (p: ForceProps) => <div style={{
   display: "flex",
   flexDirection: "column",
   padding: 4,
-  alignItems: p.attacker ? "end" : "start",
+  alignItems: p.facingRight ? "end" : "start",
   fontSize: FontSizes.normal,
 }}>
-  <div style={{paddingBottom: 4}}>
+  <div style={{paddingBottom: 4, color: p.color}}>
     {p.title}
   </div>
-  {p.combatants.map((c, idx) => <CombatantView key={idx} {...c}/>)}
+  <div style={{
+    width: "100%",
+    display: "flex",
+    flexDirection: p.facingRight ? "row-reverse" : "row",
+  }}>
+    {p.attacking.map((c, idx) => <CombatantView key={idx} {...c}/>)}
+    <div style={{flexGrow: 1}}/>
+    {p.retreating.map((c, idx) => <CombatantView key={idx} {...c}/>)}
+  </div>
+
 </div>
 
 export const BattleView = (p: BattleProps) =>
