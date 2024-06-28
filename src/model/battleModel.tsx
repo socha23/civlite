@@ -2,7 +2,7 @@ import { Colors } from "../view/icons"
 import { BattleMessages } from "../view/logMessages"
 import { Action, action } from "./action"
 import { Log } from "./log"
-import { PopType } from "./pops"
+import { PopType, popTypeDefinition } from "./pops"
 
 
 type CombatantParams = {
@@ -36,6 +36,10 @@ export class Combatant {
         this.count = count
         this.force = force
         this.color = force.color
+    }
+
+    get battleOrder() {
+        return popTypeDefinition(this.type).battleOrder * 100000 + this.initialCount
     }
 
     get description() {
@@ -111,11 +115,15 @@ export class Force {
     }
 
     get activeCombatants() {
-        return this.combatants.filter(c => c.active)
+        const result = [ ...this.combatants.filter(c => c.active) ]
+        result.sort((a, b) => a.battleOrder - b.battleOrder)
+        return result
     }
 
     get inactiveCombatants() {
-        return this.combatants.filter(c =>!c.active)
+        const result = [ ...this.combatants.filter(c => !c.active) ]
+        result.sort((a, b) => a.battleOrder - b.battleOrder)
+        return result
     }
 
     get description() {
@@ -237,10 +245,14 @@ export function testBattleModel() {
         new Battle(
             "Test battle",
             new Force("War party", Colors.OurArmy, [
-                {type: PopType.Brave, count: 50}
+                {type: PopType.Brave, count: 15},
+                {type: PopType.Brave, count: 10},
+                {type: PopType.Brave, count: 5},
             ]),
             new Force("Opposing Force", Colors.EnemyArmy, [
-                {type: PopType.Brave, count: 40}
+                {type: PopType.Brave, count: 5},
+                {type: PopType.Brave, count: 15},
+                {type: PopType.Brave, count: 10},
             ]),
         )
     )

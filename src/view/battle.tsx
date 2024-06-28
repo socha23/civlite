@@ -86,11 +86,7 @@ function dudeProps(p: CombatantProps): DudeProps[][] {
   let currentColumn: DudeProps[] = []
   const result = [currentColumn]
   for (let i = 0; i < p.initialCount; i++) {
-
-    const alive = p.facingRight ? i >= (p.initialCount -  p.count)
-      : i < p.count
-
-    currentColumn.push({type: p.type, alive: alive, facingRight: p.facingRight})
+    currentColumn.push({type: p.type, alive: i < p.count, facingRight: p.facingRight})
     if ((i + 1) % DUDES_PER_COLUMN === 0) {
       currentColumn = []
       result.push(currentColumn)
@@ -101,6 +97,7 @@ function dudeProps(p: CombatantProps): DudeProps[][] {
 
 const CombatantView = (p: CombatantProps) => <div style={{
   display: "flex",
+  flexDirection: p.facingRight ? "row-reverse" : "row",
 }}>
   {
     dudeProps(p).map((r, rIdx) => <div key={rIdx} style ={{
@@ -127,6 +124,7 @@ const ForceView = (p: ForceProps) => <div style={{
   <div style={{
     width: "100%",
     display: "flex",
+    gap: 8,
     flexDirection: p.facingRight ? "row-reverse" : "row",
   }}>
     {p.attacking.map((c, idx) => <CombatantView key={idx} {...c}/>)}

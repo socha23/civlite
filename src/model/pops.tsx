@@ -20,7 +20,9 @@ const DEFAULT_POP_DEFINITION = {
   ],
   production: [],
   consumption: [],
+  
   assignableToArmy: false,
+  battleOrder: 1,
 }
 
 
