@@ -17,7 +17,7 @@ enum CombatantState {
     WipedOut = 2,
 }
 
-const INITIAL_MORALE = 75
+const INITIAL_MORALE = 95
 const MORALE_CHECK_TRESHOLD = 0.8
 const DAMAGE_ROLL = 0.1
 
@@ -231,10 +231,10 @@ export function testBattleModel() {
         new Battle(
             "Test battle",
             new Force("War party", Colors.OurArmy, [
-                {type: PopType.Brave, count: 5}
+                {type: PopType.Brave, count: 50}
             ]),
             new Force("Opposing Force", Colors.EnemyArmy, [
-                {type: PopType.Brave, count: 4}
+                {type: PopType.Brave, count: 40}
             ]),
         )
     )

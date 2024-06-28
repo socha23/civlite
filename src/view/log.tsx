@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useRef, useState } from 'react';
 import { Log } from '../model/log';
 
 
@@ -19,13 +19,31 @@ export function logProps(log: Log): LogProps {
   }
 }
 
-export const LogView = (p: LogProps) => <div style={{
-  display: "flex",
-  flexDirection: "column",
-}}>
-  {p.messages.map((m, idx) => <div key={m.idx}>
-    {m.message}
-  </div>
+export const LogView = (p: LogProps) => {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [lastMsg, setLastMsg] = useState(0)
+  if (p.messages.length > 0) {
+    const currentLastIdx = p.messages[p.messages.length - 1].idx
+    if (lastMsg != currentLastIdx) {
+      setLastMsg(currentLastIdx)
+      setTimeout(() => {
+        if (containerRef.current) {
+          containerRef.current.lastElementChild?.scrollIntoView()
+        }
+      })
+    }
+  }
   
-  )}
-</div>
+  return <div ref={containerRef} style={{
+    display: "flex",
+    flexDirection: "column",
+    height: "100%",
+    overflow: "auto",
+  }}>
+    {p.messages.map((m, idx) => <div key={m.idx}>
+      {m.message}
+    </div>
+    
+    )}
+  </div>
+}

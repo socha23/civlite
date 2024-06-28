@@ -168,7 +168,12 @@ export const BattleView = (p: BattleProps) =>
     <div style={{paddingTop: 4}}>
       <ActionButton title="Next Round" {...p.nextRound}/>
     </div>
-    <LogView {...p.log}/>
-    </Box>
+    <div style={{
+      width: "100%",
+      height: 100,
+    }}>
+      <LogView {...p.log}/>
+    </div>
+  </Box>
 
 
