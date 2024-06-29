@@ -5,6 +5,7 @@ import { PopType } from '../model/pops';
 import { Colors, FontSizes, Icons, Labels } from './icons';
 import { ActionProps, propsForAction, ActionButton } from './action';
 import { formatNumber } from '../model/utils';
+import { WarProps, WarView, warProps } from './war';
 
 
 
@@ -13,7 +14,7 @@ type CivProps = {
   population: number,
   strength: number,
   attackActions: ActionProps[]
-  wars: WarProps
+  wars: WarProps[]
 }
 
 export type CivsProps = {
@@ -31,7 +32,8 @@ export function civsProps(model: GameModel): CivsProps {
         model.wars.startWarAction(g, model.military.attackingArmy(), c), {
           title: Labels[g]
         }
-      ))
+      )),
+      wars: model.wars.ongoingWarsAgainst(c).map(w => warProps(model, w))
      }))
   }
 }
@@ -49,6 +51,7 @@ const CivStats = (p: CivProps) => <div style={{
   fontSize: FontSizes.small,
   display: "flex",
   gap: 6,
+  paddingBottom: 4,
   alignItems: "center",
 }}>
   <CivStat icon={Icons.population} value={p.population}/>
@@ -57,6 +60,7 @@ const CivStats = (p: CivProps) => <div style={{
 
 const CivHeader = (p: CivProps) => <div style={{
   display: "flex",
+  paddingBottom: 4,
   gap: 6,
   alignItems: "center",
 }}>
@@ -76,25 +80,19 @@ const CivAttackActions = (p: CivProps) => <div style={{
 </div>
 
 const CivView = (p: CivProps) => <Box>
-      <div style={{
-      borderWidth: 2,
-      borderColor: "transparent",
-      borderStyle: "solid",
-      borderRadius: 4,
-      marginTop: 6,
-      marginBottom: 6,
+
+    <div className="dottedDividersParent" style={{
+      display: "flex",
+      flexDirection: "column",
+      gap: 4,
+      marginTop: 4,
+      marginBottom: 16,
+
     }}>
-      <div style={{
-        padding: 6,
-        display: "flex",
-        flexDirection: "column",
-        gap: 4,
-  
-      }}>
-        <CivHeader {...p}/>
-        <CivStats {...p}/>
-        <CivAttackActions {...p}/>
-      </div>
+      <CivHeader {...p}/>
+      <CivStats {...p}/>
+      {p.wars.map((w, idx) => <WarView key={idx} {...w}/>)}
+      <CivAttackActions {...p}/>
     </div>
   </Box>
 

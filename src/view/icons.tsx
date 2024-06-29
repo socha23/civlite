@@ -111,6 +111,13 @@ export const ArmyLabels = {
     ArmyAssignmentWar: (p: {goal: WarType, against: ReactNode}) => <span>{Labels[p.goal]} against {p.against}</span>,
 }
 
+export const BattleLabels = {
+    CivBoxTitle: (p: {goal: WarType, army: string}) => <span>{Labels[p.goal]} by {p.army}</span>,
+    ArmyReturned: (p: {army: string}) => <span>{p.army} returned.</span>,
+    March: "March",
+    Cancel: "Cancel",
+    Complete: "OK",
+}
 
 export const TrendColors = {
     positive: "#0a0",

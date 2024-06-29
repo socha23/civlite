@@ -23,7 +23,6 @@ export class CivModel {
     title: string
     population: number
     strength: number
-    currentWar: War | undefined 
 
     constructor(params: CivParams) {
         const def = civDefinition(params)
