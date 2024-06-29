@@ -3,6 +3,7 @@ import { PopType } from '../model/pops';
 import { WarType } from '../model/wars';
 import { formatNumber } from '../model/utils';
 import { ReactNode } from 'react';
+import { WarProps } from './war';
 
 export const DividerColors = {
     mid: "#888",
@@ -111,13 +112,53 @@ export const ArmyLabels = {
     ArmyAssignmentWar: (p: {goal: WarType, against: ReactNode}) => <span>{Labels[p.goal]} against {p.against}</span>,
 }
 
+
+
+
 export const BattleLabels = {
     CivBoxTitle: (p: {goal: WarType, army: string}) => <span>{Labels[p.goal]} by {p.army}</span>,
     ArmyReturned: (p: {army: string}) => <span>{p.army} returned.</span>,
+    MarchTime: (p: {time: number}) => <span>March time: {formatNumber(p.time)} seconds</span>,
+    
     March: "March",
     Cancel: "Cancel",
     Complete: "OK",
+    ExpectedOpposition: "Opposition:",
+    ExpectedReward: "Loot:",
 }
+
+export const BattleAgainstDescription = (p: WarProps) => <span style={{
+    color: p.againstColor
+}}>{p.againstTitle}</span>
+
+export const BattleLongDescription = (p: WarProps) => <div>
+    {
+        (p.goal === WarType.BeatemUp) && <div>
+            Go and roughen up those <BattleAgainstDescription {...p}/> a little. 
+            We won't take any of their stuff, just teach them a lesson.
+        </div>
+    }
+    {
+        (p.goal === WarType.CattleRaid) && <div>
+            Cattle breeds slow. What if we went to <BattleAgainstDescription {...p}/> pastures 
+            and took some of theirs?
+        </div>
+    }
+    {
+        (p.goal === WarType.SlaveRaid) && <div>
+            Work is hard and those asshole <BattleAgainstDescription {...p}/> are 
+            soft. Let's take some of their people and make them our slaves.
+        </div>
+    }
+    {
+        (p.goal === WarType.Subjugation) && <div>
+            We're stronger than <BattleAgainstDescription {...p}/>, 
+            so it's only natural they should serve us.
+        </div>
+    }
+</div>
+
+
 
 export const TrendColors = {
     positive: "#0a0",

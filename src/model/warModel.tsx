@@ -3,8 +3,11 @@ import { Action, action } from "./action"
 import { Battle, BattleModel, Force } from "./battleModel"
 import { CivModel } from "./civsModel"
 import { ArmyModel } from "./militaryModel"
+import { PopType } from "./pops"
+import { ResourceType } from "./resources"
 import { addTickListener } from "./timer"
-import { WarType } from "./wars"
+import { InclusiveIntRange } from "./utils"
+import { WarType, warTypeDefinition } from "./wars"
 
 
 export enum WarState {
@@ -18,6 +21,39 @@ export enum WarState {
     Completed = 6,
 }
 
+export type ExpectedOpposition = {
+    type: PopType
+    range: InclusiveIntRange
+}
+
+function expectedOpposition(goal: WarType, civ: CivModel) {
+    const popTypes = [PopType.Brave]
+    const warDef = warTypeDefinition(goal)
+    return popTypes.map(t => {
+        return {
+            type: t,
+            range: new InclusiveIntRange(civ.strength * warDef.againstStrengthFrom, civ.strength * warDef.againstStrengthTo)    
+        }
+    })
+}
+
+export type ExpectedRewards = {
+    type: PopType | ResourceType
+    range: InclusiveIntRange
+}
+
+function expectedRewards(goal: WarType, civ: CivModel) {
+    const warDef = warTypeDefinition(goal)
+    return warDef.rewards.map(t => {
+        return {
+            type: t.type,
+            range: new InclusiveIntRange(civ.population * t.from, civ.population * t.to)     
+        }
+    })
+}
+
+
+
 export class War {
     currentBattle?: BattleModel
     goal: WarType
@@ -27,6 +63,9 @@ export class War {
 
     state: WarState = WarState.BeforeMarch
 
+    expectedOpposition: ExpectedOpposition[]
+    expectedRewards: ExpectedRewards[]
+
     marchAction: Action
     cancelAction: Action
     completeAction: Action
@@ -35,13 +74,17 @@ export class War {
         this.goal = goal
         this.army = army
         this.against = against
+
+        this.expectedOpposition = expectedOpposition(goal, against)
+        this.expectedRewards = expectedRewards(goal, against)
         
         this.marchAction = action({
             action: () => {
                 this.state = WarState.March
+                this.army.engagedIn = this
             },
             disabled: () => {
-                return this.state !== WarState.BeforeMarch
+                return this.state !== WarState.BeforeMarch && this.state !== WarState.March
             },
             onComplete: () => {
                 this.state = WarState.Returned
@@ -61,6 +104,14 @@ export class War {
             },
         })
         
+    }
+
+    get enemyStrengthFrom() {
+        return warTypeDefinition(this.goal).againstStrengthFrom * this.against.strength
+    }
+
+    get enemyStrengthTo() {
+        return warTypeDefinition(this.goal).againstStrengthTo * this.against.strength
     }
 
     initBattle() {
@@ -83,11 +134,13 @@ export class WarModel {
     }
 
     ongoingWarsAgainst(c: CivModel) {
-        return this._wars.filter(w => w.against === c)
-    }
+        return this._wars
+            .filter(w => w.against === c)
+        }
 
     ongoingWarsFoughtBy(a: ArmyModel) {
-        return this._wars.filter(w => w.army === a)
+        return this._wars
+            .filter(w => w.army === a)
     }
 
     startWar(goal: WarType, army: ArmyModel, against: CivModel) {
@@ -96,7 +149,6 @@ export class WarModel {
             army,
             against
         )
-        army.engagedIn = w
         this._wars.push(w)
     }
 
@@ -113,14 +165,27 @@ export class WarModel {
         
     }
 
+    cancelUnstartedWars() {
+        this._wars.forEach(w => {
+            if (w.state === WarState.BeforeMarch) {
+                w.state = WarState.Cancelled
+            }
+        })
+    }
+
     startWarAction(goal: WarType, army: ArmyModel, against: CivModel) {
         return action({
             action: () => {
+                this.cancelUnstartedWars()
                 this.startWar(goal, army, against)
             },
             disabled: () => {
-                return this.ongoingWarsFoughtBy(army).length > 0
-                || this.ongoingWarsAgainst(against).length > 0
+                return this.ongoingWarsFoughtBy(army)
+                    .filter(w => w.state > WarState.BeforeMarch)
+                    .length > 0
+                || this.ongoingWarsAgainst(against)
+                    .filter(w => w.state > WarState.BeforeMarch)
+                    .length > 0
             },
         })
     }

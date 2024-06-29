@@ -91,8 +91,8 @@ const CivView = (p: CivProps) => <Box>
     }}>
       <CivHeader {...p}/>
       <CivStats {...p}/>
-      {p.wars.map((w, idx) => <WarView key={idx} {...w}/>)}
       <CivAttackActions {...p}/>
+      {p.wars.map((w, idx) => <WarView key={idx} {...w}/>)}
     </div>
   </Box>
 

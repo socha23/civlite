@@ -1,3 +1,5 @@
+import { ResourceType } from "./resources"
+
 export enum WarType {
   BeatemUp = "BeatemUp",
   CattleRaid = "CattleRaid",
@@ -5,15 +7,34 @@ export enum WarType {
   Subjugation = "Subjugation",
 }
 
+type Reward = {
+  from: number,
+  to: number,
+  type: ResourceType
+}
+
 const DEFAULT_WAR_TYPE_DEFINITION = {  
   againstStrengthFrom: 0.1,
   againstStrengthTo: 0.2,
   duration: 10,
+  rewards: []
 }
 
 const WarTypeDefinitions = {
-  [WarType.BeatemUp]: {},
-  [WarType.CattleRaid]: {},
+  [WarType.BeatemUp]: {
+    rewards: [{
+      from: 0,
+      to: 1,
+      type: ResourceType.Insight
+    }]
+  },
+  [WarType.CattleRaid]: {
+    rewards: [{
+      from: 0.2,
+      to: 0.4,
+      type: ResourceType.Herds
+    }]
+  },
   [WarType.SlaveRaid]: {},
   [WarType.Subjugation]: {},
 }

@@ -24,3 +24,17 @@ export function gaussRandom(from: number, to: number) {
   return from +
    (to - from) * (Math.random() + Math.random()) / 2 
 }
+
+export class InclusiveIntRange {
+  from: number
+  to: number
+
+  constructor(from: number, to: number) {
+    this.from = Math.floor(from)
+    this.to = Math.ceil(to)
+  }
+
+  randomValue() {
+    return Math.floor(this.from + (this.to + 1 - this.from) * Math.random())
+  }
+}
