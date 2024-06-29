@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Box } from './box'
 import { GameModel } from '../model/gameModel'
 import { PopType } from '../model/pops';
-import { FontSizes, Icons, Labels } from './icons';
+import { ArmyLabels, FontSizes, Icons, Labels } from './icons';
 import { ActionProps, propsForAction, ActionButton, ActionRow } from './action';
 import { formatNumber } from '../model/utils';
 
@@ -19,6 +19,7 @@ export type ArmyElement = {
 export type ArmyProps = {
   title: string,
   elements: ArmyElement[],
+  status: ReactNode,
 }
 
 export type MilitaryProps = {
@@ -29,6 +30,9 @@ export function militaryProps(model: GameModel): MilitaryProps {
   return {
      armies: model.military.armies.map(a => ({
       title: a.title,
+      status: a.engagedIn 
+        ? <ArmyLabels.ArmyAssignmentWar goal={a.engagedIn.goal} against={a.engagedIn.against.title} />
+        : <ArmyLabels.ArmyAssignmentIdle/>,
       elements: a.elements.map(e => ({
         type: e.type,
         count: a.assignedCount(e.type),
@@ -64,16 +68,23 @@ const ArmyElementView = (e: ArmyElement) => <div style={{
   </div>
 </div>
 
-const ArmyView = (a: ArmyProps) => <div style={{
+const ArmyView = (a: ArmyProps) => <div className="dottedDividersParent" style={{
   display: "flex",
   flexDirection: "column",
   gap: 4,
   marginTop: 8,
 }}>
   <div style={{
-    fontSize: FontSizes.big
+    fontSize: FontSizes.big,
+    paddingBottom: 4,
   }}>
   {a.title}
+  </div>
+  <div style={{
+    paddingBottom: 4,
+  }}>
+    {a.status
+     }
   </div>
   <div>
     {a.elements.map(e => <ArmyElementView key={e.type} {...e}/>)}

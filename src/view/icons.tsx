@@ -48,10 +48,6 @@ export const Icons = {
 }
 
 export const Labels = {
-
-
-    Target: "Target",
-
     StartWar: "Go fight",
     CompleteWar: "OK",
 
@@ -99,7 +95,6 @@ export const Labels = {
     [WarType.SlaveRaid]: "Slave raid",
     [WarType.Subjugation]: "Subjugation",
     
-
 }
 
 export const GatherActionLabels = {
@@ -110,6 +105,12 @@ export const GatherActionLabels = {
     [ResourceType.Forest]: 'Spawn Forest',
     [ResourceType.Grassland]: 'Spawn Grasslands',
 }
+
+export const ArmyLabels = {
+    ArmyAssignmentIdle: ({}) => <span>Idle</span>,
+    ArmyAssignmentWar: (p: {goal: WarType, against: ReactNode}) => <span>{Labels[p.goal]} against {p.against}</span>,
+}
+
 
 export const TrendColors = {
     positive: "#0a0",

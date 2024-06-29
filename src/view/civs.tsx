@@ -9,11 +9,11 @@ import { formatNumber } from '../model/utils';
 
 
 type CivProps = {
-  targetted: boolean,
   title: string,
   population: number,
   strength: number,
-  targetAction: ActionProps,
+  attackActions: ActionProps[]
+  wars: WarProps
 }
 
 export type CivsProps = {
@@ -27,11 +27,11 @@ export function civsProps(model: GameModel): CivsProps {
       title: c.title,
       population: c.population,
       strength: c.strength,
-      targetAction: propsForAction(model, model.civilizations.targetAction(c), {
-        title: Labels.Target,
-        buttonLabel: <i className={Icons.target}/>
-      }),
-      targetted: model.civilizations.targetted === c,
+      attackActions: c.availableWarGoals().map(g => propsForAction(model,
+        model.wars.startWarAction(g, model.military.attackingArmy(), c), {
+          title: Labels[g]
+        }
+      ))
      }))
   }
 }
@@ -61,23 +61,24 @@ const CivHeader = (p: CivProps) => <div style={{
   alignItems: "center",
 }}>
   <div style={{
-    fontSize: FontSizes.normal,
-    height: 20,
-    width: 20,
-  }}>
-    <ActionButton {...p.targetAction}/>
-  </div>
-  <div style={{
     fontSize: FontSizes.normalPlus,
   }}>
     {p.title}
   </div>
 </div>
 
+const CivAttackActions = (p: CivProps) => <div style={{
+  display: "flex",
+  gap: 4,
+  alignItems: "center"
+}}>
+  {p.attackActions.map((a, idx) => <ActionButton key={idx} {...a}/>)}
+</div>
+
 const CivView = (p: CivProps) => <Box>
       <div style={{
       borderWidth: 2,
-      borderColor: p.targetted ? Colors.selected : "transparent",
+      borderColor: "transparent",
       borderStyle: "solid",
       borderRadius: 4,
       marginTop: 6,
@@ -92,6 +93,7 @@ const CivView = (p: CivProps) => <Box>
       }}>
         <CivHeader {...p}/>
         <CivStats {...p}/>
+        <CivAttackActions {...p}/>
       </div>
     </div>
   </Box>

@@ -7,14 +7,17 @@ import { onTick } from "./timer"
 import MilitaryModel from "./militaryModel"
 import CivilizationsModel from "./civsModel"
 import { testBattleModel } from "./battleModel"
+import { WarModel } from "./warModel"
 
 export class GameModel implements GameModelInterface {
   tick: number = 0
   civName: string = "The Tribe"
   resources = new ResourcesModel()
   population = new PopulationModel()
-  civilizations = new CivilizationsModel()
   military = new MilitaryModel(this.population)
+  civilizations = new CivilizationsModel()
+  wars = new WarModel()
+
   testBattle = testBattleModel()
 
   filterUnsatisfiableCosts(costs: CostElem[]): CostElem[] {

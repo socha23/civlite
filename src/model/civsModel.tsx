@@ -1,5 +1,5 @@
 import { Action, action } from "./action"
-import WarModel from "./warModel"
+import { War } from "./warModel"
 import { WarType } from "./wars"
 
 const DEFAULT_CIV_DEFINITION = {
@@ -23,11 +23,7 @@ export class CivModel {
     title: string
     population: number
     strength: number
-    currentWar: WarModel | undefined 
-
-    startWarActions = Object.values(WarType).map(t => action({
-        action: () => {} 
-    }))
+    currentWar: War | undefined 
 
     constructor(params: CivParams) {
         const def = civDefinition(params)
@@ -36,8 +32,8 @@ export class CivModel {
         this.population = def.population
     }
 
-    startWarAsAttacker() {
-
+    availableWarGoals() {
+        return [WarType.BeatemUp, WarType.CattleRaid, WarType.SlaveRaid]
     }
 }
 
@@ -66,24 +62,10 @@ function defaultCivs(): CivParams[] {
     ]
 }
 
-
 export default class CivilizationsModel {
     civs: CivModel[]
-    targetActions: Map<CivModel, Action> = new Map()
-    targetted?: CivModel
 
     constructor() {
         this.civs = defaultCivs().map(p => new CivModel(civDefinition(p)))
-        this.civs.forEach(c => {
-         this.targetActions.set(c, action({
-            action: () => {this.targetted = c}
-         }))   
-        })
     }
-
-    targetAction(c: CivModel): Action {
-        return this.targetActions.get(c)!
-    }
-
-
 }

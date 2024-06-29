@@ -127,6 +127,8 @@ export class Combatant {
         if (defender && defender.state === CombatantState.WipedOut) {
             log.info(<BattleMessages.CombatantWipedOut combatant={defender.description}/>)
         }
+
+        this.closeAttackedBy = []
     }
 
 

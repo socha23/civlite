@@ -1,8 +1,10 @@
-import { Labels } from "../view/icons"
+import { Colors, Labels } from "../view/icons"
 import { Action, action } from "./action"
 import { Assignable } from "./assignable"
+import { Force } from "./battleModel"
 import { PopulationModel, PopModel } from "./popModel"
 import { popTypesAssignableToArmy, PopType } from "./pops"
+import { War } from "./warModel"
 
 class ArmyElementModel {
     type: PopType
@@ -36,15 +38,25 @@ class ArmyElementModel {
 export class ArmyModel extends Assignable {    
     title: string
     elements: ArmyElementModel[]
+    population: PopulationModel
+    engagedIn?: War
 
     constructor(title: string, population: PopulationModel) {
         super(popTypesAssignableToArmy())
+        this.population = population
         this.title = title
         this.elements = popTypesAssignableToArmy().map(t => new ArmyElementModel(population.pop(t), this))
     }
 
     get locked() {
-        return false // TODO
+        return this.engagedIn !== undefined
+    }
+
+    force() {
+        return new Force(this.title, Colors.OurArmy, this.elements.map(e => ({
+            type: e.type,
+            count: this.population.pop(e.type).assignedCount(this)
+        })))
     }
 
     onTick(deltaS: number) {
@@ -66,4 +78,7 @@ export default class MilitaryModel {
         })
     }
 
+    attackingArmy() {
+        return this.armies[0]
+    }
 }

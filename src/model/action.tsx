@@ -26,7 +26,9 @@ export abstract class Action {
         this.timeout = timeout      
         this.costs = costs  
         this.gains = gains
-        addTickListener(this)
+        if (this.timeout) {
+            addTickListener(this)
+        }
     }
 
     abstract _onAction(): void
