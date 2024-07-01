@@ -6,7 +6,6 @@ import { ResourcesModel } from "./resourcesModel"
 import { onTick } from "./timer"
 import MilitaryModel from "./militaryModel"
 import CivilizationsModel from "./civsModel"
-import { testBattleModel } from "./battleModel"
 import { WarModel } from "./warModel"
 
 export class GameModel implements GameModelInterface {
@@ -16,9 +15,7 @@ export class GameModel implements GameModelInterface {
   population = new PopulationModel()
   military = new MilitaryModel(this.population)
   civilizations = new CivilizationsModel()
-  wars = new WarModel()
-
-  testBattle = testBattleModel()
+  wars = new WarModel(this)
 
   filterUnsatisfiableCosts(costs: CostElem[]): CostElem[] {
     return this.resources.filterUnsatisfiableCosts(costs)

@@ -17,6 +17,7 @@ export const Colors = {
     selected: "#f88",
     OurArmy: "#080",
     EnemyArmy: "#800",
+    ActiveWar: "#800",
 }
 
 
@@ -116,15 +117,27 @@ export const ArmyLabels = {
 
 
 export const BattleLabels = {
+    EnemyLabel: "Enemy",
+
     CivBoxTitle: (p: {goal: WarType, army: string}) => <span>{Labels[p.goal]} by {p.army}</span>,
     ArmyReturned: (p: {army: string}) => <span>{p.army} returned.</span>,
+    ArmyInBattle: (p: {army: string}) => <span>{p.army} is in combat.</span>,
+    ArmyVictorius: (p: {army: string}) => <span>{p.army} is victorious!</span>,
+    ArmyRetreating: (p: {army: string}) => <span>{p.army} is retreating</span>,
+    ArmyLost: (p: {army: string}) => <span>{p.army} lost!</span>,
+    ArmyMarchingBackHome: (p: {army: string}) => <span>{p.army} is marching back</span>,
     MarchTime: (p: {time: number}) => <span>March time: {formatNumber(p.time)} seconds</span>,
     
     March: "March",
     Cancel: "Cancel",
     Complete: "OK",
+    Fight: "Fight",
+    Retreat: "Retreat",
+    MarchBackHome: "Return home",
+
     ExpectedOpposition: "Opposition:",
     ExpectedReward: "Loot:",
+    Reward: "Loot:",
 }
 
 export const BattleAgainstDescription = (p: WarProps) => <span style={{

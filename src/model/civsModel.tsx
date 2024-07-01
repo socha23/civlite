@@ -1,3 +1,4 @@
+import { Colors } from "../view/icons"
 import { Action, action } from "./action"
 import { War } from "./warModel"
 import { WarType } from "./wars"
@@ -21,6 +22,7 @@ function civDefinition(params: CivParams) {
 
 export class CivModel {
     title: string
+    color: string = Colors.default
     population: number
     strength: number
 

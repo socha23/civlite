@@ -223,9 +223,10 @@ export class Force {
 
 }
 
-enum BattleState {
+export enum BattleState {
     Active = 0,
-    BattleOver = 1,
+    AttackerWon = 1,
+    AttackerLost = 2,
 }
 
 export class Battle {
@@ -235,8 +236,10 @@ export class Battle {
     defender: Force
     round: number = 0
     log: Log = new Log
-
-    constructor(title: string, attacker: Force, defender: Force) {
+    onComplete: (attackerWon: boolean) => any
+        
+    constructor(title: string, attacker: Force, defender: Force, onComplete: (attackerWon: boolean) => any) {
+        this.onComplete = onComplete
         this.title = title
         this.attacker = attacker
         this.defender = defender
@@ -277,10 +280,14 @@ export class Battle {
     }
 
     victory(force: Force) {
-        this.state = BattleState.BattleOver
+        this.onComplete(force === this.attacker)
+        this.state = force === this.attacker ? BattleState.AttackerWon : BattleState.AttackerLost
         this.log.info(<BattleMessages.SideWon side={force.description}/>)
     }
 
+    get completed() {
+        return this.state === BattleState.AttackerLost || this.state === BattleState.AttackerWon
+    }
 
     get activeCombatants() {
         return [
@@ -288,33 +295,4 @@ export class Battle {
             ...this.defender.activeCombatants,
         ]
     }
-}
-
-
-export class BattleModel {
-    battle: Battle
-    nextRoundAction: Action
-    
-    constructor(battle: Battle) {
-      this.battle = battle
-      this.nextRoundAction = action({
-            action: () => {this.battle.nextRound()},
-            disabled: () => {return this.battle.state !== BattleState.Active},
-        })  
-    }
-}
-
-export function testBattleModel() {
-    return new BattleModel(
-        new Battle(
-            "Test battle",
-            new Force("War party", Colors.OurArmy, [
-                {type: PopType.Brave, count: 5},
-                {type: PopType.Slinger, count: 3},
-            ]),
-            new Force("Opposing Force", Colors.EnemyArmy, [
-                {type: PopType.Brave, count: 8},
-            ]),
-        )
-    )
 }

@@ -3,9 +3,7 @@ import { Box } from './box'
 import { GameModel } from '../model/gameModel'
 import { PopType } from '../model/pops';
 import { Colors, FontSizes, Icons, Labels } from './icons';
-import { ActionProps, propsForAction, ActionButton, ActionRow } from './action';
-import { formatNumber } from '../model/utils';
-import { Force, Combatant } from '../model/battleModel';
+import { Force, Combatant, Battle } from '../model/battleModel';
 import { LogProps, LogView, logProps } from './log';
 
 
@@ -29,7 +27,6 @@ export type BattleProps = {
   attacker: ForceProps,
   defender: ForceProps,
   round: number,
-  nextRound: ActionProps,
   log: LogProps,
 }
 
@@ -52,16 +49,13 @@ function forceProps(force: Force, facingRight: boolean): ForceProps {
   }
 }
 
-export function battleProps(model: GameModel): BattleProps {
-  const b = model.testBattle.battle
+export function battleProps(model: GameModel, battle: Battle): BattleProps {
+  const b = battle
   return {
     title: b.title,
     attacker: forceProps(b.attacker, true),
     defender: forceProps(b.defender, false),
     round: b.round,
-    nextRound: propsForAction(model, model.testBattle.nextRoundAction, {
-
-    }),
     log: logProps(b.log),
   }
 }
@@ -135,33 +129,10 @@ const ForceView = (p: ForceProps) => <div style={{
 </div>
 
 export const BattleView = (p: BattleProps) =>
-  <Box>
     <div className="dottedDividersParent" style={{
       display: "flex",
       flexDirection: "column",
     }}>
-      <div style={{
-        paddingTop: 4,
-        paddingBottom: 4,
-        fontSize: FontSizes.normalPlus,
-        textAlign: "center",
-      }}>
-          <div>{p.title}</div>
-      </div>
-      <div style={{
-        paddingTop: 4,
-        paddingBottom: 4,
-        display: "flex",
-        alignItems: "center",
-      }}>
-        <div>
-          Round: {p.round}
-        </div>
-        <div style={{flexGrow: 1}}/>
-          <div style={{width: 80}}>
-            <ActionButton title="Next Round" {...p.nextRound}/>
-          </div>
-      </div>
       <div 
         className='dottedHorizontalDividersParent'
         style={{
@@ -177,7 +148,6 @@ export const BattleView = (p: BattleProps) =>
     }}>
       <LogView {...p.log}/>
     </div>
-    </div>
-  </Box>
+  </div>
 
 

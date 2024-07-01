@@ -53,9 +53,12 @@ export class ArmyModel extends Assignable {
     }
 
     force() {
-        return new Force(this.title, Colors.OurArmy, this.elements.map(e => ({
-            type: e.type,
-            count: this.population.pop(e.type).assignedCount(this)
+        return new Force(
+            this.title, Colors.OurArmy, this.elements
+            .filter(e => this.population.pop(e.type).assignedCount(this) > 0)
+            .map(e => ({
+                type: e.type,
+                count: this.population.pop(e.type).assignedCount(this)
         })))
     }
 

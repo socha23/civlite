@@ -174,3 +174,24 @@ export const ActionRow = (p: ActionProps) => <div className="dottedDividers" sty
   </div>
   
 </div>
+
+export const ActionRow2 = (p: PropsWithChildren<ActionProps>) => <div style={{
+    paddingTop: 4,
+    paddingBottom: 4,
+    display: "flex",
+    alignItems: "center",
+    gap: 4,
+  }}>
+    <div style={{
+      flexGrow: 1,
+    }}>
+      {p.children}
+    </div>
+    <div style={{
+      width: 80,
+    }}>
+      <ActionButton {...p} title={p.title}/>
+    </div>
+  </div>
+ 
+
