@@ -9,17 +9,18 @@ import { InclusiveIntRange } from '../model/utils';
 import { Battle } from '../model/battleModel';
 import { ResourceType } from '../model/resources';
 import { BattleProps, BattleView, battleProps } from './battle';
-import { CostElem } from '../model/costs';
+import { Amount, amountValueType } from '../model/costs';
 
 type ExpectedProps = {
-  type: PopType | ResourceType
+  popType?: PopType 
+  resourceType?: ResourceType
   range: InclusiveIntRange
 }
 
 export type WarProps = {
   expectedOpposition: ExpectedProps[]
   expectedRewards: ExpectedProps[]
-  rewards: CostElem[]
+  rewards: Amount[]
   goal: WarType
   state: WarState
   
@@ -84,12 +85,12 @@ const ExpectedRow = (p: {description: string, items: ExpectedProps[]}) => <div s
     {p.items.map((i, idx) => <span key={idx} style={{
     }}>
       {i.range.from}-{i.range.to}  
-      <i className={Icons[i.type]}/>
+      <i className={Icons[amountValueType(i)]}/>
     </span>)}
   </div>
 </div>
 
-const ValueRow = (p: {description: string, items: CostElem[]}) => <div style={{
+const ValueRow = (p: {description: string, items: Amount[]}) => <div style={{
   display: "flex",
   alignItems: "center",
   gap: 4,
@@ -101,7 +102,7 @@ const ValueRow = (p: {description: string, items: CostElem[]}) => <div style={{
     {p.items.map((i, idx) => <span key={idx} style={{
     }}>
       {i.count}  
-      <i className={Icons[i.type]}/>
+      <i className={Icons[amountValueType(i)]}/>
     </span>)}
   </div>
 </div>

@@ -1,11 +1,12 @@
 import React from 'react';
 import { FontSizes, TrendColors } from './icons';
+import { formatNumber } from '../model/utils';
 
 export type LineProps = {
   icon: string,
   label: string,
-  count: number
-  cap?: number
+  value: number
+  max?: number
   trend?: number
 }
 
@@ -13,7 +14,7 @@ export const ResourceTrend = (p: {delta: number}) => p.delta === 0 ? <span/> : <
   color: p.delta > 0 ? TrendColors.positive: TrendColors.negative
 }}>{p.delta > 0 ? "+" : ""}{p.delta.toFixed(1)}</span>
 
-export const Line = (p: {icon?: string, label: string, count: number, cap?: number, trend?: number }) => <div 
+export const Line = (p: {icon?: string, label: string, value: number, max?: number, trend?: number }) => <div 
 className="line"
 style={{
   display: "flex",
@@ -30,10 +31,10 @@ style={{
   <div style={{
     flexGrow: 1,
     textAlign: "right",
-    }}>{p.count.toFixed()}</div>
+    }}>{formatNumber(p.value)}</div>
   <div style={{
     width: 40,
-    }}>{!p.cap ? "" : "/ " + p.cap.toFixed()}</div>
+    }}>{!p.max ? "" : "/ " + p.max.toFixed()}</div>
   <div style={{
     fontSize: FontSizes.small,
     width: 40,

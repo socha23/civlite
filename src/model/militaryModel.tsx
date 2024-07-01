@@ -57,7 +57,7 @@ export class ArmyModel extends Assignable {
             this.title, Colors.OurArmy, this.elements
             .filter(e => this.population.pop(e.type).assignedCount(this) > 0)
             .map(e => ({
-                type: e.type,
+                popType: e.type,
                 count: this.population.pop(e.type).assignedCount(this)
         })))
     }

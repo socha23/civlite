@@ -6,7 +6,7 @@ import { PopType, popTypeDefinition } from "./pops"
 
 
 type CombatantParams = {
-    type: PopType 
+    popType: PopType 
     count: number
 }
 
@@ -198,7 +198,7 @@ export class Force {
     constructor(title: string, color: string, combatants: CombatantParams[]) {
         this.title = title
         this.color = color
-        this.combatants = combatants.map(p => new Combatant(p.type, p.count, this))
+        this.combatants = combatants.map(p => new Combatant(p.popType, p.count, this))
     }
 
     get activeCombatants() {

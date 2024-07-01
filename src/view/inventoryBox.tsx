@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box } from './box'
 import { GameModel } from '../model/gameModel'
-import { ResourceType, allResourceTypes } from '../model/resources';
+import { ResourceType, allResourceTypes, resourceDefinition } from '../model/resources';
 import { FontSizes, Icons, DividerColors, Colors, Labels } from './icons';
 import { Line, LineProps } from './line';
 
@@ -23,17 +23,19 @@ export function summaryBoxProps(model: GameModel): InventoryBoxProps {
   const totalPopulation = {
     icon: Icons.population,
     label: "Population",
-    count: model.population.total,
+    value: model.population.total,
     group: 0,
   }
   
   const resources = allResourceTypes().map(t => {
-    const res = model.resources.resource(ResourceType[t])
+
+    const res = model.resources.resource(t)
+    const resDef = resourceDefinition(t)
     return {
       icon: Icons[t],
       label: Labels[t],
-      count: res.count,
-      cap: res.cap,
+      value: resDef.assignable ? res.unassigned : res.count,
+      max: resDef.assignable ? res.count : res.cap,
       trend: model.production(t) - model.consumption(t),
       group: ResourceGroups[t]
     }})  

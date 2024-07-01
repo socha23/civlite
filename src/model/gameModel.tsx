@@ -1,5 +1,5 @@
 import { GameModelInterface } from "./action"
-import { CostElem } from "./costs"
+import { Amount } from "./costs"
 import { ResourceType } from "./resources"
 import { PopulationModel } from "./popModel"
 import { ResourcesModel } from "./resourcesModel"
@@ -17,22 +17,22 @@ export class GameModel implements GameModelInterface {
   civilizations = new CivilizationsModel()
   wars = new WarModel(this)
 
-  filterUnsatisfiableCosts(costs: CostElem[]): CostElem[] {
+  filterUnsatisfiableCosts(costs: Amount[]): Amount[] {
     return this.resources.filterUnsatisfiableCosts(costs)
       .concat(this.population.filterUnsatisfiableCosts(costs))
   }
 
-  onConsume(costs: CostElem[]) {
-    this.resources.onConsume(costs)
+  onConsume(costs: Amount[]) {
+    this.resources.pay(costs)
     this.population.onConsume(costs)
   }
 
-  onProduce(value: CostElem[]) {
-    this.resources.onProduce(value)
+  onProduce(value: Amount[]) {
+    this.resources.gain(value)
     this.population.onProduce(value)
   }
 
-  canPay(elem: CostElem) {
+  canPay(elem: Amount) {
     return this.resources.filterUnsatisfiableCosts([elem]).length === 0
       && this.population.filterUnsatisfiableCosts([elem]).length === 0
   }
@@ -55,10 +55,10 @@ export class GameModel implements GameModelInterface {
   applyConsumptionAndProduction(deltaS: number) {
     this.population.pops.forEach(pop => {
       pop.consumption.forEach(res => {
-        this.resources.resource(res.type).onConsume(res.count * deltaS)
+        this.resources.resource(res.resourceType).sub(res.count * deltaS)
       })
       pop.production.forEach(res => {
-        this.resources.resource(res.type).onProduce(res.count * deltaS)
+        this.resources.resource(res.resourceType).add(res.count * deltaS)
       })
     })
   }

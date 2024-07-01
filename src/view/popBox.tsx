@@ -43,7 +43,7 @@ export const ResourcesList = (p: {items: Resources[], caption: string, color?: s
     color: p.color || (i.count > 0 ? TrendColors.positive : TrendColors.negative)
   }}>
     <div>{(i.count > 0 ? "+" : "") + formatNumber(i.count)}</div>
-    <div><i className={Icons[i.type]}/></div>
+    <div><i className={Icons[i.resourceType]}/></div>
   </div>)}
   <div>{p.items.length > 0 && p.caption}</div>
 </div>

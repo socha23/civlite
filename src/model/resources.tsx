@@ -5,38 +5,63 @@ export enum ResourceType {
     Forest = "Forest",
     Grassland = "Grassland",
     Herds = "Herds",
+}
 
+enum ResourceClass {
+    Consumable = "Consumable",
+    Assignable = "Assignable",
+}
+
+
+interface ResourceDefinition {
+    class: ResourceClass,
+    gatherTimeout: number,
+    initialCap?: number,
+    initialCount: number,
+    assignable: boolean,
+    initialAssigned: number,
+}
+
+export function resourceDefinition(type: ResourceType): ResourceDefinition {
+    const result =  {
+        class: ResourceClass.Consumable,
+        gatherTimeout: 0,
+        initialCap: undefined,
+        initialCount: 0,
+        initialAssigned: 0,
+        ...ResourceDefinitions[type],
+        assignable: false,
+    }
+    if (result.class === ResourceClass.Assignable) {
+        result.assignable = true
+    }
+    return result
 }
 
 export const ResourceDefinitions = {
     [ResourceType.Herds]: {
-        gatherTimeout: 1, 
-        initialCap: 3,    
+        class: ResourceClass.Assignable,
         initialCount: 3,
     },
     [ResourceType.Food]: {
         gatherTimeout: 1, 
         initialCap: 30,    
-        initialCount: 0,
     },
     [ResourceType.Insight]: {
         gatherTimeout: 3, 
         initialCap: 10,    
-        initialCount: 0,
     },
     [ResourceType.Labor]: {
         gatherTimeout: 5,
         initialCap: 10,
-        initialCount: 0,
     },
     [ResourceType.Forest]: {
-        gatherTimeout: 1,
-        initialCap: 30,
-        initialCount: 21,
+        class: ResourceClass.Assignable,
+        initialCount: 30,
+        initialAssigned: 9,
     },
     [ResourceType.Grassland]: {
-        gatherTimeout: 1,
-        initialCap: 5,
+        class: ResourceClass.Assignable,
         initialCount: 5,
     },
 }

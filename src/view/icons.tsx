@@ -46,7 +46,9 @@ export const Icons = {
     
     population: "fa-solid fa-people-group",
     strength: "fa-solid fa-hand-fist",
-    target: "fa-solid fa-crosshairs"
+    target: "fa-solid fa-crosshairs",
+
+    default: "",
 }
 
 export const Labels = {

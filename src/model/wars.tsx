@@ -1,3 +1,4 @@
+import { PopType } from "./pops"
 import { ResourceType } from "./resources"
 
 export enum WarType {
@@ -10,14 +11,15 @@ export enum WarType {
 type Reward = {
   from: number,
   to: number,
-  type: ResourceType
+  resourceType?: ResourceType,
+  popType?: PopType,
 }
 
 const DEFAULT_WAR_TYPE_DEFINITION = {  
   againstStrengthFrom: 0.1,
   againstStrengthTo: 0.2,
   duration: 10,
-  rewards: []
+  rewards: [] as Reward[],
 }
 
 const WarTypeDefinitions = {
@@ -25,15 +27,15 @@ const WarTypeDefinitions = {
     rewards: [{
       from: 0,
       to: 1,
-      type: ResourceType.Insight
-    }]
+      resourceType: ResourceType.Insight
+    } as Reward]
   },
   [WarType.CattleRaid]: {
     rewards: [{
       from: 0.2,
       to: 0.4,
-      type: ResourceType.Herds
-    }]
+      resourceType: ResourceType.Herds
+    } as Reward]
   },
   [WarType.SlaveRaid]: {},
   [WarType.Subjugation]: {},

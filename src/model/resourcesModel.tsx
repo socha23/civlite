@@ -1,36 +1,87 @@
-import { Action, ActionParams, action } from "./action"
-import { ResourceType, ResourceDefinitions } from "./resources"
-import { CostElem, Resources, resources } from "./costs"
+import { Action, action } from "./action"
+import { ResourceType, resourceDefinition } from "./resources"
+import { Amount, Resources, resources } from "./costs"
 
 class ResourceModel {
     type: ResourceType
     count: number = 0
+    assigned: number = 0
+    assignable: boolean = false
+    cap?: number
     gatherAction: Action
 
     constructor(type: ResourceType) {
+        const resDef = resourceDefinition(type)
         this.type = type
-        this.count = ResourceDefinitions[type].initialCount
+        
+        this.count = resDef.initialCount
+        this.assigned = resDef.initialAssigned
+        this.cap = resDef.initialCap
+        this.assignable = resDef.assignable
+ 
         this.gatherAction = action({
-            gains: [resources(type, 1)],
-            timeout: ResourceDefinitions[type].gatherTimeout
+            rewards: [resources(type, 1)],
+            timeout: resDef.gatherTimeout,
         })
     }
 
     onPlayerProduction() {
-        this.onProduce(1)
+        this.add(1)
     }
 
-    onProduce(amount: number) {
-        this.count = Math.min(this.count + amount, this.cap)
+    add(amount: number) {
+        this.count += amount
+        if (this.cap) {
+            this.count = Math.min(this.count, this.cap)
+        }
     }
 
-    onConsume(amount: number) {
+    sub(amount: number) {
         this.count = Math.max(0, this.count - amount)
     }
 
-    get cap() {
-        return ResourceDefinitions[this.type].initialCap
+    assign(amount: number) {
+        if (this.count - this.assigned < amount) {
+            throw "Can't assign, not enough left"
+        }
+        this.assigned += amount
     }
+
+    unassign(amount: number) {
+        if (this.assigned < amount) {
+            throw "Can't unassign, not enough assigned"
+        }
+        this.assigned -= amount
+    }
+
+    get unassigned() {
+        return this.count - this.assigned
+    }
+
+    canPay(c: Amount) {
+        if (this.assignable) {
+            return c.count <= this.unassigned 
+        } else {
+            return c.count <= this.count
+        }
+    }
+
+    pay(c: Amount) {
+        if (c.assignment) {
+            this.assign(c.count)
+        } else {
+            this.sub(c.count)
+        }
+    }
+
+    gain(c: Amount) {
+        if (c.assignment) {
+            this.unassign(c.count)
+        } else {
+            this.add(c.count)
+        }
+    }
+
 }
 
 export class ResourcesModel {
@@ -41,24 +92,22 @@ export class ResourcesModel {
         return this.resources.find(m => m.type === type)!
     }
 
-    filterUnsatisfiableCosts(costs: CostElem[]): CostElem[] {
-        return costs.filter(c => (c instanceof Resources) &&
-            c.count > this.resource(c.type).count
-        )
+    filterUnsatisfiableCosts(costs: Amount[]): Amount[] {
+        return costs.filter(c => (c instanceof Resources) && !this.resource(c.resourceType).canPay(c))
     }
 
-    onConsume(costs: CostElem[]) {
+    pay(costs: Amount[]) {
         costs.forEach(c => {
-            if (c instanceof Resources) {
-                this.resource(c.type).count -= c.count
+            if (c.resourceType) {
+                this.resource(c.resourceType).pay(c)
             }
         })
     }
 
-    onProduce(values: CostElem[]) {
-        values.forEach(v => {
-            if (v instanceof Resources) {
-                this.resource(v.type).onProduce(v.count)
+    gain(values: Amount[]) {
+        values.forEach(c => {
+            if (c.resourceType) {
+                this.resource(c.resourceType).gain(c)
             }
         })
     }

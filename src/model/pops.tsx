@@ -1,5 +1,5 @@
 import { ResourceType } from "./resources"
-import { pops, resources } from "./costs"
+import { assignResources, pops, resources } from "./costs"
 
 export enum PopType {
   Idler = "Idler", 
@@ -15,9 +15,6 @@ export enum PopType {
 const DEFAULT_POP_DEFINITION = {
   initialCount: 0,
   buyCost: [
-    pops(PopType.Idler, 1),
-  ],
-  sellValue: [
     pops(PopType.Idler, 1),
   ],
   production: [],
@@ -36,7 +33,6 @@ const PopTypeDefinitions = {
   [PopType.Idler]: {
     initialCount: 1,
     buyCost: [resources(ResourceType.Food, 2)],
-    sellValue: [],
     production: [
       resources(ResourceType.Insight, 0.1)
     ],
@@ -48,11 +44,7 @@ const PopTypeDefinitions = {
     initialCount: 9,
     buyCost: [
       pops(PopType.Idler, 1),
-      resources(ResourceType.Forest, 1)
-    ],
-    sellValue: [
-      pops(PopType.Idler, 1),
-      resources(ResourceType.Forest, 1)
+      assignResources(ResourceType.Forest, 1)
     ],
     production: [
       resources(ResourceType.Food, 0.1)
@@ -63,7 +55,6 @@ const PopTypeDefinitions = {
       pops(PopType.Idler, 1),
       resources(ResourceType.Food, 5),
     ],
-    sellValue: [pops(PopType.Idler, 1)],
     production: [
       resources(ResourceType.Labor, 0.2)
     ],
@@ -74,14 +65,9 @@ const PopTypeDefinitions = {
   [PopType.Herder]: {
     buyCost: [
       pops(PopType.Idler, 1),
-      resources(ResourceType.Herds, 1),
       resources(ResourceType.Labor, 3),
-      resources(ResourceType.Grassland, 1),
-    ],
-    sellValue: [
-      pops(PopType.Idler, 1),
-      resources(ResourceType.Herds, 1),
-      resources(ResourceType.Grassland, 1),
+      assignResources(ResourceType.Herds, 1),
+      assignResources(ResourceType.Grassland, 1),
     ],
     production: [
       resources(ResourceType.Food, 0.6)
@@ -91,11 +77,7 @@ const PopTypeDefinitions = {
     buyCost: [
       pops(PopType.Idler, 1),
       resources(ResourceType.Labor, 5),
-      resources(ResourceType.Grassland, 1),
-    ],
-    sellValue: [
-        pops(PopType.Idler, 1),
-        resources(ResourceType.Grassland, 1),
+      assignResources(ResourceType.Grassland, 1),
     ],
     production: [
       resources(ResourceType.Food, 0.4)

@@ -1,31 +1,31 @@
 import { addTickListener } from "./timer"
-import { CostElem } from "./costs"
+import { Amount } from "./costs"
 
 export type ActionParams = {
     timeout?: number
-    costs?: CostElem[]
-    gains?: CostElem[]
+    costs?: Amount[]
+    rewards?: Amount[]
 }
 
 export interface GameModelInterface {
-    filterUnsatisfiableCosts(cost: CostElem[]): CostElem[]
-    onProduce(cost: CostElem[]): void
-    onConsume(cost: CostElem[]): void
+    filterUnsatisfiableCosts(cost: Amount[]): Amount[]
+    onProduce(cost: Amount[]): void
+    onConsume(cost: Amount[]): void
 }
 
 
 export abstract class Action {
     timeout?: number
     timeoutLeft: number = 0
-    costs: CostElem[]
-    gains: CostElem[]
+    costs: Amount[]
+    rewards: Amount[]
     inProgress: boolean = false
     checker?: GameModelInterface
 
-    constructor({timeout, costs = [], gains=[]}: ActionParams) {
+    constructor({timeout, costs = [], rewards = []}: ActionParams) {
         this.timeout = timeout      
         this.costs = costs  
-        this.gains = gains
+        this.rewards = rewards
         if (this.timeout) {
             addTickListener(this)
         }
@@ -66,12 +66,16 @@ export abstract class Action {
     }
 
     onStart() {
-        this.checker!.onConsume(this.costs)
+        if (this.costs.length > 0) {
+            this.checker!.onConsume(this.costs)
+        }
         this.inProgress = true
     }
 
     onComplete() {
-        this.checker!.onProduce(this.gains)
+        if (this.rewards.length > 0) {
+            this.checker!.onProduce(this.rewards)
+        }
         this.inProgress = false
         this._onComplete()
 

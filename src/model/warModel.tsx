@@ -2,7 +2,7 @@ import { BattleLabels, Labels } from "../view/icons"
 import { Action, action } from "./action"
 import { Battle, BattleState, Combatant, Force } from "./battleModel"
 import { CivModel } from "./civsModel"
-import { CostElem } from "./costs"
+import { Amount, pops, resources } from "./costs"
 import { GameModel } from "./gameModel"
 import { ArmyModel } from "./militaryModel"
 import { PopType } from "./pops"
@@ -26,23 +26,24 @@ export enum WarState {
 }
 
 export type ExpectedOpposition = {
-    type: PopType
+    popType: PopType
     range: InclusiveIntRange
 }
 
-function expectedOpposition(goal: WarType, civ: CivModel) {
+function expectedOpposition(goal: WarType, civ: CivModel): ExpectedOpposition[] {
     const popTypes = [PopType.Brave]
     const warDef = warTypeDefinition(goal)
     return popTypes.map(t => {
         return {
-            type: t,
+            popType: t,
             range: new InclusiveIntRange(civ.strength * warDef.againstStrengthFrom, civ.strength * warDef.againstStrengthTo)    
         }
     })
 }
 
 export type ExpectedRewards = {
-    type: PopType | ResourceType
+    popType?: PopType 
+    resourceType?: ResourceType
     range: InclusiveIntRange
 }
 
@@ -50,13 +51,13 @@ function expectedRewards(goal: WarType, civ: CivModel) {
     const warDef = warTypeDefinition(goal)
     return warDef.rewards.map(t => {
         return {
-            type: t.type,
+            type: t.resourceType || t.popType,
+            popType: t.popType,
+            resourceType: t.resourceType,
             range: new InclusiveIntRange(civ.population * t.from, civ.population * t.to)     
         }
     })
 }
-
-
 
 export class War {
     currentBattle?: Battle
@@ -72,7 +73,7 @@ export class War {
     opposingForce: Force
 
     expectedRewards: ExpectedRewards[]
-    rewards: CostElem[] = []
+    rewards: Amount[] = []
 
     marchAction: Action
     cancelAction: Action
@@ -96,7 +97,7 @@ export class War {
         this.opposingForce = new Force(
             BattleLabels.EnemyLabel, 
             this.against.color, 
-            this.expectedOpposition.map(e => ({type: e.type,  count: e.range.randomValue()}))
+            this.expectedOpposition.map(e => pops(e.popType, e.range.randomValue()))
         )
 
         this.expectedRewards = expectedRewards(goal, against)
@@ -172,10 +173,15 @@ export class War {
         this.state = attackerWon ? WarState.AfterBattleAttackerWon : WarState.AfterBattleAttackerLost
 
         if (attackerWon) {
-            this.rewards = this.expectedRewards.map(e => ({
-                type: e.type,
-                count: e.range.randomValue()
-            }))    
+            this.rewards = this.expectedRewards.map(e => {
+                if (e.popType) {
+                    return pops(e.popType, e.range.randomValue())
+                } else if (e.resourceType) {
+                    return resources(e.resourceType, e.range.randomValue())
+                } else {
+                    throw "Unknown reward type"
+                }
+            })
         }
     }
 
