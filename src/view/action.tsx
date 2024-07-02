@@ -4,11 +4,7 @@ import { GameModel } from '../model/gameModel';
 import { Action } from '../model/action'
 import { Amount } from '../model/amount';
 import { Colors, FontSizes, Icons, DividerColors } from './icons';
-
-type ActionCost = {
-  cost: Amount
-  canPay: boolean
-}
+import { AmountWithColorProps, Amounts } from './amount';
 
 interface ActionParms {
   title?: string,
@@ -18,17 +14,16 @@ interface ActionParms {
 
 export interface ActionProps extends ActionParms {
   action: () => void
-  costs: ActionCost[]
+  costs: AmountWithColorProps[]
   timeout?: number
   timeoutLeft?: number
   disabled?: any
 }
 
-
 export function propsForAction(model: GameModel, a: Action, params: ActionParms = {}): ActionProps {
   return {
     action: () => a.onAction(model),
-    costs: a.costs.map(c => ({cost: c, canPay: model.canPay(c)})),
+    costs: a.costs.map(c => ({...c, color: model.canPay(c) ? Colors.default: Colors.UnsatisfiableCost})),
     timeout: a.timeout, 
     timeoutLeft: a.timeoutLeft,
     disabled: a.disabled(model),
@@ -112,7 +107,7 @@ export const ActionButton = (a: ActionProps) => <ActionButtonInner {...a}>
     alignItems: "center", 
     gap: 4}}>
     <div>{a.buttonLabel || a.title}</div>
-    <ActionCostRow costs={a.costs}/>
+    <Amounts items={a.costs}/>
  </div>
 </ActionButtonInner>
 
@@ -131,23 +126,6 @@ export const SmallIconButton = (a: ActionProps) => <div style={{
     
   </ActionButtonInner>
 </div>
-
-export const ActionCostRow = (p: {costs: ActionCost[]}) => <div style={{
-  display: 'flex',
-  gap: 4,
-  fontSize: FontSizes.small,
-}}>
-  {p.costs.map((c, idx) => <div key={idx} style={{
-      display: "flex",
-      color: c.canPay ? Colors.default : Colors.grayedOut,
-      gap: 2,
-    }}>
-      <div>{c.cost.count}</div>
-      <div style={{
-      }}><i className={Icons[c.cost.type]}/></div>
-    </div>)}
-</div>
-
 
 export const ActionRow = (p: ActionProps) => <div className="dottedDividers" style={{
   display: "flex",

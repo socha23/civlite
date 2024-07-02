@@ -1,6 +1,5 @@
 import { Colors } from "../view/icons"
 import { BattleMessages } from "../view/logMessages"
-import { Action, action } from "./action"
 import { Log } from "./log"
 import { PopType, popTypeDefinition } from "./pops"
 

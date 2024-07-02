@@ -1,11 +1,12 @@
 import React, { ReactNode } from 'react';
-import { FontSizes, Icons, BattleLabels, BattleLongDescription, Colors } from './icons';
+import { FontSizes, BattleLabels, BattleLongDescription, Colors } from './icons';
 import { WarType } from '../model/wars';
 import { War, WarState } from '../model/warModel';
 import { ActionButton, ActionProps, ActionRow2, propsForAction } from './action';
 import { GameModel } from '../model/gameModel';
 import { BattleProps, BattleView, battleProps } from './battle';
 import { Amount, ExpectedAmount, ExpectedPopAmount } from '../model/amount';
+import { Amounts } from './amount';
 
 export type WarProps = {
   expectedOpposition: ExpectedPopAmount[]
@@ -65,15 +66,7 @@ const ValueRow = (p: {description: string, items: (ExpectedAmount | Amount)[]}) 
   gap: 4,
 }}>
   <div>{p.description}</div>
-  <div style={{
-    display: "flex"
-  }}>
-    {p.items.map((i, idx) => <span key={idx} style={{
-    }}>
-      {"count" in i ? i.count : i.from + "-" + i.to}  
-      <i className={Icons[i.type]}/>
-    </span>)}
-  </div>
+  <Amounts items={p.items}/>
 </div>
 
 

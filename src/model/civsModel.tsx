@@ -1,6 +1,4 @@
 import { Colors } from "../view/icons"
-import { Action, action } from "./action"
-import { War } from "./warModel"
 import { WarType } from "./wars"
 
 const DEFAULT_CIV_DEFINITION = {

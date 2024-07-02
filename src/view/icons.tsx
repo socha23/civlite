@@ -18,6 +18,7 @@ export const Colors = {
     OurArmy: "#080",
     EnemyArmy: "#800",
     ActiveWar: "#800",
+    UnsatisfiableCost: "#800",
 }
 
 
