@@ -1,5 +1,5 @@
 import { GameModelInterface } from "./action"
-import { Amount } from "./costs"
+import { Amount } from "./amount"
 import { ResourceType } from "./resources"
 import { PopulationModel } from "./popModel"
 import { ResourcesModel } from "./resourcesModel"

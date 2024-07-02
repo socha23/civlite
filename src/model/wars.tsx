@@ -1,4 +1,4 @@
-import { ItemType } from "./costs"
+import { ItemType } from "./amount"
 import { PopType } from "./pops"
 import { ResourceType } from "./resources"
 

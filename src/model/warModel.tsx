@@ -2,13 +2,12 @@ import { BattleLabels, Labels } from "../view/icons"
 import { Action, action } from "./action"
 import { Battle, BattleState, Combatant, Force } from "./battleModel"
 import { CivModel } from "./civsModel"
-import { Amount, ItemType, isPopAmount, isResourceAmount, pops, resources } from "./costs"
+import { Amount, ExpectedAmount, ExpectedPopAmount, ItemType, isPopAmount, isResourceAmount, pops, resources, rollActualAmount } from "./amount"
 import { GameModel } from "./gameModel"
 import { ArmyModel } from "./militaryModel"
 import { PopType } from "./pops"
 import { ResourceType } from "./resources"
 import { addTickListener } from "./timer"
-import { InclusiveIntRange } from "./utils"
 import { WarType, warTypeDefinition } from "./wars"
 
 
@@ -25,81 +24,52 @@ export enum WarState {
     Completed = 8,
 }
 
-export type ExpectedOpposition = {
-    type: PopType
-    range: InclusiveIntRange
-}
-
-function expectedOpposition(goal: WarType, civ: CivModel): ExpectedOpposition[] {
+function expectedOpposition(goal: WarType, civ: CivModel): ExpectedPopAmount[] {
     const popTypes = [PopType.Brave]
     const warDef = warTypeDefinition(goal)
     return popTypes.map(t => {
         return {
             type: t,
-            range: new InclusiveIntRange(civ.strength * warDef.againstStrengthFrom, civ.strength * warDef.againstStrengthTo)    
+            from: civ.strength * warDef.againstStrengthFrom,
+            to: civ.strength * warDef.againstStrengthTo,
         }
     })
 }
 
-export type ExpectedRewards = {
-    type: ItemType 
-    range: InclusiveIntRange
-}
-
-function expectedRewards(goal: WarType, civ: CivModel) {
+function expectedRewards(goal: WarType, civ: CivModel): ExpectedAmount[] {
     const warDef = warTypeDefinition(goal)
     return warDef.rewards.map(t => {
         return {
             type: t.type,
-            range: new InclusiveIntRange(civ.population * t.from, civ.population * t.to)     
+            from: civ.population * t.from,
+            to:  civ.population * t.to
         }
     })
 }
 
-export class War {
-    currentBattle?: Battle
-    goal: WarType
 
+
+
+
+export class War {
     model: GameModel
+
+    goal: WarType
     army: ArmyModel
     against: CivModel
-
     state: WarState = WarState.BeforeMarch
+    attackerWon = false
 
-    expectedOpposition: ExpectedOpposition[]
+    expectedOpposition: ExpectedPopAmount[]
     opposingForce: Force
 
-    expectedRewards: ExpectedRewards[]
+    expectedRewards: ExpectedAmount[]
     rewards: Amount[] = []
 
-    marchAction: Action
-    cancelAction: Action
+    currentBattle?: Battle
 
-    fightAction: Action
-    retreatAction: Action
-    marchBackHomeAction: Action
-
-    completeAction: Action
-
-    attackerWon = false
-    attackerLost = false
-
-    constructor(goal: WarType, model: GameModel, army: ArmyModel, against: CivModel) {
-        this.goal = goal
-        this.model = model
-        this.army = army
-        this.against = against
-
-        this.expectedOpposition = expectedOpposition(goal, against)
-        this.opposingForce = new Force(
-            BattleLabels.EnemyLabel, 
-            this.against.color, 
-            this.expectedOpposition.map(e => pops(e.type, e.range.randomValue()))
-        )
-
-        this.expectedRewards = expectedRewards(goal, against)
-        
-        this.marchAction = action({
+    actions = {
+        march: action({
             action: () => {
                 this.state = WarState.March
                 this.army.engagedIn = this
@@ -112,15 +82,13 @@ export class War {
                 this.startBattle()
             },
             timeout: 1, 
-        })
-
-        this.cancelAction = action({
+        }),
+        cancel: action({
             action: () => {
                 this.state = WarState.Cancelled
             },
-        })
-
-        this.fightAction = action({
+        }),
+        fight: action({
             action: () => {
                 if (this.currentBattle) {
                     this.currentBattle.nextRound()
@@ -129,8 +97,8 @@ export class War {
             disabled: () => {
                 return this.state !== WarState.Battle
             },
-        })   
-        this.retreatAction = action({
+        }),
+        retreat: action({
             action: () => {
                 this.state = WarState.Retreat
             },
@@ -141,8 +109,8 @@ export class War {
                 this.state = WarState.Returned
             },
             timeout: 1, 
-        })   
-        this.marchBackHomeAction = action({
+        }),
+        marchBackHome: action({
             action: () => {
                 this.state = WarState.MarchBackHome
             },
@@ -153,32 +121,38 @@ export class War {
                 this.state = WarState.Returned
             },
             timeout: 1, 
-        })   
-        this.completeAction = action({
+        }),
+        complete: action({
             action: () => {
                 this.state = WarState.Completed
                 this.onWarCompleted()
             },
-        })   
+        }),
+    }
 
+    constructor(goal: WarType, model: GameModel, army: ArmyModel, against: CivModel) {
+        this.goal = goal
+        this.model = model
+        this.army = army
+        this.against = against
+
+        this.expectedOpposition = expectedOpposition(goal, against)
+        this.opposingForce = new Force(
+            BattleLabels.EnemyLabel, 
+            this.against.color, 
+            this.expectedOpposition.map(e => rollActualAmount(e))
+        )
+
+        this.expectedRewards = expectedRewards(goal, against)
     }
 
     onBattleCompleted(attackerWon: boolean) {
-        this.attackerWon = attackerWon
-        this.attackerLost = !attackerWon
-
-        this.state = attackerWon ? WarState.AfterBattleAttackerWon : WarState.AfterBattleAttackerLost
-
         if (attackerWon) {
-            this.rewards = this.expectedRewards.map(e => {
-                if (isPopAmount(e)) {
-                    return pops(e.type, e.range.randomValue())
-                } else if (isResourceAmount(e)) {
-                    return resources(e.type, e.range.randomValue())
-                } else {
-                    throw "Unknown reward type"
-                }
-            })
+            this.attackerWon = attackerWon
+            this.state = WarState.AfterBattleAttackerWon
+            this.rewards = this.expectedRewards.map(e => rollActualAmount(e))
+        } else {
+            this.state = WarState.AfterBattleAttackerLost
         }
     }
 
@@ -197,40 +171,41 @@ export class War {
     }
 }
 
-export class WarModel {
-    
+
+
+
+
+export class WarModel {    
     _wars: War[] = []
     model: GameModel
 
     constructor(model: GameModel) {
-        addTickListener(this)
         this.model = model
+        addTickListener(this)
     }
 
     ongoingWarsAgainst(c: CivModel) {
-        return this._wars
-            .filter(w => w.against === c)
+        return this._wars.filter(w => w.against === c)
         }
 
     ongoingWarsFoughtBy(a: ArmyModel) {
-        return this._wars
-            .filter(w => w.army === a)
+        return this._wars.filter(w => w.army === a)
     }
 
     startWar(goal: WarType, army: ArmyModel, against: CivModel) {
-        const w = new War(
-            goal,
-            this.model,
-            army,
-            against
-        )
-        this._wars.push(w)
+        this.cancelUnstartedWars()
+        this._wars.push(new War(goal, this.model, army, against))
     }
 
     onTick(deltaS: number) {
+        this.cleanupCompletedAndCancelledWars()
+    }
+
+    cleanupCompletedAndCancelledWars() {
         const activeWars: War[] = [] 
         this._wars.forEach(w => {
             if (w.state === WarState.Completed || w.state == WarState.Cancelled) {
+                // war needs cleanup
                 w.army.engagedIn = undefined
             } else {
                 activeWars.push(w)
@@ -249,16 +224,13 @@ export class WarModel {
 
     startWarAction(goal: WarType, army: ArmyModel, against: CivModel) {
         return action({
-            action: () => {
-                this.cancelUnstartedWars()
-                this.startWar(goal, army, against)
-            },
+            action: () => {this.startWar(goal, army, against)},
             disabled: () => {
                 return this.ongoingWarsFoughtBy(army)
-                    .filter(w => w.state > WarState.BeforeMarch)
+                    //.filter(w => w.state > WarState.BeforeMarch)
                     .length > 0
                 || this.ongoingWarsAgainst(against)
-                    .filter(w => w.state > WarState.BeforeMarch)
+                    //.filter(w => w.state > WarState.BeforeMarch)
                     .length > 0
             },
         })

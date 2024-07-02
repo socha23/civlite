@@ -2,7 +2,7 @@ import { ResourceType,  } from "./resources"
 import { Action, action } from "./action"
 import { sum } from './utils'
 import { popTypeDefinition, PopType } from "./pops"
-import { Amount, ResourceAmount, isPopAmount, isPopType, isResourceAmount, resources } from "./costs"
+import { Amount, ResourceAmount, isPopAmount, isPopType, isResourceAmount, resources } from "./amount"
 import { Assignable } from "./assignable"
 
 export class PopModel {

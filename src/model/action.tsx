@@ -1,5 +1,5 @@
 import { addTickListener } from "./timer"
-import { Amount } from "./costs"
+import { Amount } from "./amount"
 
 export type ActionParams = {
     timeout?: number

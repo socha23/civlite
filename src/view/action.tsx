@@ -2,7 +2,7 @@ import React, { PropsWithChildren, ReactNode } from 'react';
 
 import { GameModel } from '../model/gameModel';
 import { Action } from '../model/action'
-import { Amount } from '../model/costs';
+import { Amount } from '../model/amount';
 import { Colors, FontSizes, Icons, DividerColors } from './icons';
 
 type ActionCost = {

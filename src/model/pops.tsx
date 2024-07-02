@@ -1,5 +1,5 @@
 import { ResourceType } from "./resources"
-import { assignResources, pops, resources } from "./costs"
+import { assignResources, pops, resources } from "./amount"
 
 export enum PopType {
   Idler = "Idler", 

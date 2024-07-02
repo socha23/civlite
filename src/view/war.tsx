@@ -1,38 +1,28 @@
 import React, { ReactNode } from 'react';
-import { FontSizes, Icons, Labels, BattleLabels, BattleLongDescription, Colors } from './icons';
+import { FontSizes, Icons, BattleLabels, BattleLongDescription, Colors } from './icons';
 import { WarType } from '../model/wars';
 import { War, WarState } from '../model/warModel';
 import { ActionButton, ActionProps, ActionRow2, propsForAction } from './action';
 import { GameModel } from '../model/gameModel';
-import { PopType } from '../model/pops';
-import { InclusiveIntRange } from '../model/utils';
-import { Battle } from '../model/battleModel';
-import { ResourceType } from '../model/resources';
 import { BattleProps, BattleView, battleProps } from './battle';
-import { Amount, ItemType } from '../model/costs';
-
-type ExpectedProps = {
-  type: ItemType
-  range: InclusiveIntRange
-}
+import { Amount, ExpectedAmount, ExpectedPopAmount } from '../model/amount';
 
 export type WarProps = {
-  expectedOpposition: ExpectedProps[]
-  expectedRewards: ExpectedProps[]
+  expectedOpposition: ExpectedPopAmount[]
+  expectedRewards: ExpectedAmount[]
   rewards: Amount[]
   goal: WarType
   state: WarState
-  
-  marchAction: ActionProps
-  cancelAction: ActionProps
-  
-  fightAction: ActionProps
-  retreatAction: ActionProps
-  marchBackHomeAction: ActionProps
-  
-  completeAction: ActionProps
 
-
+  actions: {
+    march: ActionProps
+    cancel: ActionProps
+    fight: ActionProps
+    retreat: ActionProps
+    marchBackHome: ActionProps
+    complete: ActionProps 
+  }
+  
   armyTitle: string
   againstTitle: string
   againstColor: string 
@@ -50,67 +40,40 @@ export function warProps(model: GameModel, war: War): WarProps {
     armyTitle: war.army.title,
     againstTitle: war.against.title,
     againstColor: "#000",
-    marchAction: propsForAction(model, war.marchAction, {
-      title: BattleLabels.March,
-    }),
-    cancelAction: propsForAction(model, war.cancelAction, {
-      title: BattleLabels.Cancel,
-    }),
-    completeAction: propsForAction(model, war.completeAction, {
-      title: BattleLabels.Complete,
-    }),
-    fightAction: propsForAction(model, war.fightAction, {
-      title: BattleLabels.Fight,
-    }),
-    retreatAction: propsForAction(model, war.retreatAction, {
-      title: BattleLabels.Retreat,
-    }),
-    marchBackHomeAction: propsForAction(model, war.marchBackHomeAction, {
-      title: BattleLabels.MarchBackHome,
-    }),
+    actions: {
+      march: propsForAction(model, war.actions.march, {title: BattleLabels.March}),
+      cancel: propsForAction(model, war.actions.cancel, {title: BattleLabels.Cancel}),
+      fight: propsForAction(model, war.actions.fight, {title: BattleLabels.Fight}),
+      retreat: propsForAction(model, war.actions.retreat, {title: BattleLabels.Retreat}),
+      marchBackHome: propsForAction(model, war.actions.marchBackHome, {title: BattleLabels.MarchBackHome}),
+      complete: propsForAction(model, war.actions.complete, {title: BattleLabels.Complete}),
     }
+  }
 }
-
-
-const ExpectedRow = (p: {description: string, items: ExpectedProps[]}) => <div style={{
-  display: "flex",
-  alignItems: "center",
-  gap: 4,
-}}>
-  <div>{p.description}</div>
-  <div style={{
-    display: "flex"
-  }}>
-    {p.items.map((i, idx) => <span key={idx} style={{
-    }}>
-      {i.range.from}-{i.range.to}  
-      <i className={Icons[i.type]}/>
-    </span>)}
-  </div>
-</div>
-
-const ValueRow = (p: {description: string, items: Amount[]}) => <div style={{
-  display: "flex",
-  alignItems: "center",
-  gap: 4,
-}}>
-  <div>{p.description}</div>
-  <div style={{
-    display: "flex"
-  }}>
-    {p.items.map((i, idx) => <span key={idx} style={{
-    }}>
-      {i.count}  
-      <i className={Icons[i.type]}/>
-    </span>)}
-  </div>
-</div>
 
 const WarTitle = (p: WarProps) => <div style={{
   fontSize: FontSizes.normal,
   textDecoration: "underline",
 }}>
   <BattleLabels.CivBoxTitle goal={p.goal} army={p.armyTitle}/>
+</div>
+
+
+const ValueRow = (p: {description: string, items: (ExpectedAmount | Amount)[]}) => <div style={{
+  display: "flex",
+  alignItems: "center",
+  gap: 4,
+}}>
+  <div>{p.description}</div>
+  <div style={{
+    display: "flex"
+  }}>
+    {p.items.map((i, idx) => <span key={idx} style={{
+    }}>
+      {"count" in i ? i.count : i.from + "-" + i.to}  
+      <i className={Icons[i.type]}/>
+    </span>)}
+  </div>
 </div>
 
 
@@ -124,13 +87,13 @@ const BeforeBattle = (p: WarProps) => <div style={{
   }}>
       <BattleLongDescription {...p}/>
   </div>
-  <ExpectedRow description={BattleLabels.ExpectedOpposition} items={p.expectedOpposition}/>
+  <ValueRow description={BattleLabels.ExpectedOpposition} items={p.expectedOpposition}/>
   {
     (p.expectedRewards.length > 0) && 
-      <ExpectedRow description={BattleLabels.ExpectedReward} items={p.expectedRewards}/>
+      <ValueRow description={BattleLabels.ExpectedReward} items={p.expectedRewards}/>
   }
   <div>
-    <BattleLabels.MarchTime time={p.marchAction.timeoutLeft || p.marchAction.timeout || 0}/>
+    <BattleLabels.MarchTime time={p.actions.march.timeoutLeft || p.actions.march.timeout || 0}/>
   </div>
   <div style={{
     marginTop: 4,
@@ -141,11 +104,11 @@ const BeforeBattle = (p: WarProps) => <div style={{
     <div style={{
       width: 120,
     }}>
-      <ActionButton {...p.marchAction}/>
+      <ActionButton {...p.actions.march}/>
     </div>
     {(p.state === WarState.BeforeMarch) && 
       <div style={{width: 100}}>  
-        <ActionButton {...p.cancelAction}/>
+        <ActionButton {...p.actions.cancel}/>
       </div>
     }
   </div>
@@ -157,13 +120,13 @@ const DuringBattle = (p: {war: WarProps, battle: BattleProps}) => <div style={{
   flexDirection: "column"
 }}>
   {p.war.state === WarState.Battle && 
-    <ActionRow2 {...p.war.fightAction}><BattleLabels.ArmyInBattle army={p.war.armyTitle}/></ActionRow2>
+    <ActionRow2 {...p.war.actions.fight}><BattleLabels.ArmyInBattle army={p.war.armyTitle}/></ActionRow2>
   }
   {p.war.state === WarState.AfterBattleAttackerLost && 
-    <ActionRow2 {...p.war.retreatAction}><BattleLabels.ArmyLost army={p.war.armyTitle}/></ActionRow2>
+    <ActionRow2 {...p.war.actions.retreat}><BattleLabels.ArmyLost army={p.war.armyTitle}/></ActionRow2>
   }
   {p.war.state === WarState.AfterBattleAttackerWon && 
-    <ActionRow2 {...p.war.marchBackHomeAction}><BattleLabels.ArmyVictorius army={p.war.armyTitle}/></ActionRow2>
+    <ActionRow2 {...p.war.actions.marchBackHome}><BattleLabels.ArmyVictorius army={p.war.armyTitle}/></ActionRow2>
   }
   <BattleView {...p.battle}/>
 </div>
@@ -202,16 +165,12 @@ export const WarView = (p: WarProps) => <div style={{
     <DuringBattle battle={p.currentBattle} war={p}/>
   }
   {p.state === WarState.Retreat && 
-    <AfterBattle message={<BattleLabels.ArmyRetreating army={p.armyTitle}/>} action={p.retreatAction} war={p}/>
+    <AfterBattle message={<BattleLabels.ArmyRetreating army={p.armyTitle}/>} action={p.actions.retreat} war={p}/>
   }
   {p.state === WarState.MarchBackHome && 
-    <AfterBattle message={<BattleLabels.ArmyMarchingBackHome army={p.armyTitle}/>} action={p.marchBackHomeAction} war={p}/>
+    <AfterBattle message={<BattleLabels.ArmyMarchingBackHome army={p.armyTitle}/>} action={p.actions.marchBackHome} war={p}/>
   }
   {p.state === WarState.Returned && 
-    <AfterBattle message={<BattleLabels.ArmyReturned army={p.armyTitle}/>} action={p.completeAction} war={p}/>
+    <AfterBattle message={<BattleLabels.ArmyReturned army={p.armyTitle}/>} action={p.actions.complete} war={p}/>
   }
-
 </div>
-
-
-

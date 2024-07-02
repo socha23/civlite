@@ -1,6 +1,6 @@
 import { Action, action } from "./action"
 import { ResourceType, resourceDefinition } from "./resources"
-import { Amount, ResourceAmount, isResourceAmount, isResourceType, resources } from "./costs"
+import { Amount, ResourceAmount, isResourceAmount, isResourceType, resources } from "./amount"
 
 class ResourceModel {
     type: ResourceType

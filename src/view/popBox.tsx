@@ -5,7 +5,7 @@ import { ActionProps, ActionButton, propsForAction } from './action';
 import { PopType, isAssignable } from '../model/pops';
 import { FontSizes, TrendColors, DividerColors, Icons, Colors, Labels } from './icons';
 import { formatNumber } from '../model/utils';
-import { ResourceAmount } from '../model/costs';
+import { ResourceAmount } from '../model/amount';
 
 export type PopBoxProps = {
   popType: PopType,
