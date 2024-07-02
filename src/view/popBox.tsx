@@ -4,8 +4,8 @@ import { GameModel } from '../model/gameModel'
 import { ActionProps, ActionButton, propsForAction } from './action';
 import { PopType, isAssignable } from '../model/pops';
 import { FontSizes, TrendColors, DividerColors, Icons, Colors, Labels } from './icons';
-import { Resources } from '../model/costs';
 import { formatNumber } from '../model/utils';
+import { ResourceAmount } from '../model/costs';
 
 export type PopBoxProps = {
   popType: PopType,
@@ -14,8 +14,8 @@ export type PopBoxProps = {
   unassignedCount: number,
   buyAction: ActionProps,
   sellAction: ActionProps,
-  resourceBalance: Resources[], 
-  singlePopBalance: Resources[],
+  resourceBalance: ResourceAmount[], 
+  singlePopBalance: ResourceAmount[],
 }
 
 export function popBoxProps(model: GameModel, type: PopType): PopBoxProps {
@@ -32,7 +32,7 @@ export function popBoxProps(model: GameModel, type: PopType): PopBoxProps {
   }
 }
 
-export const ResourcesList = (p: {items: Resources[], caption: string, color?: string}) => <div style={{
+export const ResourcesList = (p: {items: ResourceAmount[], caption: string, color?: string}) => <div style={{
   display: "flex",
   gap: 4,
   fontSize: FontSizes.small,
@@ -43,7 +43,7 @@ export const ResourcesList = (p: {items: Resources[], caption: string, color?: s
     color: p.color || (i.count > 0 ? TrendColors.positive : TrendColors.negative)
   }}>
     <div>{(i.count > 0 ? "+" : "") + formatNumber(i.count)}</div>
-    <div><i className={Icons[i.resourceType]}/></div>
+    <div><i className={Icons[i.type]}/></div>
   </div>)}
   <div>{p.items.length > 0 && p.caption}</div>
 </div>

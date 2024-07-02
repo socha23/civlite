@@ -9,11 +9,10 @@ import { InclusiveIntRange } from '../model/utils';
 import { Battle } from '../model/battleModel';
 import { ResourceType } from '../model/resources';
 import { BattleProps, BattleView, battleProps } from './battle';
-import { Amount, amountValueType } from '../model/costs';
+import { Amount, ItemType } from '../model/costs';
 
 type ExpectedProps = {
-  popType?: PopType 
-  resourceType?: ResourceType
+  type: ItemType
   range: InclusiveIntRange
 }
 
@@ -85,7 +84,7 @@ const ExpectedRow = (p: {description: string, items: ExpectedProps[]}) => <div s
     {p.items.map((i, idx) => <span key={idx} style={{
     }}>
       {i.range.from}-{i.range.to}  
-      <i className={Icons[amountValueType(i)]}/>
+      <i className={Icons[i.type]}/>
     </span>)}
   </div>
 </div>
@@ -102,7 +101,7 @@ const ValueRow = (p: {description: string, items: Amount[]}) => <div style={{
     {p.items.map((i, idx) => <span key={idx} style={{
     }}>
       {i.count}  
-      <i className={Icons[amountValueType(i)]}/>
+      <i className={Icons[i.type]}/>
     </span>)}
   </div>
 </div>

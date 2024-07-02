@@ -2,7 +2,7 @@ import { BattleLabels, Labels } from "../view/icons"
 import { Action, action } from "./action"
 import { Battle, BattleState, Combatant, Force } from "./battleModel"
 import { CivModel } from "./civsModel"
-import { Amount, pops, resources } from "./costs"
+import { Amount, ItemType, isPopAmount, isResourceAmount, pops, resources } from "./costs"
 import { GameModel } from "./gameModel"
 import { ArmyModel } from "./militaryModel"
 import { PopType } from "./pops"
@@ -26,7 +26,7 @@ export enum WarState {
 }
 
 export type ExpectedOpposition = {
-    popType: PopType
+    type: PopType
     range: InclusiveIntRange
 }
 
@@ -35,15 +35,14 @@ function expectedOpposition(goal: WarType, civ: CivModel): ExpectedOpposition[] 
     const warDef = warTypeDefinition(goal)
     return popTypes.map(t => {
         return {
-            popType: t,
+            type: t,
             range: new InclusiveIntRange(civ.strength * warDef.againstStrengthFrom, civ.strength * warDef.againstStrengthTo)    
         }
     })
 }
 
 export type ExpectedRewards = {
-    popType?: PopType 
-    resourceType?: ResourceType
+    type: ItemType 
     range: InclusiveIntRange
 }
 
@@ -51,9 +50,7 @@ function expectedRewards(goal: WarType, civ: CivModel) {
     const warDef = warTypeDefinition(goal)
     return warDef.rewards.map(t => {
         return {
-            type: t.resourceType || t.popType,
-            popType: t.popType,
-            resourceType: t.resourceType,
+            type: t.type,
             range: new InclusiveIntRange(civ.population * t.from, civ.population * t.to)     
         }
     })
@@ -97,7 +94,7 @@ export class War {
         this.opposingForce = new Force(
             BattleLabels.EnemyLabel, 
             this.against.color, 
-            this.expectedOpposition.map(e => pops(e.popType, e.range.randomValue()))
+            this.expectedOpposition.map(e => pops(e.type, e.range.randomValue()))
         )
 
         this.expectedRewards = expectedRewards(goal, against)
@@ -174,10 +171,10 @@ export class War {
 
         if (attackerWon) {
             this.rewards = this.expectedRewards.map(e => {
-                if (e.popType) {
-                    return pops(e.popType, e.range.randomValue())
-                } else if (e.resourceType) {
-                    return resources(e.resourceType, e.range.randomValue())
+                if (isPopAmount(e)) {
+                    return pops(e.type, e.range.randomValue())
+                } else if (isResourceAmount(e)) {
+                    return resources(e.type, e.range.randomValue())
                 } else {
                     throw "Unknown reward type"
                 }

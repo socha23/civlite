@@ -55,10 +55,10 @@ export class GameModel implements GameModelInterface {
   applyConsumptionAndProduction(deltaS: number) {
     this.population.pops.forEach(pop => {
       pop.consumption.forEach(res => {
-        this.resources.resource(res.resourceType).sub(res.count * deltaS)
+        this.resources.resource(res.type).sub(res.count * deltaS)
       })
       pop.production.forEach(res => {
-        this.resources.resource(res.resourceType).add(res.count * deltaS)
+        this.resources.resource(res.type).add(res.count * deltaS)
       })
     })
   }

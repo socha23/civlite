@@ -2,7 +2,7 @@ import React, { PropsWithChildren, ReactNode } from 'react';
 
 import { GameModel } from '../model/gameModel';
 import { Action } from '../model/action'
-import { Amount, amountValueType } from '../model/costs';
+import { Amount } from '../model/costs';
 import { Colors, FontSizes, Icons, DividerColors } from './icons';
 
 type ActionCost = {
@@ -144,7 +144,7 @@ export const ActionCostRow = (p: {costs: ActionCost[]}) => <div style={{
     }}>
       <div>{c.cost.count}</div>
       <div style={{
-      }}><i className={Icons[amountValueType(c.cost)]}/></div>
+      }}><i className={Icons[c.cost.type]}/></div>
     </div>)}
 </div>
 

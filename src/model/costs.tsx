@@ -1,57 +1,61 @@
 import { PopType } from "./pops"
 import { ResourceType } from "./resources"
 
+export type ItemType = PopType | ResourceType
+
+export function isPopType(p: ItemType): p is PopType {
+  return Object.keys(PopType).includes(p)
+}
+
+export function isResourceType(p: ItemType): p is ResourceType {
+  return Object.keys(ResourceType).includes(p)
+}
+
 export interface Amount {
-  popType?: PopType 
-  resourceType?: ResourceType
+  type: ItemType 
   assignment: boolean
   count: number
 }
 
-export function amountValueType(a: {popType?: PopType, resourceType?: ResourceType}) : PopType | ResourceType {
-  if (a.popType) {
-    return a.popType
-  } else if (a.resourceType) {
-    return a.resourceType
-  } else {
-    console.log(a)
-    throw `Illegal amount type ${a}`
+/////////////////
+
+export interface PopAmount extends Amount {
+  type: PopType 
+}
+
+export function isPopAmount(a: {type: ItemType}): a is PopAmount {
+  return isPopType(a.type)
+}
+
+export function pops(type: PopType, count: number): PopAmount {
+  return {
+    type: type,
+    count: count,
+    assignment: false
   }
 }
 
+export interface ResourceAmount extends Amount {
+  type: ResourceType 
+}
 
-export class Pops implements Amount {
-  popType: PopType
-  count: number
-  assignment = false
-
-  constructor(type: PopType, count: number) {
-    this.popType = type
-    this.count = count
-  } 
+export function isResourceAmount(a: {type: ItemType}): a is ResourceAmount {
+  return isResourceType(a.type)
 }
 
 
-export function pops(type: PopType, count: number) {
-  return new Pops(type, count)
-}
-
-export class Resources implements Amount {
-  resourceType: ResourceType
-  count: number
-  assignment: boolean
-
-  constructor(type: ResourceType, count: number, assignment: boolean) {
-      this.resourceType = type
-      this.count = count
-      this.assignment = assignment
+export function resources(type: ResourceType, count: number): ResourceAmount {
+  return {
+    type: type,
+    count: count,
+    assignment: false
   }
-}
-
-export function resources(type: ResourceType, count: number) {
-    return new Resources(type, count, false)
 }
 
 export function assignResources(type: ResourceType, count: number) {
-  return new Resources(type, count, true)
+  return {
+    type: type,
+    count: count,
+    assignment: true
+  }
 }

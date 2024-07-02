@@ -1,6 +1,6 @@
 import { Action, action } from "./action"
 import { ResourceType, resourceDefinition } from "./resources"
-import { Amount, Resources, resources } from "./costs"
+import { Amount, ResourceAmount, isResourceAmount, isResourceType, resources } from "./costs"
 
 class ResourceModel {
     type: ResourceType
@@ -93,21 +93,21 @@ export class ResourcesModel {
     }
 
     filterUnsatisfiableCosts(costs: Amount[]): Amount[] {
-        return costs.filter(c => (c instanceof Resources) && !this.resource(c.resourceType).canPay(c))
+        return costs.filter(c => isResourceAmount(c) && !this.resource(c.type).canPay(c))
     }
 
     pay(costs: Amount[]) {
         costs.forEach(c => {
-            if (c.resourceType) {
-                this.resource(c.resourceType).pay(c)
+            if (isResourceType(c.type)) {
+                this.resource(c.type).pay(c)
             }
         })
     }
 
     gain(values: Amount[]) {
         values.forEach(c => {
-            if (c.resourceType) {
-                this.resource(c.resourceType).gain(c)
+            if (isResourceType(c.type)) {
+                this.resource(c.type).gain(c)
             }
         })
     }

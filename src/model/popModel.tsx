@@ -2,7 +2,7 @@ import { ResourceType,  } from "./resources"
 import { Action, action } from "./action"
 import { sum } from './utils'
 import { popTypeDefinition, PopType } from "./pops"
-import { Amount, Pops, Resources, resources } from "./costs"
+import { Amount, ResourceAmount, isPopAmount, isPopType, isResourceAmount, resources } from "./costs"
 import { Assignable } from "./assignable"
 
 export class PopModel {
@@ -38,33 +38,34 @@ export class PopModel {
   }
 
   get singlePopSellValue(): Amount[] {
-    return this.definition.buyCost.filter(a => a instanceof Pops || (a instanceof Resources && a.assignment))
+    return this.definition.buyCost.filter(
+      a =>isPopAmount(a) || (isResourceAmount(a) && a.assignment))
   }
 
-  get singlePopProduction(): Resources[] {
-    return this.definition.production.map(r => resources(r.resourceType, r.count))
+  get singlePopProduction(): ResourceAmount[] {
+    return this.definition.production.map(r => resources(r.type, r.count))
   }
 
-  get production(): Resources[] {
-    return this.singlePopProduction.map(r => resources(r.resourceType, r.count * this.count))
+  get production(): ResourceAmount[] {
+    return this.singlePopProduction.map(r => resources(r.type, r.count * this.count))
   }
 
-  get singlePopConsumption(): Resources[] {
-    return this.definition.consumption.map(r => resources(r.resourceType, r.count))
+  get singlePopConsumption(): ResourceAmount[] {
+    return this.definition.consumption.map(r => resources(r.type, r.count))
   }
 
-  get consumption(): Resources[] {
-    return this.singlePopConsumption.map(r => resources(r.resourceType, r.count * this.count))
+  get consumption(): ResourceAmount[] {
+    return this.singlePopConsumption.map(r => resources(r.type, r.count * this.count))
   }
 
-  get singlePopBalance(): Resources[] {
-    return this.singlePopConsumption.map(r => resources(r.resourceType, -r.count))
+  get singlePopBalance(): ResourceAmount[] {
+    return this.singlePopConsumption.map(r => resources(r.type, -r.count))
     .concat(this.singlePopProduction)
     .filter(c => c.count !== 0)
   }
 
-  get resourceBalance(): Resources[] {
-    return this.consumption.map(r => resources(r.resourceType, -r.count))
+  get resourceBalance(): ResourceAmount[] {
+    return this.consumption.map(r => resources(r.type, -r.count))
     .concat(this.production)
     .filter(c => c.count !== 0)
   }
@@ -145,36 +146,36 @@ export class PopulationModel {
   }
 
   filterUnsatisfiableCosts(costs: Amount[]): Amount[] {
-    return costs.filter(c => (c instanceof Pops) &&
-        c.count > this.pop(c.popType).count
+    return costs.filter(c => (isPopType(c.type)) &&
+        c.count > this.pop(c.type).count
     )
   }
 
   onConsume(costs: Amount[]) {
     costs.forEach(c => {
-        if (c instanceof Pops) {
-            this.pop(c.popType).decCount(c.count)
+        if (isPopAmount(c)) {
+            this.pop(c.type).decCount(c.count)
         }
     })
   }
 
   onProduce(costs: Amount[]) {
     costs.forEach(c => {
-        if (c instanceof Pops) {
-            this.pop(c.popType).incCount(c.count)
+        if (isPopAmount(c)) {
+            this.pop(c.type).incCount(c.count)
         }
     })
   }
 
   production(resourceType: ResourceType): number {
     return sum(this.pops, pop =>
-      sum(pop.production.filter(p => p.resourceType === resourceType), r => r.count)
+      sum(pop.production.filter(p => p.type === resourceType), r => r.count)
     )
   }
 
   consumption(resourceType: ResourceType): number {
     return sum(this.pops, pop =>
-      sum(pop.consumption.filter(p => p.resourceType === resourceType), r => r.count)
+      sum(pop.consumption.filter(p => p.type === resourceType), r => r.count)
     )
   }
 
