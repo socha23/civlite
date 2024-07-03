@@ -41,7 +41,6 @@ export class GameModel implements GameModelInterface {
     this.tick += deltaS
     onTick(deltaS)
     this.applyConsumptionAndProduction(deltaS)
-    this.military.onTick(deltaS)
   }
 
   production(resourceType: ResourceType): number {

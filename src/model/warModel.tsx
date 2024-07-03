@@ -48,9 +48,6 @@ function expectedRewards(goal: WarType, civ: CivModel): ExpectedAmount[] {
 }
 
 
-
-
-
 export class War {
     model: GameModel
 
@@ -68,66 +65,13 @@ export class War {
 
     currentBattle?: Battle
 
-    actions = {
-        march: action({
-            action: () => {
-                this.state = WarState.March
-                this.army.engagedIn = this
-            },
-            disabled: () => {
-                return this.state !== WarState.BeforeMarch && this.state !== WarState.March
-            },
-            onComplete: () => {
-                this.state = WarState.Battle
-                this.startBattle()
-            },
-            timeout: 1, 
-        }),
-        cancel: action({
-            action: () => {
-                this.state = WarState.Cancelled
-            },
-        }),
-        fight: action({
-            action: () => {
-                if (this.currentBattle) {
-                    this.currentBattle.nextRound()
-                }
-            },
-            disabled: () => {
-                return this.state !== WarState.Battle
-            },
-        }),
-        retreat: action({
-            action: () => {
-                this.state = WarState.Retreat
-            },
-            disabled: () => {
-                return this.state !== WarState.AfterBattleAttackerLost && this.state !== WarState.Retreat
-            },
-            onComplete: () => {
-                this.state = WarState.Returned
-            },
-            timeout: 1, 
-        }),
-        marchBackHome: action({
-            action: () => {
-                this.state = WarState.MarchBackHome
-            },
-            disabled: () => {
-                return this.state !== WarState.AfterBattleAttackerWon && this.state !== WarState.MarchBackHome
-            },
-            onComplete: () => {
-                this.state = WarState.Returned
-            },
-            timeout: 1, 
-        }),
-        complete: action({
-            action: () => {
-                this.state = WarState.Completed
-                this.onWarCompleted()
-            },
-        }),
+    actions: {
+        march: Action,
+        cancel: Action,
+        fight: Action,
+        retreat: Action,
+        marchBackHome: Action,
+        complete: Action,
     }
 
     constructor(goal: WarType, model: GameModel, army: ArmyModel, against: CivModel) {
@@ -136,13 +80,73 @@ export class War {
         this.army = army
         this.against = against
 
+        this.actions = {
+            march: action({
+                action: () => {
+                    this.state = WarState.March
+                    this.army.engagedIn = this
+                },
+                disabled: () => {
+                    return this.state !== WarState.BeforeMarch && this.state !== WarState.March
+                },
+                onComplete: () => {
+                    this.state = WarState.Battle
+                    this.startBattle()
+                },
+                timeout: army.marchDuration,
+            }),
+            cancel: action({
+                action: () => {
+                    this.state = WarState.Cancelled
+                },
+            }),
+            fight: action({
+                action: () => {
+                    if (this.currentBattle) {
+                        this.currentBattle.nextRound()
+                    }
+                },
+                disabled: () => {
+                    return this.state !== WarState.Battle
+                },
+            }),
+            retreat: action({
+                action: () => {
+                    this.state = WarState.Retreat
+                },
+                disabled: () => {
+                    return this.state !== WarState.AfterBattleAttackerLost && this.state !== WarState.Retreat
+                },
+                onComplete: () => {
+                    this.state = WarState.Returned
+                },
+                timeout: army.marchDuration,
+            }),
+            marchBackHome: action({
+                action: () => {
+                    this.state = WarState.MarchBackHome
+                },
+                disabled: () => {
+                    return this.state !== WarState.AfterBattleAttackerWon && this.state !== WarState.MarchBackHome
+                },
+                onComplete: () => {
+                    this.state = WarState.Returned
+                },
+                timeout: army.marchDuration,
+            }),
+            complete: action({
+                action: () => {
+                    this.state = WarState.Completed
+                    this.onWarCompleted()
+                },
+            }),
+        }
         this.expectedOpposition = expectedOpposition(goal, against)
         this.opposingForce = new Force(
             BattleLabels.EnemyLabel, 
             this.against.color, 
             this.expectedOpposition.map(e => rollActualAmount(e))
         )
-
         this.expectedRewards = expectedRewards(goal, against)
     }
 
@@ -235,5 +239,4 @@ export class WarModel {
             },
         })
     }
-
 }

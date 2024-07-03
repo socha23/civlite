@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, ReactNode } from 'react';
+import React from 'react';
 
 import { Amount, ExpectedAmount } from '../model/amount';
 import { Colors, FontSizes, Icons } from './icons';

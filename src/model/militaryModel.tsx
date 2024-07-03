@@ -3,7 +3,7 @@ import { Action, action } from "./action"
 import { Assignable } from "./assignable"
 import { Force } from "./battleModel"
 import { PopulationModel, PopModel } from "./popModel"
-import { popTypesAssignableToArmy, PopType } from "./pops"
+import { popTypesAssignableToArmy, PopType, popTypeDefinition } from "./pops"
 import { War } from "./warModel"
 
 class ArmyElementModel {
@@ -35,6 +35,7 @@ class ArmyElementModel {
     }
 }
     
+
 export class ArmyModel extends Assignable {    
     title: string
     elements: ArmyElementModel[]
@@ -52,19 +53,35 @@ export class ArmyModel extends Assignable {
         return this.engagedIn !== undefined
     }
 
+    get popTypesPresentInArmy() {
+        return this.elements
+            .filter(e => this.count(e.type) > 0)
+            .map(e => e.type)
+    }
+
+    count(t: PopType) {
+        return this.population.pop(t).assignedCount(this)
+    }
+
+    get marchDuration() {
+        let result = 0
+        this.popTypesPresentInArmy.forEach(type => {
+            result = Math.max(result, popTypeDefinition(type).marchDuration)
+        })
+        return result
+    }
+
     force() {
         return new Force(
             this.title, Colors.OurArmy, this.elements
-            .filter(e => this.population.pop(e.type).assignedCount(this) > 0)
+            .filter(e => this.count(e.type) > 0)
             .map(e => ({
                 type: e.type,
-                count: this.population.pop(e.type).assignedCount(this)
+                count: this.count(e.type)
         })))
     }
-
-    onTick(deltaS: number) {
-    }
 }
+
 
 export default class MilitaryModel {
     armies: ArmyModel[]
@@ -73,12 +90,6 @@ export default class MilitaryModel {
     constructor(population: PopulationModel) {
         this.armies = [new ArmyModel(Labels.WarParty, population)]
         this.population = population
-    }
-
-    onTick(deltaS: number) {
-        this.armies.forEach(a => {
-            a.onTick(deltaS)
-        })
     }
 
     attackingArmy() {

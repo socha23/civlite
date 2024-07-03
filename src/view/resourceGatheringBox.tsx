@@ -11,7 +11,7 @@ export type ResourceGatheringProps = {
 
 export function resourceGatheringProps(model: GameModel): ResourceGatheringProps {
   
-  const gatherableResources = [ResourceType.Food, ResourceType.Labor]
+  const gatherableResources = [ResourceType.Food, ResourceType.Insight, ResourceType.Labor]
 
   return {
     actions: gatherableResources.map(t => propsForAction(

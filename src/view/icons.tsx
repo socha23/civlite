@@ -111,6 +111,8 @@ export const GatherActionLabels = {
     [ResourceType.Grassland]: 'Spawn Grasslands',
 }
 
+
+
 export const ArmyLabels = {
     ArmyAssignmentIdle: ({}) => <span>Idle</span>,
     ArmyAssignmentWar: (p: {goal: WarType, against: ReactNode}) => <span>{Labels[p.goal]} against {p.against}</span>,

@@ -26,6 +26,8 @@ const DEFAULT_POP_DEFINITION = {
   closeAttack: 1,
   rangedAttack: 0,
   hp: 1,
+
+  marchDuration: 10,
 }
 
 
@@ -89,6 +91,7 @@ const PopTypeDefinitions = {
     battleOrder: 10,
     closeAttack: 2,
     hp: 2,
+    marchDuration: 6,
   },
   [PopType.Slinger]: {
     initialCount: 5,
@@ -97,6 +100,7 @@ const PopTypeDefinitions = {
     closeAttack: 1,
     rangedAttack: 3,
     hp: 2,
+    marchDuration: 6,
   },
 }
 
