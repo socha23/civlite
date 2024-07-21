@@ -170,5 +170,17 @@ export const ActionRow2 = (p: PropsWithChildren<ActionProps>) => <div style={{
       <ActionButton {...p} title={p.title}/>
     </div>
   </div>
+
+
+
+
+
+export const ActionRow3 = (p: PropsWithChildren<ActionProps>) => <div style={{
+
+}}>
+  <div>
+      <div>{p.title}</div>
+  </div>
+</div>
  
 

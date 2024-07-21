@@ -1,9 +1,8 @@
 import { Action, action } from "./action"
 import { ResourceType, resourceDefinition } from "./resources"
-import { Amount, isResourceAmount, isResourceType, resources, time } from "./amount"
+import { Amount, isResourceAmount, isResourceType, resources } from "./amount"
 
 export enum WorkType {
-    Time = "Time",
     Labora = "Labora",
 }
 
@@ -26,7 +25,7 @@ class ResourceModel {
  
         this.gatherAction = action({
             rewards: [resources(type, 1)],
-            workCost: [time(resDef.gatherTimeout)],
+            timeCost: resDef.gatherTimeout,
         })
     }
 

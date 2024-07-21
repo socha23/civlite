@@ -1,10 +1,12 @@
 import { addTickListener, removeTickListener } from "./timer"
-import { Amount, AmountsAccumulator, WorkAmount } from "./amount"
+import { Amount, AmountsAccumulator, SingleAmountAccumulator, WorkAmount } from "./amount"
 import { WorkType } from "./work"
 
 export type ActionParams = {
     initialCost?: Amount[]
     workCost?: WorkAmount[]
+    timeCost?: number
+
     rewards?: Amount[]
 }
 
@@ -23,13 +25,15 @@ export enum ActionState {
 export abstract class Action {
     initialCost: Amount[]
     workAcc: AmountsAccumulator
+    timeAcc: SingleAmountAccumulator 
     rewards: Amount[]
     checker?: GameModelInterface
     state: ActionState = ActionState.Ready
 
-    constructor({initialCost = [], workCost = [], rewards = []}: ActionParams) {
+    constructor({initialCost = [], workCost = [], rewards = [], timeCost}: ActionParams) {
         this.initialCost = initialCost  
         this.rewards = rewards
+        this.timeAcc = new SingleAmountAccumulator(timeCost || 0)
         this.workAcc = new AmountsAccumulator(workCost)
     }
 
@@ -57,8 +61,9 @@ export abstract class Action {
     }
 
     onTick(deltaS: number) {
-        if (this.state === ActionState.InProgress) {
-            this.onWork(WorkType.Time, deltaS)
+        if (this.state === ActionState.InProgress && this.timeAcc) {
+            this.timeAcc.add(deltaS)
+            this._checkCompletion()
         }
     }
 

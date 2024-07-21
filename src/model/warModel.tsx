@@ -2,7 +2,7 @@ import { BattleLabels, Labels } from "../view/icons"
 import { Action, action } from "./action"
 import { Battle, Force } from "./battleModel"
 import { CivModel } from "./civsModel"
-import { Amount, ExpectedAmount, ExpectedPopAmount, rollActualAmount, time } from "./amount"
+import { Amount, ExpectedAmount, ExpectedPopAmount, rollActualAmount } from "./amount"
 import { GameModel } from "./gameModel"
 import { ArmyModel } from "./militaryModel"
 import { PopType } from "./pops"
@@ -92,7 +92,7 @@ export class War {
                     this.state = WarState.Battle
                     this.startBattle()
                 },
-                workCost: [time(army.marchDuration)],
+                timeCost: army.marchDuration,
             }),
             cancel: action({
                 action: () => {
@@ -119,7 +119,7 @@ export class War {
                 onComplete: () => {
                     this.state = WarState.Returned
                 },
-                workCost: [time(army.marchDuration)],
+                timeCost: army.marchDuration,
             }),
             marchBackHome: action({
                 action: () => {
@@ -131,7 +131,7 @@ export class War {
                 onComplete: () => {
                     this.state = WarState.Returned
                 },
-                workCost: [time(army.marchDuration)],
+                timeCost: army.marchDuration,
             }),
             complete: action({
                 action: () => {

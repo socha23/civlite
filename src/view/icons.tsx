@@ -46,7 +46,6 @@ export const Icons = {
     [ResourceType.Forest]: 'fa-solid fa-tree',
     [ResourceType.Grassland]: 'fa-solid fa-seedling',
     [WorkType.Labora]: 'fa-solid fa-hand',
-    [WorkType.Time]: 'fa-solid fa-clock',
     
     population: "fa-solid fa-people-group",
     strength: "fa-solid fa-hand-fist",

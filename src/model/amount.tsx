@@ -78,11 +78,6 @@ export function work(type: WorkType, count: number): WorkAmount {
   }
 }
 
-export function time(count: number) {
-  return work(WorkType.Time, count)
-}
-
-
 ///////////////////////////////////////////
 
 type _ExpectedAmount<Type extends ItemType> = {
@@ -107,43 +102,70 @@ export function rollActualAmount<T extends ItemType>(a: _ExpectedAmount<T>): _Am
 
 
 export class AmountsAccumulator {
-  required: Map<ItemType, number> = new Map()
-  collected: Map<ItemType, number> = new Map()
+  accs: Map<ItemType, SingleAmountAccumulator> = new Map()
 
   constructor(amounts: Amount[]) {
     amounts.forEach(a => {
-      this.required.set(a.type, a.count)
-      this.collected.set(a.type, 0)
+      this.accs.set(a.type, new SingleAmountAccumulator(a.count))
     })
   }
 
   add(type: ItemType, amount: number) {
-    if (this.required.has(type)) {
-      const requiredA = this.required.get(type)!!
-      const collectedA = this.collected.get(type)!!
-      this.collected.set(type, Math.min(requiredA, collectedA + amount))
+    if (this.accs.has(type)) {
+      this.accs.get(type)!!.add(amount)
     }
   }
 
   get completed() {
-    return !(Array.from(this.required.keys()).find(r => this.collected.get(r)!! < this.required.get(r)!!))
+    const incomplete = Array.from(this.accs.values()).filter(a => !a.completed)
+    return incomplete.length === 0
   }
 
   reset() {
-    Array.from(this.required.keys()).forEach(t => this.collected.set(t, 0))
+    Array.from(this.accs.values()).forEach(t => t.reset())
   }
 
   get completionRatio() {
     let collected = 0
     let required = 0
-    Array.from(this.required.keys()).forEach(t => {
-      required += this.required.get(t)!!
-      collected += this.collected.get(t)!!
+    Array.from(this.accs.values()).forEach(t => {
+      required += t.required
+      collected += t.collected
     })
     if (required === 0) {
       return 1
     } else {
       return collected / required
+    }
+  }
+}
+
+export class SingleAmountAccumulator {
+  required: number
+  collected: number
+
+  constructor(required: number) {
+    this.required = required
+    this.collected = 0
+  }
+
+  add(amount: number) {
+    this.collected = Math.min(this.required, this.collected + amount)
+  }
+
+  get completed() {
+    return this.collected >= this.required
+  }
+
+  reset() {
+    this.collected = 0
+  }
+
+  get completionRatio() {
+    if (this.required === 0) {
+      return 1
+    } else {
+      return this.collected / this.required
     }
   }
 }
