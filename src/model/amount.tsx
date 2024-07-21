@@ -1,7 +1,8 @@
 import { PopType } from "./pops"
 import { ResourceType } from "./resources"
+import { WorkType } from "./work"
 
-export type ItemType = PopType | ResourceType
+export type ItemType = PopType | ResourceType | WorkType
 
 export function isPopType(p: ItemType): p is PopType {
   return Object.keys(PopType).includes(p)
@@ -9,6 +10,10 @@ export function isPopType(p: ItemType): p is PopType {
 
 export function isResourceType(p: ItemType): p is ResourceType {
   return Object.keys(ResourceType).includes(p)
+}
+
+export function isWorkType(p: ItemType): p is WorkType {
+  return Object.keys(WorkType).includes(p)
 }
 
 ///////////////////////////////////////////
@@ -59,6 +64,25 @@ export function assignResources(type: ResourceType, count: number) {
   }
 }
 
+export type WorkAmount = _Amount<WorkType>
+
+export function isWorkAmount(a: {type: ItemType}): a is WorkAmount {
+  return isWorkType(a.type)
+}
+
+export function work(type: WorkType, count: number): WorkAmount {
+  return {
+    type: type,
+    count: count,
+    assignment: false
+  }
+}
+
+export function time(count: number) {
+  return work(WorkType.Time, count)
+}
+
+
 ///////////////////////////////////////////
 
 type _ExpectedAmount<Type extends ItemType> = {
@@ -78,5 +102,48 @@ export function rollActualAmount<T extends ItemType>(a: _ExpectedAmount<T>): _Am
     type: a.type,
     count: v,
     assignment: false
+  }
+}
+
+
+export class AmountsAccumulator {
+  required: Map<ItemType, number> = new Map()
+  collected: Map<ItemType, number> = new Map()
+
+  constructor(amounts: Amount[]) {
+    amounts.forEach(a => {
+      this.required.set(a.type, a.count)
+      this.collected.set(a.type, 0)
+    })
+  }
+
+  add(type: ItemType, amount: number) {
+    if (this.required.has(type)) {
+      const requiredA = this.required.get(type)!!
+      const collectedA = this.collected.get(type)!!
+      this.collected.set(type, Math.min(requiredA, collectedA + amount))
+    }
+  }
+
+  get completed() {
+    return !(Array.from(this.required.keys()).find(r => this.collected.get(r)!! < this.required.get(r)!!))
+  }
+
+  reset() {
+    Array.from(this.required.keys()).forEach(t => this.collected.set(t, 0))
+  }
+
+  get completionRatio() {
+    let collected = 0
+    let required = 0
+    Array.from(this.required.keys()).forEach(t => {
+      required += this.required.get(t)!!
+      collected += this.collected.get(t)!!
+    })
+    if (required === 0) {
+      return 1
+    } else {
+      return collected / required
+    }
   }
 }

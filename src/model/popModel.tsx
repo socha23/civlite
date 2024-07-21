@@ -17,7 +17,7 @@ export class PopModel {
     this.type = type
 
     this.buyAction = action({
-      costs: this.definition.buyCost,
+      initialCost: this.definition.buyCost,
       action: () => {this.incCount(1)}
     })
     this.sellAction = action({      
@@ -85,7 +85,7 @@ export class PopModel {
   assign(to: Assignable) {
     this._assignables.add(to)
     if (this.unassignedCount === 0) {
-      throw `No unassigned pops of type ${this.type}`
+      throw new Error(`No unassigned pops of type ${this.type}`)
     }
     to.assign(this.type)
   }

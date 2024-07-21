@@ -1,9 +1,8 @@
 import React, { PropsWithChildren, ReactNode } from 'react';
 
 import { GameModel } from '../model/gameModel';
-import { Action } from '../model/action'
-import { Amount } from '../model/amount';
-import { Colors, FontSizes, Icons, DividerColors } from './icons';
+import { Action, ActionState } from '../model/action'
+import { Colors, FontSizes, DividerColors } from './icons';
 import { AmountWithColorProps, Amounts } from './amount';
 
 interface ActionParms {
@@ -15,18 +14,18 @@ interface ActionParms {
 export interface ActionProps extends ActionParms {
   action: () => void
   costs: AmountWithColorProps[]
-  timeout?: number
-  timeoutLeft?: number
   disabled?: any
+  completionRatio?: number
+  state?: ActionState
 }
 
 export function propsForAction(model: GameModel, a: Action, params: ActionParms = {}): ActionProps {
   return {
     action: () => a.onAction(model),
-    costs: a.costs.map(c => ({...c, color: model.canPay(c) ? Colors.default: Colors.UnsatisfiableCost})),
-    timeout: a.timeout, 
-    timeoutLeft: a.timeoutLeft,
+    costs: a.initialCost.map(c => ({...c, color: model.canPay(c) ? Colors.default: Colors.UnsatisfiableCost})),
+    completionRatio: a.completionRatio, 
     disabled: a.disabled(model),
+    state: a.state,
     ...params,
   }
 }
@@ -52,7 +51,7 @@ const ActionButtonInner = (a: PropsWithChildren<ActionProps>) =>
       height: "100%",
     position: "relative",
       userSelect: "none",
-      cursor: (a.disabled || a.timeoutLeft ? BUTTON_STYLE_DISABLED.cursor : BUTTON_STYLE_ENABLED.cursor)
+      cursor: (a.disabled || a.state === ActionState.InProgress ? BUTTON_STYLE_DISABLED.cursor : BUTTON_STYLE_ENABLED.cursor)
     }}
     onClick={() => {
       if (a.disabled) {
@@ -79,14 +78,14 @@ const ActionButtonInner = (a: PropsWithChildren<ActionProps>) =>
       ...(a.disabled ? BUTTON_STYLE_DISABLED : BUTTON_STYLE_ENABLED)
       }}>
         {
-          a.timeout !== undefined && a.timeoutLeft !== undefined && <div style={{
+          (a.completionRatio && a.completionRatio !== 1) ? <div style={{
             zIndex: 2,
             position: "absolute",
             backgroundColor: "white",
             opacity: 0.9,
-            width: (100 * a.timeoutLeft / a.timeout ) + "%",
+            width: (100 * a.completionRatio ) + "%",
             height: "100%",
-          }}/>
+          }}/> : <span/>
         }
         <div style={{
           position: "relative",

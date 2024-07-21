@@ -1,9 +1,10 @@
-import { addTickListener } from "./timer"
-import { Amount } from "./amount"
+import { addTickListener, removeTickListener } from "./timer"
+import { Amount, AmountsAccumulator, WorkAmount } from "./amount"
+import { WorkType } from "./work"
 
 export type ActionParams = {
-    timeout?: number
-    costs?: Amount[]
+    initialCost?: Amount[]
+    workCost?: WorkAmount[]
     rewards?: Amount[]
 }
 
@@ -14,21 +15,22 @@ export interface GameModelInterface {
 }
 
 
-export abstract class Action {
-    timeout?: number
-    timeoutLeft: number = 0
-    costs: Amount[]
-    rewards: Amount[]
-    inProgress: boolean = false
-    checker?: GameModelInterface
+export enum ActionState {
+    Ready = 0,
+    InProgress = 1,
+} 
 
-    constructor({timeout, costs = [], rewards = []}: ActionParams) {
-        this.timeout = timeout      
-        this.costs = costs  
+export abstract class Action {
+    initialCost: Amount[]
+    workAcc: AmountsAccumulator
+    rewards: Amount[]
+    checker?: GameModelInterface
+    state: ActionState = ActionState.Ready
+
+    constructor({initialCost = [], workCost = [], rewards = []}: ActionParams) {
+        this.initialCost = initialCost  
         this.rewards = rewards
-        if (this.timeout) {
-            addTickListener(this)
-        }
+        this.workAcc = new AmountsAccumulator(workCost)
     }
 
     abstract _onAction(): void
@@ -42,50 +44,64 @@ export abstract class Action {
     }
 
     onAction(checker: GameModelInterface) {
-        if (this.timeoutLeft > 0) {
+        if (this.state !== ActionState.Ready) {
             return
         }
-        if (checker.filterUnsatisfiableCosts(this.costs).length > 0) {
+        if (checker.filterUnsatisfiableCosts(this.initialCost).length > 0) {
             return
         }
         this.checker = checker
         this.onStart()
         this._onAction()
-        if (this.timeout) {
-            this.timeoutLeft = this.timeout
-        } else {
-            this.onComplete()
-        }
+        this._checkCompletion()
     }
 
     onTick(deltaS: number) {
-        this.timeoutLeft = Math.max(0, this.timeoutLeft - deltaS)
-        if (this.inProgress && this.timeoutLeft === 0) {
+        if (this.state === ActionState.InProgress) {
+            this.onWork(WorkType.Time, deltaS)
+        }
+    }
+
+    onWork(type: WorkType, amount: number) {
+        this.workAcc.add(type, amount)
+        this._checkCompletion()
+    }
+
+    _checkCompletion() {
+        if (this.workAcc.completed) {
             this.onComplete()
         }
     }
 
     onStart() {
-        if (this.costs.length > 0) {
-            this.checker!.onConsume(this.costs)
+        if (this.initialCost.length > 0) {
+            this.checker!.onConsume(this.initialCost)
         }
-        this.inProgress = true
+        this.workAcc.reset()
+        addTickListener(this)
+        this.state = ActionState.InProgress
     }
 
     onComplete() {
         if (this.rewards.length > 0) {
             this.checker!.onProduce(this.rewards)
         }
-        this.inProgress = false
+        this.state = ActionState.Ready
+        this.workAcc.reset()
+        removeTickListener(this)
         this._onComplete()
 
     }
 
     disabled(checker: GameModelInterface): any {
-        if (checker.filterUnsatisfiableCosts(this.costs).length > 0) {
-            return "Cost can't be paid"
+        if (checker.filterUnsatisfiableCosts(this.initialCost).length > 0) {
+            return "Initial cost can't be paid"
         }
         return this._isDisabled()
+    }
+
+    get completionRatio() {
+        return this.workAcc.completionRatio
     }
 }
 

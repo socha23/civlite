@@ -1,12 +1,11 @@
 import { BattleLabels, Labels } from "../view/icons"
 import { Action, action } from "./action"
-import { Battle, BattleState, Combatant, Force } from "./battleModel"
+import { Battle, Force } from "./battleModel"
 import { CivModel } from "./civsModel"
-import { Amount, ExpectedAmount, ExpectedPopAmount, ItemType, isPopAmount, isResourceAmount, pops, resources, rollActualAmount } from "./amount"
+import { Amount, ExpectedAmount, ExpectedPopAmount, rollActualAmount, time } from "./amount"
 import { GameModel } from "./gameModel"
 import { ArmyModel } from "./militaryModel"
 import { PopType } from "./pops"
-import { ResourceType } from "./resources"
 import { addTickListener } from "./timer"
 import { WarType, warTypeDefinition } from "./wars"
 
@@ -93,7 +92,7 @@ export class War {
                     this.state = WarState.Battle
                     this.startBattle()
                 },
-                timeout: army.marchDuration,
+                workCost: [time(army.marchDuration)],
             }),
             cancel: action({
                 action: () => {
@@ -120,7 +119,7 @@ export class War {
                 onComplete: () => {
                     this.state = WarState.Returned
                 },
-                timeout: army.marchDuration,
+                workCost: [time(army.marchDuration)],
             }),
             marchBackHome: action({
                 action: () => {
@@ -132,7 +131,7 @@ export class War {
                 onComplete: () => {
                     this.state = WarState.Returned
                 },
-                timeout: army.marchDuration,
+                workCost: [time(army.marchDuration)],
             }),
             complete: action({
                 action: () => {
@@ -208,7 +207,7 @@ export class WarModel {
     cleanupCompletedAndCancelledWars() {
         const activeWars: War[] = [] 
         this._wars.forEach(w => {
-            if (w.state === WarState.Completed || w.state == WarState.Cancelled) {
+            if (w.state === WarState.Completed || w.state === WarState.Cancelled) {
                 // war needs cleanup
                 w.army.engagedIn = undefined
             } else {

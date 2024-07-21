@@ -4,6 +4,7 @@ import { WarType } from '../model/wars';
 import { formatNumber } from '../model/utils';
 import { ReactNode } from 'react';
 import { WarProps } from './war';
+import { WorkType } from '../model/work';
 
 export const DividerColors = {
     mid: "#888",
@@ -44,6 +45,8 @@ export const Icons = {
     [ResourceType.Insight]: 'fa-regular fa-lightbulb',
     [ResourceType.Forest]: 'fa-solid fa-tree',
     [ResourceType.Grassland]: 'fa-solid fa-seedling',
+    [WorkType.Labora]: 'fa-solid fa-hand',
+    [WorkType.Time]: 'fa-solid fa-clock',
     
     population: "fa-solid fa-people-group",
     strength: "fa-solid fa-hand-fist",

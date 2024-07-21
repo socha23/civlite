@@ -86,7 +86,7 @@ const BeforeBattle = (p: WarProps) => <div style={{
       <ValueRow description={BattleLabels.ExpectedReward} items={p.expectedRewards}/>
   }
   <div>
-    <BattleLabels.MarchTime time={p.actions.march.timeoutLeft || p.actions.march.timeout || 0}/>
+    <BattleLabels.MarchTime time={/*p.actions.march.timeoutLeft || p.actions.march.timeout || */0}/>
   </div>
   <div style={{
     marginTop: 4,
