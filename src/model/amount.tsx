@@ -138,6 +138,10 @@ export class AmountsAccumulator {
       return collected / required
     }
   }
+
+  get missing() {
+    return Array.from(this.accs.keys()).map(t => ({type: t, count: this.accs.get(t)!!.missing}))
+  }
 }
 
 export class SingleAmountAccumulator {
@@ -167,5 +171,9 @@ export class SingleAmountAccumulator {
     } else {
       return this.collected / this.required
     }
+  }
+
+  get missing() {
+    return this.required - this.collected
   }
 }

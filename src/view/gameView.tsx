@@ -8,6 +8,7 @@ import { ResourceGatheringBox, ResourceGatheringProps, resourceGatheringProps } 
 import { PopBox, PopBoxProps, popBoxProps } from './popBox';
 import { MilitaryProps, MilitaryView, militaryProps } from './military';
 import { CivilizationsView, CivsProps, civsProps } from './civs';
+import { ActionState } from '../model/action';
 
 
 export type GameViewProps = {
@@ -31,7 +32,8 @@ export function gameViewProps(model: GameModel, onReset: () => void): GameViewPr
     reset: {
       title: "Reset",
       costs: [],
-      action: onReset
+      action: onReset,
+      state: ActionState.Ready
     },
     military: militaryProps(model),
     civilizations: civsProps(model),

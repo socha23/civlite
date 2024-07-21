@@ -4,6 +4,7 @@ import { GameModel } from '../model/gameModel';
 import { Action, ActionState } from '../model/action'
 import { Colors, FontSizes, DividerColors } from './icons';
 import { AmountWithColorProps, Amounts } from './amount';
+import { ActionCommonLabels } from './labels';
 
 interface ActionParms {
   title?: string,
@@ -13,16 +14,25 @@ interface ActionParms {
 
 export interface ActionProps extends ActionParms {
   action: () => void
-  costs: AmountWithColorProps[]
+  costs?: AmountWithColorProps[]
+  workLeft?: AmountWithColorProps[],
+  timeCost?: number,
+  timeLeft?: number,
+  rewards?: AmountWithColorProps[]
   disabled?: any
   completionRatio?: number
-  state?: ActionState
+  state: ActionState
+  description?: ReactNode | string
 }
 
 export function propsForAction(model: GameModel, a: Action, params: ActionParms = {}): ActionProps {
   return {
     action: () => a.onAction(model),
     costs: a.initialCost.map(c => ({...c, color: model.canPay(c) ? Colors.default: Colors.UnsatisfiableCost})),
+    workLeft: a.workLeft,
+    timeCost: a.timeAcc.required ? a.timeAcc.required : undefined,
+    timeLeft: a.timeAcc.missing, 
+    rewards: a.rewards.map(c => ({...c, color: Colors.default})),
     completionRatio: a.completionRatio, 
     disabled: a.disabled(model),
     state: a.state,
@@ -30,7 +40,15 @@ export function propsForAction(model: GameModel, a: Action, params: ActionParms 
   }
 }
 
+const BUTTON_STYLE = {
+  borderWidth: 1,
+  borderStyle: "solid",
+  borderColor: Colors.default,
+  borderRadius: 4,
+}
+
 const BUTTON_STYLE_ENABLED = {
+  ...BUTTON_STYLE,
   color: "black",
   borderColor: "#666",
   backgroundColor: "#eee",
@@ -38,6 +56,7 @@ const BUTTON_STYLE_ENABLED = {
 }
 
 const BUTTON_STYLE_DISABLED = {
+  ...BUTTON_STYLE,
   color: "#bbb",
   borderColor: "#ddd",
   backgroundColor: "#fff",
@@ -71,7 +90,6 @@ const ActionButtonInner = (a: PropsWithChildren<ActionProps>) =>
         borderColor: (a.disabled ? BUTTON_STYLE_DISABLED.borderColor : BUTTON_STYLE_ENABLED.borderColor)
       }}/>
       <div style={{
-        borderRadius: 4,
         zIndex: 3,
         height: "100%",
         width: "100%",
@@ -106,7 +124,7 @@ export const ActionButton = (a: ActionProps) => <ActionButtonInner {...a}>
     alignItems: "center", 
     gap: 4}}>
     <div>{a.buttonLabel || a.title}</div>
-    <Amounts items={a.costs}/>
+    {a.costs && <Amounts items={a.costs}/>}
  </div>
 </ActionButtonInner>
 
@@ -173,14 +191,100 @@ export const ActionRow2 = (p: PropsWithChildren<ActionProps>) => <div style={{
 
 
 
-
-
-export const ActionRow3 = (p: PropsWithChildren<ActionProps>) => <div style={{
-
-}}>
-  <div>
-      <div>{p.title}</div>
+const ActionRowProgressIndicator = (a: ActionProps) => {
+  const amounts = a.workLeft ? [...a.workLeft] : []
+  if (a.timeLeft) {
+    amounts.push({count: a.timeLeft, postfix: ActionCommonLabels.Second})
+  }
+  return <div style={{
+    fontSize: FontSizes.normal,
+    fontWeight: "bold",
+  }}>
+      <Amounts items={amounts} vertical={true}/>
   </div>
+} 
+
+
+const ActionRowStartActionButton = (a: ActionProps) => {
+  const enabled = !a.disabled && a.state === ActionState.Ready
+  const buttonStyle = enabled ? BUTTON_STYLE_ENABLED : BUTTON_STYLE_DISABLED
+  return <div style={{
+    ...buttonStyle,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: 80,
+    userSelect: "none",
+  }} onClick={() => {
+    if (a.disabled) {
+      console.log(a.disabled)
+    } else if (enabled) {
+      a.action()
+    }
+  }}>
+    {a.buttonLabel || a.title}
+  </div>
+}
+
+const ActionRowTitle = (p: ActionProps) => <div style={{
+  fontWeight: "bold",
+}}>
+  {p.title}
 </div>
- 
+
+
+const ActionRowsAmountsRow = (p: {label: string, items: AmountWithColorProps[]}) => <div style={{
+  display: "flex",
+  gap: 4,
+}}>
+  <div>{p.label}</div>
+  <Amounts items={p.items}/>
+</div>
+
+export const ActionRow3 = (p: ActionProps) => {
+
+  const totalCostAmounts = (p.costs ? [...p.costs] : []) as AmountWithColorProps[]
+  if (p.timeCost) {
+    totalCostAmounts.push({
+      count: p.timeCost,
+      postfix: ActionCommonLabels.Second
+    })
+  }
+
+  const totalRewardAmounts = p.rewards ? p.rewards : []
+
+  return <div style={{
+    display: "flex",
+    flexDirection: "column",
+    paddingTop: 4,
+    paddingBottom: 4,
+    gap: 4,
+  }}>
+    <div style={{
+      display: "flex",
+    }}>
+      <div style={{
+        display: "flex",
+        flexGrow: 1,
+        flexDirection: "column",
+      }}>
+        <ActionRowTitle {...p}/>
+        {
+          (totalCostAmounts.length > 0 || totalRewardAmounts.length > 0) &&
+          <div style={{
+            display: "flex",
+            gap: 8,
+          }}>
+            {p.timeCost && <ActionRowsAmountsRow items={[{count: p.timeCost, postfix: ActionCommonLabels.Second}]} label={ActionCommonLabels.Time}/>}
+            {p.costs && p.costs.length > 0 && <ActionRowsAmountsRow items={p.costs} label={ActionCommonLabels.Cost}/>}
+          </div>
+        }
+      </div>
+      {p.state === ActionState.InProgress ? <ActionRowProgressIndicator {...p}/> : <ActionRowStartActionButton {...p}/>}
+    </div>
+    <div>
+      {p.description}
+    </div>
+  </div>
+}
 

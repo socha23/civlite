@@ -2,9 +2,16 @@ import React from 'react';
 
 import { Amount, ExpectedAmount } from '../model/amount';
 import { Colors, FontSizes, Icons } from './icons';
+import { formatNumber } from '../model/utils';
 
-export type AmountWithColorProps = (Amount | ExpectedAmount) & {
+export type RawNumber = {
+  count: number
+}
+
+export type AmountWithColorProps = (Amount | ExpectedAmount | RawNumber) & {
   color?: string
+  postfix?: string
+
 }
 
 export const AmountView = (p: AmountWithColorProps) => <div style={{
@@ -12,16 +19,14 @@ export const AmountView = (p: AmountWithColorProps) => <div style={{
   display: "flex",
   gap: 2
 }}>
-  <div>{"count" in p ? p.count : p.from + "-" + p.to}</div>
-  <i className={Icons[p.type]}/>
+  <div>{"count" in p ? formatNumber(p.count) : p.from + "-" + p.to}{p.postfix}</div>
+  {"type" in p && <i className={Icons[p.type]}/>}
 </div>
 
-
-export const Amounts = (p: {items: AmountWithColorProps[]}) => <div style={{
+export const Amounts = (p: {items: AmountWithColorProps[], vertical?: boolean}) => <div style={{
   display: 'flex',
+  flexDirection: p.vertical ? "column" : "row",
   gap: 4,
-  fontSize: FontSizes.small,
 }}>
   {p.items.map((c, idx) => <AmountView key={idx} {...c}/>)}
 </div>
-

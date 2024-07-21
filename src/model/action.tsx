@@ -67,13 +67,17 @@ export abstract class Action {
         }
     }
 
+    get workLeft() {
+        return this.workAcc.missing
+    }
+
     onWork(type: WorkType, amount: number) {
         this.workAcc.add(type, amount)
         this._checkCompletion()
     }
 
     _checkCompletion() {
-        if (this.workAcc.completed) {
+        if (this.workAcc.completed && this.timeAcc.completed) {
             this.onComplete()
         }
     }
@@ -83,6 +87,7 @@ export abstract class Action {
             this.checker!.onConsume(this.initialCost)
         }
         this.workAcc.reset()
+        this.timeAcc.reset()
         addTickListener(this)
         this.state = ActionState.InProgress
     }
