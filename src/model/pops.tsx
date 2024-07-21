@@ -1,5 +1,6 @@
 import { ResourceType } from "./resources"
-import { assignResources, Amount, pops, resources, ResourceAmount } from "./amount"
+import { assignResources, Amount, pops, resources, ResourceAmount, WorkAmount, work } from "./amount"
+import { WorkType } from "./work"
 
 export enum PopType {
   Idler = "Idler", 
@@ -16,10 +17,12 @@ export enum PopType {
 const DEFAULT_POP_DEFINITION = {
   initialCount: 0,
   timeCost: 5,
+  workCost: [] as WorkAmount[],
   buyCost: [
     pops(PopType.Idler, 1),
   ] as Amount[],
   production: [] as ResourceAmount[],
+  work: [] as WorkAmount[],
   consumption: [] as ResourceAmount[],
   
   assignableToArmy: false,
@@ -39,8 +42,8 @@ const PopTypeDefinitions = {
     initialCount: 1,
     buyCost: [resources(ResourceType.Food, 2)],
     timeCost: 3,
-    production: [
-      resources(ResourceType.Insight, 0.1)
+    work: [
+      work(WorkType.Insight, 0.1)
     ],
     consumption: [
       resources(ResourceType.Food, 0.1)
@@ -61,17 +64,19 @@ const PopTypeDefinitions = {
       pops(PopType.Idler, 1),
       resources(ResourceType.Food, 5),
     ],
-    production: [
-      resources(ResourceType.Labor, 0.2)
+    work: [
+      work(WorkType.Labor, 0.2)
     ],
     consumption: [
       resources(ResourceType.Food, 1)
     ]  
   },
   [PopType.Herder]: {
+    workCost: [
+      work(WorkType.Labor, 3)
+    ],
     buyCost: [
       pops(PopType.Idler, 1),
-      resources(ResourceType.Labor, 3),
       assignResources(ResourceType.Herds, 1),
       assignResources(ResourceType.Grassland, 1),
     ],
@@ -80,9 +85,11 @@ const PopTypeDefinitions = {
     ],
   },
   [PopType.Farmer]: {
+    workCost: [
+      work(WorkType.Labor, 3)
+    ],
     buyCost: [
       pops(PopType.Idler, 1),
-      resources(ResourceType.Labor, 5),
       assignResources(ResourceType.Grassland, 1),
     ],
     production: [

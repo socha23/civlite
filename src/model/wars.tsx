@@ -24,11 +24,7 @@ const DEFAULT_WAR_TYPE_DEFINITION = {
 
 const WarTypeDefinitions = {
   [WarType.BeatemUp]: {
-    rewards: [{
-      from: 0,
-      to: 1,
-      type: ResourceType.Insight
-    } as Reward]
+    rewards: []
   },
   [WarType.CattleRaid]: {
     rewards: [{

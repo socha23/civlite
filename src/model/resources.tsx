@@ -1,7 +1,5 @@
 export enum ResourceType {
-    Insight = "Insight",
     Food = "Food", 
-    Labor = "Labor",
     Forest = "Forest",
     Grassland = "Grassland",
     Herds = "Herds",
@@ -46,14 +44,6 @@ export const ResourceDefinitions = {
     [ResourceType.Food]: {
         gatherTimeout: 1, 
         initialCap: 30,    
-    },
-    [ResourceType.Insight]: {
-        gatherTimeout: 3, 
-        initialCap: 10,    
-    },
-    [ResourceType.Labor]: {
-        gatherTimeout: 5,
-        initialCap: 10,
     },
     [ResourceType.Forest]: {
         class: ResourceClass.Assignable,

@@ -7,12 +7,14 @@ import { onTick } from "./timer"
 import MilitaryModel from "./militaryModel"
 import CivilizationsModel from "./civsModel"
 import { WarModel } from "./warModel"
+import { WorkModel } from "./workModel"
 
 export class GameModel implements GameModelInterface {
   tick: number = 0
   civName: string = "The Tribe"
   resources = new ResourcesModel()
   population = new PopulationModel()
+  work = new WorkModel()
   military = new MilitaryModel(this.population)
   civilizations = new CivilizationsModel()
   wars = new WarModel(this)

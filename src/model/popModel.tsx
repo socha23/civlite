@@ -18,6 +18,7 @@ export class PopModel {
 
     this.buyAction = action({
       initialCost: this.definition.buyCost,
+      workCost: this.definition.workCost,
       timeCost: this.definition.timeCost,
       action: () => {this.incCount(1)}
     })

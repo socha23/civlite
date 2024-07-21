@@ -3,7 +3,18 @@ import { ResourceType, resourceDefinition } from "./resources"
 import { Amount, isResourceAmount, isResourceType, resources } from "./amount"
 
 export enum WorkType {
-    Labora = "Labora",
+    Labor = "Labor",
+    Insight = "Insight",
+
+}
+
+export const WorkDefinitions = {
+    [WorkType.Insight]: {
+        gatherTimeout: 3, 
+    },
+    [WorkType.Labor]: {
+        gatherTimeout: 5,
+    },
 }
 
 class ResourceModel {

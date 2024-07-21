@@ -13,8 +13,6 @@ export type InventoryBoxProps = {
 const ResourceGroups = {
   [ResourceType.Herds]: 0,  
   [ResourceType.Food]: 1,
-  [ResourceType.Insight]: 1,
-  [ResourceType.Labor]: 1,
   [ResourceType.Forest]: 2,
   [ResourceType.Grassland]: 2,
 }

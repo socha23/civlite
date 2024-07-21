@@ -15,6 +15,7 @@ interface ActionParms {
 export interface ActionProps extends ActionParms {
   action: () => void
   costs?: AmountWithColorProps[]
+  workCost?: AmountWithColorProps[],
   workLeft?: AmountWithColorProps[],
   timeCost?: number,
   timeLeft?: number,
@@ -29,6 +30,7 @@ export function propsForAction(model: GameModel, a: Action, params: ActionParms 
   return {
     action: () => a.onAction(model),
     costs: a.initialCost.map(c => ({...c, color: model.canPay(c) ? Colors.default: Colors.UnsatisfiableCost})),
+    workCost: a.workCost,
     workLeft: a.workLeft,
     timeCost: a.timeAcc.required ? a.timeAcc.required : undefined,
     timeLeft: a.timeAcc.missing, 
@@ -243,14 +245,10 @@ const ActionRowsAmountsRow = (p: {label: string, items: AmountWithColorProps[]})
 
 export const ActionRow3 = (p: ActionProps & {displayRewards?: boolean}) => {
 
-  const totalCostAmounts = (p.costs ? [...p.costs] : []) as AmountWithColorProps[]
-  if (p.timeCost) {
-    totalCostAmounts.push({
-      count: p.timeCost,
-      postfix: ActionCommonLabels.Second
-    })
-  }
+  const costs = p.costs || []
+  const work = p.workCost || []
 
+  const totalCostAmounts = [...costs, ...work] as AmountWithColorProps[]
   const totalRewardAmounts = p.rewards ? p.rewards : []
 
   return <div style={{
@@ -277,7 +275,7 @@ export const ActionRow3 = (p: ActionProps & {displayRewards?: boolean}) => {
             gap: 8,
           }}>
             {p.timeCost && <ActionRowsAmountsRow items={[{count: p.timeCost, postfix: ActionCommonLabels.Second}]} label={ActionCommonLabels.Time}/>}
-            {p.costs && p.costs.length > 0 && <ActionRowsAmountsRow items={p.costs} label={ActionCommonLabels.Cost}/>}
+            {totalCostAmounts.length > 0 && <ActionRowsAmountsRow items={totalCostAmounts} label={ActionCommonLabels.Cost}/>}
             {p.rewards && p.rewards.length > 0 && p.displayRewards && <ActionRowsAmountsRow items={p.rewards} label={ActionCommonLabels.Rewards}/>}
           </div>
         }

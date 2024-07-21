@@ -71,6 +71,11 @@ export abstract class Action {
         return this.workAcc.missing
     }
 
+    get workCost() {
+        return this.workAcc.required
+    }
+
+
     onWork(type: WorkType, amount: number) {
         this.workAcc.add(type, amount)
         this._checkCompletion()
