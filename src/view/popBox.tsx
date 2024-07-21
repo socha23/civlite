@@ -1,11 +1,12 @@
 import React from 'react';
 import { Box } from './box'
 import { GameModel } from '../model/gameModel'
-import { ActionProps, ActionButton, propsForAction } from './action';
+import { ActionProps, ActionButton, propsForAction, ActionRow3 } from './action';
 import { PopType, isAssignable } from '../model/pops';
 import { FontSizes, TrendColors, DividerColors, Icons, Colors, Labels } from './icons';
 import { formatNumber } from '../model/utils';
 import { ResourceAmount } from '../model/amount';
+import { PopulationRecruitLabels, PopulationUnrecruitLabels } from './labels';
 
 export type PopBoxProps = {
   popType: PopType,
@@ -25,8 +26,16 @@ export function popBoxProps(model: GameModel, type: PopType): PopBoxProps {
     popLabel: Labels.Plural[type],
     count: pop.count,
     unassignedCount: pop.unassignedCount,
-    buyAction: propsForAction(model, pop.buyAction, {title: Labels.Assign[type]}),
-    sellAction: propsForAction(model, pop.sellAction, {title: Labels.Unassign[type]}),
+    buyAction: propsForAction(model, pop.buyAction, {
+      title: PopulationRecruitLabels[type].ActionTitle,
+      buttonLabel: PopulationRecruitLabels[type].ButtonTitle,
+      //description: PopulationRecruitLabels[type].Description,
+    }),
+    sellAction: propsForAction(model, pop.sellAction, {
+      title: PopulationUnrecruitLabels[type].ActionTitle,
+      buttonLabel: PopulationUnrecruitLabels[type].ButtonTitle,
+      //description: PopulationUnrecruitLabels[type].Description,
+    }),
     resourceBalance: pop.resourceBalance,
     singlePopBalance: pop.singlePopBalance,
   }
@@ -49,34 +58,12 @@ export const ResourcesList = (p: {items: ResourceAmount[], caption: string, colo
 </div>
 
 
-export const RecruitRow = (p: PopBoxProps) => <div style={{
-  display: "flex",
-  flexDirection: "column",
-}}>
-  <div style={{
-    display: "flex",
-    fontSize: FontSizes.small,
-    gap: 4,
-  }}>
-    <div style={{
-      width: 120,
-    }}>
-      <ActionButton {...p.buyAction}/>
-    </div>
-    <div style={{
-      width: 20,
-      height: 20,
-    }}>
-      <ActionButton {...p.sellAction} title='-'/>
-    </div>
-  </div>
-  
-</div>
-
 
 export const PopBox = (p: PopBoxProps) =>
   <Box>
-    <div style={{
+    <div 
+    className='dottedDividersParent'
+    style={{
       paddingTop: 8,
       paddingBottom: 12,
     }}>
@@ -111,13 +98,8 @@ export const PopBox = (p: PopBoxProps) =>
         <div style={{flexGrow: 1}}/>
         <ResourcesList items={p.resourceBalance} caption={Labels.PerSecond}/>
       </div>
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        marginTop: 6
-      }}>
-          <RecruitRow {...p}/>
-      </div>
+      <ActionRow3 {...p.buyAction}/>
+      <ActionRow3 {...p.sellAction} displayRewards={true}/>
     </div>
   </Box>
 

@@ -241,7 +241,7 @@ const ActionRowsAmountsRow = (p: {label: string, items: AmountWithColorProps[]})
   <Amounts items={p.items}/>
 </div>
 
-export const ActionRow3 = (p: ActionProps) => {
+export const ActionRow3 = (p: ActionProps & {displayRewards?: boolean}) => {
 
   const totalCostAmounts = (p.costs ? [...p.costs] : []) as AmountWithColorProps[]
   if (p.timeCost) {
@@ -262,6 +262,7 @@ export const ActionRow3 = (p: ActionProps) => {
   }}>
     <div style={{
       display: "flex",
+      height: 24,
     }}>
       <div style={{
         display: "flex",
@@ -277,6 +278,7 @@ export const ActionRow3 = (p: ActionProps) => {
           }}>
             {p.timeCost && <ActionRowsAmountsRow items={[{count: p.timeCost, postfix: ActionCommonLabels.Second}]} label={ActionCommonLabels.Time}/>}
             {p.costs && p.costs.length > 0 && <ActionRowsAmountsRow items={p.costs} label={ActionCommonLabels.Cost}/>}
+            {p.rewards && p.rewards.length > 0 && p.displayRewards && <ActionRowsAmountsRow items={p.rewards} label={ActionCommonLabels.Rewards}/>}
           </div>
         }
       </div>

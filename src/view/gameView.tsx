@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActionProps, ActionRow } from './action'
+import { ActionProps, ActionRow, ActionRow3 } from './action'
 import { GameModel } from '../model/gameModel'
 import { PopType } from '../model/pops'
 import { InventoryBox, InventoryBoxProps, summaryBoxProps } from './inventoryBox';
@@ -89,7 +89,7 @@ export const GameView = (p: GameViewProps) =>
           <InventoryBox {...p.summary}/>
           <ResourceGatheringBox {...p.resourceGathering}/>
           <PopsView pops={p.pops} column={0}/>
-          <ActionRow {...p.reset}/>
+          <ActionRow3 {...p.reset}/>
 
         </div>
         <PopsView pops={p.pops} column={1}/>

@@ -15,6 +15,7 @@ export enum PopType {
 
 const DEFAULT_POP_DEFINITION = {
   initialCount: 0,
+  timeCost: 5,
   buyCost: [
     pops(PopType.Idler, 1),
   ] as Amount[],
@@ -37,6 +38,7 @@ const PopTypeDefinitions = {
   [PopType.Idler]: {
     initialCount: 1,
     buyCost: [resources(ResourceType.Food, 2)],
+    timeCost: 3,
     production: [
       resources(ResourceType.Insight, 0.1)
     ],
