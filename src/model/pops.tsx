@@ -1,5 +1,5 @@
 import { ResourceType } from "./resources"
-import { assignResources, pops, resources } from "./amount"
+import { assignResources, Amount, pops, resources, ResourceAmount } from "./amount"
 
 export enum PopType {
   Idler = "Idler", 
@@ -12,13 +12,14 @@ export enum PopType {
   Slinger = "Slinger",
 }
 
+
 const DEFAULT_POP_DEFINITION = {
   initialCount: 0,
   buyCost: [
     pops(PopType.Idler, 1),
-  ],
-  production: [],
-  consumption: [],
+  ] as Amount[],
+  production: [] as ResourceAmount[],
+  consumption: [] as ResourceAmount[],
   
   assignableToArmy: false,
   battleOrder: 1,
@@ -30,6 +31,7 @@ const DEFAULT_POP_DEFINITION = {
   marchDuration: 10,
 }
 
+type PopDefinition = typeof DEFAULT_POP_DEFINITION
 
 const PopTypeDefinitions = {
   [PopType.Idler]: {
@@ -104,7 +106,7 @@ const PopTypeDefinitions = {
   },
 }
 
-export function popTypeDefinition(t: PopType) {
+export function popTypeDefinition(t: PopType): PopDefinition {
   return {...DEFAULT_POP_DEFINITION, ...PopTypeDefinitions[t]}
 }
 
