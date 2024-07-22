@@ -9,6 +9,7 @@ import { PopBox, PopBoxProps, popBoxProps } from './popBox';
 import { MilitaryProps, MilitaryView, militaryProps } from './military';
 import { CivilizationsView, CivsProps, civsProps } from './civs';
 import { ActionState } from '../model/action';
+import { CalendarBox, CalendarProps, calendarProps } from './calendarBox';
 
 
 export type GameViewProps = {
@@ -20,6 +21,7 @@ export type GameViewProps = {
   resourceGathering: ResourceGatheringProps,
   military: MilitaryProps,
   civilizations: CivsProps,
+  calendar: CalendarProps,
 }
 
 export function gameViewProps(model: GameModel, onReset: () => void): GameViewProps {
@@ -37,6 +39,7 @@ export function gameViewProps(model: GameModel, onReset: () => void): GameViewPr
     },
     military: militaryProps(model),
     civilizations: civsProps(model),
+    calendar: calendarProps(model),
   }
 }
 
@@ -87,6 +90,7 @@ export const GameView = (p: GameViewProps) =>
           paddingTop: 4,
         }}>
           <InventoryBox {...p.summary}/>
+          <CalendarBox {...p.calendar}/>
           <ResourceGatheringBox {...p.resourceGathering}/>
           <PopsView pops={p.pops} column={0}/>
           <ActionRow3 {...p.reset}/>

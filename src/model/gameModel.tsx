@@ -8,10 +8,12 @@ import MilitaryModel from "./militaryModel"
 import CivilizationsModel from "./civsModel"
 import { WarModel } from "./warModel"
 import { WorkModel } from "./workModel"
+import { CalendarModel } from "./calendarModel"
 
 export class GameModel implements GameModelInterface {
   tick: number = 0
   civName: string = "The Tribe"
+  calendar = new CalendarModel(this)
   resources = new ResourcesModel()
   population = new PopulationModel()
   work = new WorkModel()
@@ -43,7 +45,13 @@ export class GameModel implements GameModelInterface {
   onTick(deltaS: number) {
     this.tick += deltaS
     onTick(deltaS)
+    this.calendar.onTick(deltaS)
     this.applyWorkConsumptionAndProduction(deltaS)
+  }
+
+  onEndOfSeason() {
+    console.log("END OF SEASON")
+    // TODO hunger
   }
 
   production(resourceType: ResourceType): number {

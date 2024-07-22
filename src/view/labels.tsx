@@ -5,6 +5,7 @@ import { formatNumber } from '../model/utils';
 import { ReactNode } from 'react';
 import { WarProps } from './war';
 import { WorkType } from '../model/work';
+import { Season } from '../model/calendarModel';
 
 
 export const ManualResourceGatheringLabels = {
@@ -114,3 +115,11 @@ export const ActionCommonLabels = {
     Second: "s",
 }
 
+export const CalendarLabels = {
+    UntilEndOfSeason: "End of season in",
+    Second: "s",
+    [Season.Spring]: "Spring", 
+    [Season.Summer]: "Summer", 
+    [Season.Autumn]: "Autumn", 
+    [Season.Winter]: "Winter", 
+}
