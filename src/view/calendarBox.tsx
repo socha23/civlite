@@ -1,9 +1,9 @@
 import React from 'react';
 import { Box } from './box'
 import { GameModel } from '../model/gameModel'
-import { Season } from '../model/calendarModel';
+import { Season } from '../model/calendarConsts';
 import { FontSizes } from './icons';
-import { CalendarLabels } from './labels';
+import { CalendarLabels } from './calendarLabels';
 
 export type CalendarProps = {
   season: Season

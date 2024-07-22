@@ -12,11 +12,12 @@ import { ActionState } from '../model/action';
 import { CalendarBox, CalendarProps, calendarProps } from './calendarBox';
 import { HuntingProps, HuntingSection, huntingProps } from './hunting';
 import { Effects } from './effects';
+import { LogProps, LogView, logProps } from './log';
 
 
 export type GameViewProps = {
+  log: LogProps,
   civName: string,
-  tick: number
   summary: InventoryBoxProps
   reset: ActionProps
   pops: PopBoxProps[]
@@ -30,7 +31,7 @@ export type GameViewProps = {
 export function gameViewProps(model: GameModel, onReset: () => void): GameViewProps {
   return {
     civName: model.civName,
-    tick: model.tick,
+    log: logProps(model.log),
     summary: summaryBoxProps(model),
     pops: model.population.pops.map(p => popBoxProps(model, p.type)),
     resourceGathering: resourceGatheringProps(model),
@@ -52,26 +53,6 @@ export const CivName = (p: {civName: string}) => <div style={{
   fontSize: FontSizes.xbig,
   color: Colors.captions,
 }}>{p.civName}</div>
-
-
-const PopColums = {
-  [PopType.Idler]: 0,
-  [PopType.Gatherer]: 1,
-  [PopType.Laborer]: 1,
-  [PopType.Herder]: 1,
-  [PopType.Farmer]: 1,
-  [PopType.Brave]: 2,
-  [PopType.Slinger]: 2,
-}
-
-export const PopsView = (p: {pops: PopBoxProps[], column: number}) => <div style={{
-  display: "flex",
-  flexDirection: "column",
-}}>
-    {p.pops
-      .filter(pop => PopColums[pop.popType] === p.column)
-      .map((pop, idx) => <PopBox key={idx} {...pop}/>)}
-</div>
 
 
 const Column = (p: PropsWithChildren) => <div className="dividersParent" style={{
@@ -124,6 +105,9 @@ const _GameView = (p: GameViewProps) =>
         </Column>
         <Column>
           <CivilizationsView {...p.civilizations}/>
+        </Column>
+        <Column>
+          <LogView {...p.log}/>
         </Column>
       </div>
     </div>

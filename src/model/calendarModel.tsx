@@ -1,12 +1,6 @@
+import { CalendarMessages } from "../view/calendarLabels"
+import { Season } from "./calendarConsts"
 import { GameModel } from "./gameModel"
-
-
-export enum Season {
-  Spring = 0,
-  Summer = 1,
-  Autumn = 2,
-  Winter = 3,
-}
 
 const SEASONS = [Season.Spring, Season.Summer, Season.Autumn, Season.Winter]
 
@@ -36,7 +30,9 @@ export class CalendarModel {
   onEndOfSeason() {
     this.model.onEndOfSeason()
     const newIdx = (SEASONS.indexOf(this.currentSeason) + 1) % SEASONS.length
-    this.currentSeason = SEASONS[newIdx]
+    const newSeason = SEASONS[newIdx]
+    this.model.log.info(<CalendarMessages.SeasonEnds oldSeason={this.currentSeason} newSeason={newSeason}/>)
+    this.currentSeason = newSeason
     this.timeUntilEndOfSeason = SEASON_DURATION
   }
 

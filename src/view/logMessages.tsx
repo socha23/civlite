@@ -1,6 +1,9 @@
 import React, { ReactNode } from 'react';
 import { Combatant, Force } from '../model/battleModel';
 import { Labels } from './icons';
+import { AnimalType } from '../model/huntingModel';
+import { HuntingLabels } from './labels';
+import { PopType } from '../model/pops';
 
 
 export const BattleMessages = {
@@ -29,4 +32,16 @@ export const BattleMessages = {
         {p.force.title}
     </span>,
 
+}
+
+export const HuntingMessages = {
+    HuntComplete: (p: {animalType: AnimalType, count: number}) => <span>
+            Gatherers have caught {p.count} {HuntingLabels[p.animalType]}. 
+        </span>,
+}
+
+export const HungerMessages = {
+    HungerDeaths: (p: {type: PopType, count: number}) => <span>
+            {p.count} {Labels.Plural[p.type]} die of hunger.
+        </span>,
 }

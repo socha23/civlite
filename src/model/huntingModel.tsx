@@ -1,5 +1,7 @@
+import { HuntingMessages } from "../view/logMessages"
 import { Action, action } from "./action"
-import { ExpectedAmount, ExpectedResourceAmount, Amount, PopAmount, pops } from "./amount"
+import { ExpectedResourceAmount, Amount, } from "./amount"
+import { Log } from "./log"
 import { PopulationModel } from "./popModel"
 import { PopType } from "./pops"
 import { ResourceType } from "./resources"
@@ -52,13 +54,15 @@ const HuntTypes = {
 export class HuntingModel {
     animalCounts: Map<AnimalType, number> = new Map()
 
+    log: Log
     population: PopulationModel
     resources: ResourcesModel
 
     smallHuntAction: Action
     largeHuntAction: Action
 
-    constructor(population: PopulationModel, resources: ResourcesModel) {
+    constructor(population: PopulationModel, resources: ResourcesModel, log: Log) {
+        this.log = log
         this.population = population
         this.resources = resources
 
@@ -101,6 +105,7 @@ export class HuntingModel {
             onComplete: (rewards: Amount[]) => {
                 let count = 0
                 rewards.forEach(r => count += r.count)
+                this.log.info(<HuntingMessages.HuntComplete animalType={type.animalType} count={count}/>)
                 const currentAnimalCount = this.animalCounts.get(type.animalType)!!
                 const newAnimalCount = Math.max(0, currentAnimalCount - count) 
                 this.animalCounts.set(type.animalType, newAnimalCount)

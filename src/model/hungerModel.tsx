@@ -1,6 +1,8 @@
 import { spawnEffectAwards, spawnEffectCost } from "../view/effects"
 import { coordsIdPopCount } from "../view/elementCoordinatesHolder"
+import { HungerMessages } from "../view/logMessages"
 import { PopAmount, pops } from "./amount"
+import { Log } from "./log"
 import { PopulationModel } from "./popModel"
 import { PopType } from "./pops"
 import { ResourceType } from "./resources"
@@ -20,10 +22,12 @@ function feedOrder(t: PopType): number {
 }
 
 export class HungerModel {
+    log: Log
     population: PopulationModel
     resources: ResourcesModel
 
-    constructor(population: PopulationModel, resources: ResourcesModel) {
+    constructor(population: PopulationModel, resources: ResourcesModel, log: Log) {
+        this.log = log
         this.population = population
         this.resources = resources
     }
@@ -42,6 +46,7 @@ export class HungerModel {
             if (peopleFed < pop.count) {
                 const hungerDeaths = pop.count - peopleFed
                 pop.decCount(hungerDeaths)
+                this.log.info(<HungerMessages.HungerDeaths type={t} count={hungerDeaths}/>)
                 spawnEffectCost(coordsIdPopCount(t), [pops(t, -hungerDeaths)])
                 loses.push(pops(t, hungerDeaths))
             }

@@ -4,7 +4,6 @@ import { sum } from './utils'
 import { popTypeDefinition, PopType } from "./pops"
 import { Amount, ResourceAmount, WorkAmount, isPopAmount, isPopType, isResourceAmount, resources, work } from "./amount"
 import { Assignable } from "./assignable"
-import { WorkType } from "./work"
 
 export class PopModel {
 

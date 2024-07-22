@@ -1,13 +1,7 @@
 import { ResourceType } from '../model/resources';
 import { PopType } from '../model/pops';
-import { WarType } from '../model/wars';
-import { formatNumber } from '../model/utils';
-import { ReactNode } from 'react';
-import { WarProps } from './war';
 import { WorkType } from '../model/work';
-import { Season } from '../model/calendarModel';
 import { AnimalType, HuntType } from '../model/huntingModel';
-
 
 export const ManualResourceGatheringLabels = {
     [ResourceType.Food]: {
@@ -114,15 +108,6 @@ export const ActionCommonLabels = {
     Time: "Time:",
 
     Second: "s",
-}
-
-export const CalendarLabels = {
-    UntilEndOfSeason: "End of season in",
-    Second: "s",
-    [Season.Spring]: "Spring", 
-    [Season.Summer]: "Summer", 
-    [Season.Autumn]: "Autumn", 
-    [Season.Winter]: "Winter", 
 }
 
 export const HuntingLabels = {
