@@ -243,7 +243,7 @@ const ActionRowsAmountsRow = (p: {label: string, items: AmountWithColorProps[]})
   <Amounts items={p.items}/>
 </div>
 
-export const ActionRow3 = (p: ActionProps & {displayRewards?: boolean}) => {
+const _ActionRow3 = (p: ActionProps & {displayRewards?: boolean}) => {
 
   const costs = p.costs || []
   const work = p.workCost || []
@@ -254,8 +254,6 @@ export const ActionRow3 = (p: ActionProps & {displayRewards?: boolean}) => {
   return <div style={{
     display: "flex",
     flexDirection: "column",
-    paddingTop: 4,
-    paddingBottom: 4,
     gap: 4,
   }}>
     <div style={{
@@ -288,3 +286,31 @@ export const ActionRow3 = (p: ActionProps & {displayRewards?: boolean}) => {
   </div>
 }
 
+export const ActionRow3 = (p: ActionProps & {displayRewards?: boolean}) => <div style={{
+    borderStyle: "solid",
+    borderWidth: 2,
+    borderColor: p.state === ActionState.InProgress ? Colors.active : "transparent",
+    borderRadius: 6,
+  }}>
+    <div style={{
+      position: "relative",
+      width: "100%",
+      height: "100%",
+    }}>
+      <div style={{
+        position: "absolute",
+        zIndex: 1,
+        width: (100 * (p.completionRatio || 0)) + "%",
+        height: "100%",
+        backgroundColor: p.state === ActionState.InProgress ? Colors.active : "transparent",
+      }}/>
+      <div style={{
+        position: "relative",
+        zIndex: 2,
+        padding: 2,
+      }}>
+        <_ActionRow3 {...p}/>
+      </div>
+      
+    </div>
+  </div>

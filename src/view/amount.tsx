@@ -19,7 +19,7 @@ export const AmountView = (p: AmountWithColorProps) => <div style={{
   display: "flex",
   gap: 2
 }}>
-  <div>{"count" in p ? formatNumber(p.count) : p.from + "-" + p.to}{p.postfix}</div>
+  <div>{"count" in p ? formatNumber(p.count, 1) : p.from + "-" + p.to}{p.postfix}</div>
   {"type" in p && <i className={Icons[p.type]}/>}
 </div>
 

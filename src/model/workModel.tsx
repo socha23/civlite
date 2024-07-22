@@ -1,4 +1,5 @@
 import { Action, action } from "./action"
+import { listInProgressActions } from "./actionsModel"
 import { Amount, isWorkType, work, } from "./amount"
 import { WorkDefinitions, WorkType } from "./work"
 
@@ -14,6 +15,12 @@ class WorkTypeModel {
             timeCost: WorkDefinitions[type].gatherTimeout
         })
     }
+
+    add(count: number) {
+        const needy = listInProgressActions()
+            .filter(a => a.needsWorkOfType(this.type))
+        needy.forEach(a => a.onWork(this.type, count / needy.length))
+    }
 }
 
 
@@ -24,10 +31,10 @@ export class WorkModel {
         return this.workModels.find(m => m.type === type)!
     }
 
-    gain(values: Amount[]) {
+    add(values: Amount[]) {
         values.forEach(c => {
             if (isWorkType(c.type)) {
-                /// TODO
+                this.work(c.type).add(c.count)
             }
         })
     }

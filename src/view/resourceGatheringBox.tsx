@@ -35,6 +35,9 @@ export const ResourceGatheringBox = (p: ResourceGatheringProps) =>
     style={{
       display: "flex",
       flexDirection: "column",
+      gap: 4,
+      marginTop: 4,
+      marginBottom: 4,
     }}> {
       p.actions.map((a, idx) => <ActionRow3 key={idx} {...a}/>)
     }

@@ -30,7 +30,8 @@ export class GameModel implements GameModelInterface {
   }
 
   onProduce(value: Amount[]) {
-    this.resources.gain(value)
+    this.work.add(value)
+    this.resources.add(value)
     this.population.onProduce(value)
   }
 
@@ -42,7 +43,7 @@ export class GameModel implements GameModelInterface {
   onTick(deltaS: number) {
     this.tick += deltaS
     onTick(deltaS)
-    this.applyConsumptionAndProduction(deltaS)
+    this.applyWorkConsumptionAndProduction(deltaS)
   }
 
   production(resourceType: ResourceType): number {
@@ -53,13 +54,16 @@ export class GameModel implements GameModelInterface {
     return this.population.consumption(resourceType)
   }
 
-  applyConsumptionAndProduction(deltaS: number) {
+  applyWorkConsumptionAndProduction(deltaS: number) {
     this.population.pops.forEach(pop => {
       pop.consumption.forEach(res => {
         this.resources.resource(res.type).sub(res.count * deltaS)
       })
       pop.production.forEach(res => {
         this.resources.resource(res.type).add(res.count * deltaS)
+      })
+     pop.work.forEach(w => {
+        this.work.work(w.type).add(w.count * deltaS)
       })
     })
   }

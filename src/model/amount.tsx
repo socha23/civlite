@@ -139,6 +139,11 @@ export class AmountsAccumulator {
     }
   }
 
+  missingOfType(type: ItemType) : number {
+     return this.accs.get(type)?.missing || 0
+  }
+
+
   get missing() {
     return Array.from(this.accs.keys()).map(t => ({type: t, count: this.accs.get(t)!!.missing}))
   }

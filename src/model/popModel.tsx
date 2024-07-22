@@ -2,8 +2,9 @@ import { ResourceType,  } from "./resources"
 import { Action, action } from "./action"
 import { sum } from './utils'
 import { popTypeDefinition, PopType } from "./pops"
-import { Amount, ResourceAmount, isPopAmount, isPopType, isResourceAmount, resources } from "./amount"
+import { Amount, ResourceAmount, WorkAmount, isPopAmount, isPopType, isResourceAmount, resources, work } from "./amount"
 import { Assignable } from "./assignable"
+import { WorkType } from "./work"
 
 export class PopModel {
 
@@ -20,7 +21,7 @@ export class PopModel {
       initialCost: this.definition.buyCost,
       workCost: this.definition.workCost,
       timeCost: this.definition.timeCost,
-      action: () => {this.incCount(1)}
+      onComplete: () => {this.incCount(1)}
     })
     this.sellAction = action({      
       rewards: this.singlePopSellValue,
@@ -58,6 +59,14 @@ export class PopModel {
 
   get consumption(): ResourceAmount[] {
     return this.singlePopConsumption.map(r => resources(r.type, r.count * this.count))
+  }
+
+  get work(): WorkAmount[] {
+    return this.singlePopWork.map(r => work(r.type, r.count * this.count))
+  }
+
+  get singlePopWork(): WorkAmount[] {
+    return this.definition.work.map(r => work(r.type, r.count))
   }
 
   get singlePopBalance(): ResourceAmount[] {

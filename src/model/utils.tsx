@@ -6,7 +6,7 @@ export function sum<T>(items: T[], op: (arg: T) => number) {
     return total
   }
 
-export function formatNumber(n: number) {
+export function formatNumber(n: number, maxDigits = 1) {
   if (Math.abs(n) < 0.001) {
     return 0
   }
@@ -17,7 +17,7 @@ export function formatNumber(n: number) {
     fixed++
     n *= 10
   }
-  return val.toFixed(fixed)
+  return val.toFixed(Math.min(fixed, maxDigits))
 }
 
 export function gaussRandom(from: number, to: number) {

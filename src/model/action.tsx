@@ -1,6 +1,7 @@
 import { addTickListener, removeTickListener } from "./timer"
 import { Amount, AmountsAccumulator, SingleAmountAccumulator, WorkAmount } from "./amount"
 import { WorkType } from "./work"
+import { registerInProgressAction, unregisterInProgressAction } from "./actionsModel"
 
 export type ActionParams = {
     initialCost?: Amount[]
@@ -75,6 +76,10 @@ export abstract class Action {
         return this.workAcc.required
     }
 
+    needsWorkOfType(type: WorkType) {
+        return this.workAcc.missingOfType(type) > 0
+    }
+
 
     onWork(type: WorkType, amount: number) {
         this.workAcc.add(type, amount)
@@ -93,6 +98,7 @@ export abstract class Action {
         }
         this.workAcc.reset()
         this.timeAcc.reset()
+        registerInProgressAction(this)
         addTickListener(this)
         this.state = ActionState.InProgress
     }
@@ -104,6 +110,7 @@ export abstract class Action {
         this.state = ActionState.Ready
         this.workAcc.reset()
         removeTickListener(this)
+        unregisterInProgressAction(this)
         this._onComplete()
 
     }
@@ -116,7 +123,7 @@ export abstract class Action {
     }
 
     get completionRatio() {
-        return this.workAcc.completionRatio
+        return Math.min(this.workAcc.completionRatio, this.timeAcc.completionRatio)
     }
 }
 

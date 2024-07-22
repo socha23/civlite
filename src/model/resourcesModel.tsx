@@ -104,7 +104,7 @@ export class ResourcesModel {
         })
     }
 
-    gain(values: Amount[]) {
+    add(values: Amount[]) {
         values.forEach(c => {
             if (isResourceType(c.type)) {
                 this.resource(c.type).gain(c)
