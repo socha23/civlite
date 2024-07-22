@@ -1,3 +1,5 @@
+import { spawnEffectAwards, spawnEffectCost } from "../view/effects"
+import { coordsIdPopCount } from "../view/elementCoordinatesHolder"
 import { PopAmount, pops } from "./amount"
 import { PopulationModel } from "./popModel"
 import { PopType } from "./pops"
@@ -40,6 +42,7 @@ export class HungerModel {
             if (peopleFed < pop.count) {
                 const hungerDeaths = pop.count - peopleFed
                 pop.decCount(hungerDeaths)
+                spawnEffectCost(coordsIdPopCount(t), [pops(t, -hungerDeaths)])
                 loses.push(pops(t, hungerDeaths))
             }
         })

@@ -11,6 +11,7 @@ import { CivilizationsView, CivsProps, civsProps } from './civs';
 import { ActionState } from '../model/action';
 import { CalendarBox, CalendarProps, calendarProps } from './calendarBox';
 import { HuntingProps, HuntingSection, huntingProps } from './hunting';
+import { Effects } from './effects';
 
 
 export type GameViewProps = {
@@ -34,6 +35,7 @@ export function gameViewProps(model: GameModel, onReset: () => void): GameViewPr
     pops: model.population.pops.map(p => popBoxProps(model, p.type)),
     resourceGathering: resourceGatheringProps(model),
     reset: {
+      id: "reset",
       title: "Reset",
       costs: [],
       action: onReset,
@@ -85,7 +87,7 @@ function popProps(p: GameViewProps, t: PopType) {
   return p.pops.find(pop => pop.popType === t)!!
 }
 
-export const GameView = (p: GameViewProps) =>
+const _GameView = (p: GameViewProps) =>
   <div style={{
     display: "flex",
     padding: 10,
@@ -127,3 +129,13 @@ export const GameView = (p: GameViewProps) =>
     </div>
   </div>
 
+export const GameView = (p: GameViewProps) => <div style={{
+  position: "relative"
+}}>
+  <Effects/>
+  <div style={{
+    zIndex: 0
+  }}>
+    <_GameView {...p}/>
+  </div>
+</div>

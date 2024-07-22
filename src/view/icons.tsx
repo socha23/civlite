@@ -13,6 +13,8 @@ export const DividerColors = {
 
 export const Colors = {
     active: "#D0D6B5",
+    award: "#0A0",
+    cost: "#A00",
     default: "#222",
     grayedOut: "#bbb",
     captions: "#000",

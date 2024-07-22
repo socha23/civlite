@@ -5,6 +5,7 @@ import { Action, ActionState } from '../model/action'
 import { Colors, FontSizes, DividerColors } from './icons';
 import { AmountWithColorProps, Amounts } from './amount';
 import { ActionCommonLabels } from './labels';
+import { CoordsCatcher } from './elementCoordinatesHolder';
 
 interface ActionParms {
   title?: string,
@@ -13,7 +14,8 @@ interface ActionParms {
 }
 
 export interface ActionProps extends ActionParms {
-  action: () => void
+  id: string,
+  action: () => void,
   costs?: AmountWithColorProps[]
   workCost?: AmountWithColorProps[],
   workLeft?: AmountWithColorProps[],
@@ -28,6 +30,7 @@ export interface ActionProps extends ActionParms {
 
 export function propsForAction(model: GameModel, a: Action, params: ActionParms = {}): ActionProps {
   return {
+    id: a.id,
     action: () => a.onAction(model),
     costs: a.initialCost.map(c => ({...c, color: model.canPay(c) ? Colors.default: Colors.UnsatisfiableCost})),
     workCost: a.workCost,
@@ -210,22 +213,24 @@ const ActionRowProgressIndicator = (a: ActionProps) => {
 const ActionRowStartActionButton = (a: ActionProps) => {
   const enabled = !a.disabled && (a.state === ActionState.Ready)
   const buttonStyle = enabled ? BUTTON_STYLE_ENABLED : BUTTON_STYLE_DISABLED
-  return <div style={{
-    ...buttonStyle,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    width: 80,
-    userSelect: "none",
-  }} onClick={() => {
-    if (a.disabled) {
-      console.log(a.disabled)
-    } else if (enabled) {
-      a.action()
-    }
-  }}>
-    {a.buttonLabel || a.title}
-  </div>
+  return <CoordsCatcher id={a.id}>  
+    <div style={{
+      ...buttonStyle,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      width: 80,
+      userSelect: "none",
+    }} onClick={() => {
+      if (a.disabled) {
+        console.log(a.disabled)
+      } else if (enabled) {
+        a.action()
+      }
+    }}>
+      {a.buttonLabel || a.title}
+    </div>
+  </CoordsCatcher>
 }
 
 const ActionRowTitle = (p: ActionProps) => <div style={{

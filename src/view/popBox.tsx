@@ -7,6 +7,7 @@ import { FontSizes, TrendColors, DividerColors, Icons, Colors, Labels } from './
 import { formatNumber } from '../model/utils';
 import { ResourceAmount } from '../model/amount';
 import { PopulationRecruitLabels, PopulationUnrecruitLabels } from './labels';
+import { CoordsCatcher, coordsIdPopCount } from './elementCoordinatesHolder';
 
 export type PopBoxProps = {
   popType: PopType,
@@ -83,7 +84,9 @@ export const PopBox = (p: PropsWithChildren<PopBoxProps>) =>
           width: 80,
           textAlign: 'right',
         }}>
-          {isAssignable(p.popType) ? p.unassignedCount + " / " + p.count : p.count}
+          <CoordsCatcher id={coordsIdPopCount(p.popType)}>
+            {isAssignable(p.popType) ? p.unassignedCount + " / " + p.count : p.count}
+          </CoordsCatcher>
         </div>
         <div style={{width: 60, display: 'flex', justifyContent: 'flex-end'}}>
         </div>

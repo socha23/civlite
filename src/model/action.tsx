@@ -2,7 +2,7 @@ import { addTickListener, removeTickListener } from "./timer"
 import { Amount, AmountsAccumulator, ExpectedAmount, SingleAmountAccumulator, WorkAmount, isAmount, rollActualAmount } from "./amount"
 import { WorkType } from "./work"
 import { exclusiveActionsInProgress, registerInProgressAction, unregisterInProgressAction } from "./actionsModel"
-import { Amounts } from "../view/amount"
+import { spawnEffectAwards } from "../view/effects"
 
 export type ActionParams = {
     id: string
@@ -124,6 +124,7 @@ export abstract class Action {
             }
         })
         if (this.rewards.length > 0) {
+            spawnEffectAwards(this.id, this.actualAwards)
             this.checker!.onProduce(this.actualAwards)
         }
         this.state = ActionState.Ready
