@@ -21,6 +21,11 @@ type Effect = {
 
 let autoinc  = 0
 
+
+export function spawnEffectNumberIncrease(id: string, value: number, size: number = FontSizes.normal) {
+    return spawnEffect(id, <span style={{fontSize: size, color: Colors.award}}>+{value}</span>)
+}
+
 export function spawnEffectCost(id: string, value: Amount[]) {
     return spawnEffect(id, value.map(v => ({color: Colors.cost, ...v})))
 }
@@ -37,7 +42,7 @@ export function spawnEffect(id: string, value: EffectValue) {
         direction: -Math.PI / 2 + Math.random() * Math.PI,
         speed: gaussRandom(10, 20),
         lifetime: 0,
-        lifetimeMax: 3
+        lifetimeMax: 1
     })
 }
 
@@ -52,14 +57,13 @@ export function currentEffects() {
 }
 
 addTickListener({
-    onTick(deltaMs: number) {
+    onTick(deltaS: number) {
         const newEffects = [] as Effect[]
         effects.forEach(e => {
-            e.lifetime += deltaMs
+            e.lifetime += deltaS
             if (e.lifetime < e.lifetimeMax) {
                 newEffects.push(e)
             } else {
-                console.log("Killing effect")
             }
         })
         effects = newEffects

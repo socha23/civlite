@@ -58,6 +58,10 @@ export class GameModel implements GameModelInterface {
     this.hunger.feedPops()
   }
 
+  onEndOfTurn() {
+    this.hunting.multiplyAnimals()
+  }
+
   production(resourceType: ResourceType): number {
     return this.population.production(resourceType)
   }

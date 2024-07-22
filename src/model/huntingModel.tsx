@@ -1,3 +1,5 @@
+import { spawnEffectAwards, spawnEffectNumberIncrease } from "../view/effects"
+import { coordsIdHuntStock } from "../view/elementCoordinatesHolder"
 import { HuntingMessages } from "../view/logMessages"
 import { Action, action } from "./action"
 import { ExpectedResourceAmount, Amount, } from "./amount"
@@ -20,10 +22,12 @@ export interface AnimalStock {
 
 const AnimalDefs = {
     [AnimalType.Small]: {
-        capPerForest: 20,
+        capPerForest: 10,
+        growthRate: 1.005,
     },
     [AnimalType.Large]: {
-        capPerForest: 10,
+        capPerForest: 5,
+        growthRate: 1.002,
     },
 }
 
@@ -40,13 +44,13 @@ interface HuntDefinition {
 
 const HuntTypes = {
     [HuntType.Small]: {
-        duration: 5,
+        duration: 2,
         rewardsPerHunter: [{type: ResourceType.Food, from: 1, to: 2}],
         animalType: AnimalType.Small
     },
     [HuntType.Large]: {
-        duration: 10,
-        rewardsPerHunter: [{type: ResourceType.Food, from: 3, to: 6}],
+        duration: 5,
+        rewardsPerHunter: [{type: ResourceType.Food, from: 3, to: 5}],
         animalType: AnimalType.Large
     },
 }
@@ -96,8 +100,8 @@ export class HuntingModel {
             timeCost: type.duration,
             rewards: type.rewardsPerHunter.map(r => ({
                 type: r.type, 
-                from: Math.min(r.from * hunters, animals),
-                to: Math.min(r.to * hunters, animals),
+                from: Math.floor(Math.min(r.from * hunters, animals)),
+                to: Math.floor(Math.min(r.to * hunters, animals)),
             })),
             disabled() {
               return hunters === 0 || animals === 0  
@@ -121,6 +125,29 @@ export class HuntingModel {
             this.largeHuntAction = this.createHuntAction(HuntTypes.Large)
         }
 
+        this.applyCaps()
+    }
+
+    applyCaps() {
+        return Object.values(AnimalType).forEach(t => {
+            if ((this.animalCounts.get(t) || 0) > this.cap(t)) {
+                this.animalCounts.set(t, this.cap(t))
+            }
+        })   
+    }
+
+    multiplyAnimals() {
+        Object.values(AnimalType).forEach(t => {
+            const count = this.animalCounts.get(t) || 0
+            if (count > 1) {                
+                const newCount = count * AnimalDefs[t].growthRate
+                this.animalCounts.set(t, newCount)
+                const added = Math.floor(newCount) - Math.floor(count)
+                if (added > 0) {
+                    spawnEffectNumberIncrease(coordsIdHuntStock(t), added)
+                }
+            }
+        })   
     }
 }
 

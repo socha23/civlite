@@ -39,6 +39,7 @@ export const LogView = (p: LogProps) => {
     flexDirection: "column",
     height: "100%",
     overflow: "auto",
+    gap: 4,
   }}>
     {p.messages.map((m, idx) => <div key={m.idx}>
       {m.message}

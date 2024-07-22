@@ -1,5 +1,6 @@
 import React, { PropsWithChildren, useEffect, useRef } from 'react';
 import { PopType } from '../model/pops';
+import { AnimalType } from '../model/huntingModel';
 
 type Coords = DOMRect
 
@@ -46,4 +47,8 @@ export const CoordsCatcher = (p: PropsWithChildren<{id: string}>) => {
 
 export function coordsIdPopCount(t: PopType) {
   return `pop_count_${t}`
+}
+
+export function coordsIdHuntStock(t: AnimalType) {
+  return `hunting_stock_${t}`
 }

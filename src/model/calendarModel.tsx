@@ -5,9 +5,11 @@ import { GameModel } from "./gameModel"
 const SEASONS = [Season.Spring, Season.Summer, Season.Autumn, Season.Winter]
 
 export const SEASON_DURATION = 15
+export const TURN_DURATION = 1
 
 export class CalendarModel {
   timeUntilEndOfSeason: number = SEASON_DURATION
+  timeUntilEndOfTurn: number = TURN_DURATION
   currentSeason: Season = Season.Spring
   model: GameModel
 
@@ -15,7 +17,7 @@ export class CalendarModel {
     this.model = model
   }
 
-  onTick(deltaS: number) {
+  progressSeason(deltaS: number) {
     let timeLeft = deltaS
     while (timeLeft > 0) {
       const timeLeftThisSeason = Math.min(timeLeft, this.timeUntilEndOfSeason)
@@ -25,6 +27,28 @@ export class CalendarModel {
         this.onEndOfSeason()
       }
     }
+  }
+
+  progressTurn(deltaS: number) {
+    let timeLeft = deltaS
+    while (timeLeft > 0) {
+      const timeLeftThisTurn = Math.min(timeLeft, this.timeUntilEndOfTurn)
+      timeLeft -= timeLeftThisTurn
+      this.timeUntilEndOfTurn -= timeLeftThisTurn
+      if (this.timeUntilEndOfTurn <= 0) {
+        this.onEndOfTurn()
+      }
+    }
+  }
+
+  onTick(deltaS: number) {
+    this.progressSeason(deltaS)
+    this.progressTurn(deltaS)
+  }
+
+  onEndOfTurn() {
+    this.model.onEndOfTurn()
+    this.timeUntilEndOfTurn = TURN_DURATION
   }
 
   onEndOfSeason() {

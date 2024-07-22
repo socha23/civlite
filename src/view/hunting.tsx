@@ -4,6 +4,7 @@ import { ActionProps, propsForAction, ActionRow3 } from './action';
 import { HuntingLabels, } from './labels';
 import { AnimalStock, } from '../model/huntingModel';
 import { FontSizes } from './icons';
+import { CoordsCatcher, coordsIdHuntStock } from './elementCoordinatesHolder';
 
 export type HuntingProps = {
   stocks: AnimalStock[],
@@ -30,7 +31,9 @@ const AnimalStockView = (p: AnimalStock) => <div style={{
     {HuntingLabels[p.type]}
   </div>
   <div>
-    {Math.floor(p.count)} / {Math.floor(p.cap)}
+    <CoordsCatcher id={coordsIdHuntStock(p.type)}>
+      {Math.floor(p.count)} / {Math.floor(p.cap)}
+    </CoordsCatcher>
   </div>
 </div>
 
