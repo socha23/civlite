@@ -208,7 +208,7 @@ const ActionRowProgressIndicator = (a: ActionProps) => {
 
 
 const ActionRowStartActionButton = (a: ActionProps) => {
-  const enabled = !a.disabled && a.state === ActionState.Ready
+  const enabled = !a.disabled && (a.state === ActionState.Ready)
   const buttonStyle = enabled ? BUTTON_STYLE_ENABLED : BUTTON_STYLE_DISABLED
   return <div style={{
     ...buttonStyle,
@@ -244,7 +244,6 @@ const ActionRowsAmountsRow = (p: {label: string, items: AmountWithColorProps[]})
 </div>
 
 const _ActionRow3 = (p: ActionProps & {displayRewards?: boolean}) => {
-
   const costs = p.costs || []
   const work = p.workCost || []
 

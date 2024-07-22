@@ -17,3 +17,11 @@ export function unregisterInProgressAction(a: Action) {
 export function listInProgressActions() {
     return IN_PROGRESS_ACTIONS
 }
+
+export function exclusiveActionsInProgress(a: Action): boolean {
+    if (!a.exclusivityGroup) {
+        return false
+    }
+    const otherAction = IN_PROGRESS_ACTIONS.find(e => e.exclusivityGroup === a.exclusivityGroup)
+    return otherAction !== undefined
+}

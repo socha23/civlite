@@ -12,7 +12,8 @@ class WorkTypeModel {
         this.type = type
         this.gatherAction = action({
             rewards: [work(type, 1)],
-            timeCost: WorkDefinitions[type].gatherTimeout
+            timeCost: WorkDefinitions[type].gatherTimeout,
+            exclusivityGroup: "gathering"
         })
     }
 

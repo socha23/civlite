@@ -22,6 +22,7 @@ class ResourceModel {
         this.gatherAction = action({
             rewards: [resources(type, 1)],
             timeCost: resDef.gatherTimeout,
+            exclusivityGroup: "gathering",
         })
     }
 

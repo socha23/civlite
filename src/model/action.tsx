@@ -1,9 +1,10 @@
 import { addTickListener, removeTickListener } from "./timer"
 import { Amount, AmountsAccumulator, SingleAmountAccumulator, WorkAmount } from "./amount"
 import { WorkType } from "./work"
-import { registerInProgressAction, unregisterInProgressAction } from "./actionsModel"
+import { exclusiveActionsInProgress, registerInProgressAction, unregisterInProgressAction } from "./actionsModel"
 
 export type ActionParams = {
+    exclusivityGroup?: string
     initialCost?: Amount[]
     workCost?: WorkAmount[]
     timeCost?: number
@@ -30,9 +31,11 @@ export abstract class Action {
     rewards: Amount[]
     checker?: GameModelInterface
     state: ActionState = ActionState.Ready
+    exclusivityGroup?: string
 
-    constructor({initialCost = [], workCost = [], rewards = [], timeCost}: ActionParams) {
+    constructor({initialCost = [], workCost = [], rewards = [], timeCost, exclusivityGroup}: ActionParams) {
         this.initialCost = initialCost  
+        this.exclusivityGroup = exclusivityGroup
         this.rewards = rewards
         this.timeAcc = new SingleAmountAccumulator(timeCost || 0)
         this.workAcc = new AmountsAccumulator(workCost)
@@ -116,6 +119,9 @@ export abstract class Action {
     }
 
     disabled(checker: GameModelInterface): any {
+        if (exclusiveActionsInProgress(this)) {
+            return "Exclusive actions in progress"
+        }
         if (checker.filterUnsatisfiableCosts(this.initialCost).length > 0) {
             return "Initial cost can't be paid"
         }
