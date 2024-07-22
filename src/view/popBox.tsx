@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropsWithChildren} from 'react';
 import { Box } from './box'
 import { GameModel } from '../model/gameModel'
 import { ActionProps, ActionButton, propsForAction, ActionRow3 } from './action';
@@ -59,7 +59,7 @@ export const ResourcesList = (p: {items: ResourceAmount[], caption: string, colo
 
 
 
-export const PopBox = (p: PopBoxProps) =>
+export const PopBox = (p: PropsWithChildren<PopBoxProps>) =>
   <Box>
     <div 
     className='dottedDividersParent'
@@ -98,8 +98,11 @@ export const PopBox = (p: PopBoxProps) =>
         <div style={{flexGrow: 1}}/>
         <ResourcesList items={p.resourceBalance} caption={Labels.PerSecond}/>
       </div>
-      <ActionRow3 {...p.buyAction}/>
-      <ActionRow3 {...p.sellAction} displayRewards={true}/>
+      <div>
+        <ActionRow3 {...p.buyAction}/>
+        <ActionRow3 {...p.sellAction} displayRewards={true}/>
+      </div>
+      {p.children}
     </div>
   </Box>
 

@@ -6,6 +6,7 @@ import { ReactNode } from 'react';
 import { WarProps } from './war';
 import { WorkType } from '../model/work';
 import { Season } from '../model/calendarModel';
+import { AnimalType, HuntType } from '../model/huntingModel';
 
 
 export const ManualResourceGatheringLabels = {
@@ -122,4 +123,19 @@ export const CalendarLabels = {
     [Season.Summer]: "Summer", 
     [Season.Autumn]: "Autumn", 
     [Season.Winter]: "Winter", 
+}
+
+export const HuntingLabels = {
+    [AnimalType.Small]: "Small animals",
+    [AnimalType.Large]: "Large animals",
+    [HuntType.Small]: {
+        title: "Hunt small animals",
+        buttonLabel: "Hunt",
+        description: "Hunt small game for food."
+    },
+    [HuntType.Large]: {
+        title: "Hunt large animals",
+        buttonLabel: "Hunt",
+        description: "Hunt big gamefor food."
+    },
 }

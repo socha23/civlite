@@ -10,6 +10,7 @@ import { WarModel } from "./warModel"
 import { WorkModel } from "./workModel"
 import { CalendarModel } from "./calendarModel"
 import { HungerModel } from "./hungerModel"
+import { HuntingModel } from "./huntingModel"
 
 export class GameModel implements GameModelInterface {
   tick: number = 0
@@ -22,6 +23,7 @@ export class GameModel implements GameModelInterface {
   civilizations = new CivilizationsModel()
   wars = new WarModel(this)
   hunger = new HungerModel(this.population, this.resources)
+  hunting = new HuntingModel(this.population, this.resources)
 
   filterUnsatisfiableCosts(costs: Amount[]): Amount[] {
     return this.resources.filterUnsatisfiableCosts(costs)
@@ -49,6 +51,7 @@ export class GameModel implements GameModelInterface {
     onTick(deltaS)
     this.calendar.onTick(deltaS)
     this.applyWorkConsumptionAndProduction(deltaS)
+    this.hunting.onTick(deltaS)
   }
 
   onEndOfSeason() {

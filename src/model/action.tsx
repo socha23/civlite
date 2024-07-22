@@ -1,7 +1,8 @@
 import { addTickListener, removeTickListener } from "./timer"
-import { Amount, AmountsAccumulator, SingleAmountAccumulator, WorkAmount } from "./amount"
+import { Amount, AmountsAccumulator, ExpectedAmount, SingleAmountAccumulator, WorkAmount, isAmount, rollActualAmount } from "./amount"
 import { WorkType } from "./work"
 import { exclusiveActionsInProgress, registerInProgressAction, unregisterInProgressAction } from "./actionsModel"
+import { Amounts } from "../view/amount"
 
 export type ActionParams = {
     exclusivityGroup?: string
@@ -9,7 +10,7 @@ export type ActionParams = {
     workCost?: WorkAmount[]
     timeCost?: number
 
-    rewards?: Amount[]
+    rewards?: (Amount | ExpectedAmount)[]
 }
 
 export interface GameModelInterface {
@@ -28,7 +29,8 @@ export abstract class Action {
     initialCost: Amount[]
     workAcc: AmountsAccumulator
     timeAcc: SingleAmountAccumulator 
-    rewards: Amount[]
+    rewards: (Amount | ExpectedAmount)[]
+    actualAwards: Amount[] = []
     checker?: GameModelInterface
     state: ActionState = ActionState.Ready
     exclusivityGroup?: string
@@ -49,6 +51,10 @@ export abstract class Action {
 
     _onComplete(): void {
 
+    }
+
+    get inProgress() {
+        return this.state === ActionState.InProgress
     }
 
     onAction(checker: GameModelInterface) {
@@ -107,8 +113,15 @@ export abstract class Action {
     }
 
     onComplete() {
+        this.actualAwards = this.rewards.map(r => {
+            if (isAmount(r)) {
+                return r
+            } else {
+                return rollActualAmount(r)
+            }
+        })
         if (this.rewards.length > 0) {
-            this.checker!.onProduce(this.rewards)
+            this.checker!.onProduce(this.actualAwards)
         }
         this.state = ActionState.Ready
         this.workAcc.reset()
@@ -135,12 +148,12 @@ export abstract class Action {
 
 class InlineAction extends Action {
     action?: () => void
-    __onComplete?: () => void
+    __onComplete?: (rewards: Amount[]) => void
     _disabled?: () => any
     
     constructor(p: ActionParams & {
         action?: () => void,
-        onComplete?: () => void,
+        onComplete?: (rewards: Amount[]) => void,
         disabled?: () => any,
     }) {
         super(p)
@@ -157,7 +170,7 @@ class InlineAction extends Action {
 
     _onComplete(): void {
         if (this.__onComplete) {
-            this.__onComplete()
+            this.__onComplete(this.actualAwards)
         }
     }
 
@@ -171,7 +184,7 @@ class InlineAction extends Action {
 
 export function action(p: ActionParams & {
     action?: () => void,
-    onComplete?: () => void,
+    onComplete?: (rewards: Amount[]) => void,
     disabled?: () => any,
 }): Action {
     return new InlineAction(p);

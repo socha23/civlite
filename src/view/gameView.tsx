@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropsWithChildren} from 'react';
 import { ActionProps, ActionRow, ActionRow3 } from './action'
 import { GameModel } from '../model/gameModel'
 import { PopType } from '../model/pops'
@@ -10,6 +10,7 @@ import { MilitaryProps, MilitaryView, militaryProps } from './military';
 import { CivilizationsView, CivsProps, civsProps } from './civs';
 import { ActionState } from '../model/action';
 import { CalendarBox, CalendarProps, calendarProps } from './calendarBox';
+import { HuntingProps, HuntingSection, huntingProps } from './hunting';
 
 
 export type GameViewProps = {
@@ -22,6 +23,7 @@ export type GameViewProps = {
   military: MilitaryProps,
   civilizations: CivsProps,
   calendar: CalendarProps,
+  hunting: HuntingProps,
 }
 
 export function gameViewProps(model: GameModel, onReset: () => void): GameViewProps {
@@ -40,6 +42,7 @@ export function gameViewProps(model: GameModel, onReset: () => void): GameViewPr
     military: militaryProps(model),
     civilizations: civsProps(model),
     calendar: calendarProps(model),
+    hunting: huntingProps(model),
   }
 }
 
@@ -68,6 +71,20 @@ export const PopsView = (p: {pops: PopBoxProps[], column: number}) => <div style
       .map((pop, idx) => <PopBox key={idx} {...pop}/>)}
 </div>
 
+
+const Column = (p: PropsWithChildren) => <div className="dividersParent" style={{
+  display: "flex",
+  flexDirection: "column",
+  gap: 4,
+}}>
+  {p.children}
+</div>
+
+
+function popProps(p: GameViewProps, t: PopType) {
+  return p.pops.find(pop => pop.popType === t)!!
+}
+
 export const GameView = (p: GameViewProps) =>
   <div style={{
     display: "flex",
@@ -84,26 +101,28 @@ export const GameView = (p: GameViewProps) =>
         display: "flex",
         gap: 20,
       }}>
-        <div className="dividersParent" style={{
-          display: "flex",
-          flexDirection: "column",
-          paddingTop: 4,
-        }}>
+        <Column>
           <InventoryBox {...p.summary}/>
           <CalendarBox {...p.calendar}/>
-          <ResourceGatheringBox {...p.resourceGathering}/>
-          <PopsView pops={p.pops} column={0}/>
+          <ResourceGatheringBox {...p.resourceGathering}/>     
+          <PopBox {...popProps(p, PopType.Idler)}/>
           <ActionRow3 {...p.reset}/>
-
-        </div>
-        <PopsView pops={p.pops} column={1}/>
-        <div className='dividersParent'>
-          <PopsView pops={p.pops} column={2}/>
+        </Column>
+        <Column>
+          <PopBox {...popProps(p, PopType.Gatherer)}>
+            <HuntingSection {...p.hunting}/>
+          </PopBox>
+          <PopBox {...popProps(p, PopType.Herder)}/>
+          <PopBox {...popProps(p, PopType.Farmer)}/>
+        </Column>
+        <Column>
+          <PopBox {...popProps(p, PopType.Brave)}/>
+          <PopBox {...popProps(p, PopType.Slinger)}/>
           <MilitaryView {...p.military}/>
-        </div>
-        <div>
+        </Column>
+        <Column>
           <CivilizationsView {...p.civilizations}/>
-        </div>
+        </Column>
       </div>
     </div>
   </div>

@@ -41,7 +41,7 @@ type PopDefinition = typeof DEFAULT_POP_DEFINITION
 
 const PopTypeDefinitions = {
   [PopType.Idler]: {
-    initialCount: 1,
+    initialCount: 0,
     foodConsumption: 1,
     buyCost: [resources(ResourceType.Food, 2)],
     timeCost: 3,
@@ -50,7 +50,7 @@ const PopTypeDefinitions = {
     ],
   },
   [PopType.Gatherer]: {
-    initialCount: 9,
+    initialCount: 3,
     foodConsumption: 1,
     buyCost: [
       pops(PopType.Idler, 1),

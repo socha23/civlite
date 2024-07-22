@@ -26,6 +26,10 @@ type _Amount<Type extends ItemType> = {
 
 export type Amount = _Amount<ItemType>
 
+export function isAmount(a: any): a is Amount {
+  return "type" in a && "count" in a
+}
+
 ///////////////////////////////////////////
 
 export type PopAmount = _Amount<PopType>
@@ -99,7 +103,6 @@ export function rollActualAmount<T extends ItemType>(a: _ExpectedAmount<T>): _Am
     assignment: false
   }
 }
-
 
 export class AmountsAccumulator {
   accs: Map<ItemType, SingleAmountAccumulator> = new Map()

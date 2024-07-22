@@ -47,8 +47,8 @@ export const ResourceDefinitions = {
     },
     [ResourceType.Forest]: {
         class: ResourceClass.Assignable,
-        initialCount: 30,
-        initialAssigned: 9,
+        initialCount: 5,
+        initialAssigned: 3,
     },
     [ResourceType.Grassland]: {
         class: ResourceClass.Assignable,
