@@ -11,6 +11,7 @@ class WorkTypeModel {
     constructor(type: WorkType) {
         this.type = type
         this.gatherAction = action({
+            id: `work_${type}`,
             rewards: [work(type, 1)],
             timeCost: WorkDefinitions[type].gatherTimeout,
             exclusivityGroup: "gathering"

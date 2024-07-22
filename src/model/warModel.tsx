@@ -46,6 +46,7 @@ function expectedRewards(goal: WarType, civ: CivModel): ExpectedAmount[] {
     })
 }
 
+let warAutoinc = 0
 
 export class War {
     model: GameModel
@@ -61,9 +62,10 @@ export class War {
 
     expectedRewards: ExpectedAmount[]
     rewards: Amount[] = []
-
+    
     currentBattle?: Battle
 
+    id = warAutoinc++
     actions: {
         march: Action,
         cancel: Action,
@@ -81,6 +83,7 @@ export class War {
 
         this.actions = {
             march: action({
+                id: `war_march_${this.id}`,
                 action: () => {
                     this.state = WarState.March
                     this.army.engagedIn = this
@@ -95,11 +98,13 @@ export class War {
                 timeCost: army.marchDuration,
             }),
             cancel: action({
+                id: `war_cancel_${this.id}`,
                 action: () => {
                     this.state = WarState.Cancelled
                 },
             }),
             fight: action({
+                id: `war_fight_${this.id}`,
                 action: () => {
                     if (this.currentBattle) {
                         this.currentBattle.nextRound()
@@ -110,6 +115,7 @@ export class War {
                 },
             }),
             retreat: action({
+                id: `war_retreat_${this.id}`,
                 action: () => {
                     this.state = WarState.Retreat
                 },
@@ -122,6 +128,7 @@ export class War {
                 timeCost: army.marchDuration,
             }),
             marchBackHome: action({
+                id: `war_marchBack_${this.id}`,
                 action: () => {
                     this.state = WarState.MarchBackHome
                 },
@@ -134,6 +141,7 @@ export class War {
                 timeCost: army.marchDuration,
             }),
             complete: action({
+                id: `war_complete_${this.id}`,
                 action: () => {
                     this.state = WarState.Completed
                     this.onWarCompleted()
@@ -227,6 +235,7 @@ export class WarModel {
 
     startWarAction(goal: WarType, army: ArmyModel, against: CivModel) {
         return action({
+            id: `war_start`,
             action: () => {this.startWar(goal, army, against)},
             disabled: () => {
                 return this.ongoingWarsFoughtBy(army)

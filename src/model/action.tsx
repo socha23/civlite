@@ -5,6 +5,7 @@ import { exclusiveActionsInProgress, registerInProgressAction, unregisterInProgr
 import { Amounts } from "../view/amount"
 
 export type ActionParams = {
+    id: string
     exclusivityGroup?: string
     initialCost?: Amount[]
     workCost?: WorkAmount[]
@@ -26,6 +27,7 @@ export enum ActionState {
 } 
 
 export abstract class Action {
+    id: string
     initialCost: Amount[]
     workAcc: AmountsAccumulator
     timeAcc: SingleAmountAccumulator 
@@ -35,7 +37,8 @@ export abstract class Action {
     state: ActionState = ActionState.Ready
     exclusivityGroup?: string
 
-    constructor({initialCost = [], workCost = [], rewards = [], timeCost, exclusivityGroup}: ActionParams) {
+    constructor({id, initialCost = [], workCost = [], rewards = [], timeCost, exclusivityGroup}: ActionParams) {
+        this.id = id
         this.initialCost = initialCost  
         this.exclusivityGroup = exclusivityGroup
         this.rewards = rewards

@@ -18,12 +18,14 @@ export class PopModel {
     this.type = type
 
     this.buyAction = action({
+      id: `buy_${type}`,
       initialCost: this.definition.buyCost,
       workCost: this.definition.workCost,
       timeCost: this.definition.timeCost,
       onComplete: () => {this.incCount(1)}
     })
     this.sellAction = action({      
+      id: `sell_${type}`,
       rewards: this.singlePopSellValue,
       action: () => {this.decCount(1)},
       disabled: () => this.decCountDisabled(1)

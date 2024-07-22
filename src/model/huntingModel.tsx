@@ -87,6 +87,7 @@ export class HuntingModel {
         const hunters = this.population.pop(PopType.Gatherer).count
         const animals = this.animalCounts.get(type.animalType)!!
         return action({
+            id: "hunting" + type.animalType,
             exclusivityGroup: "hunting",
             timeCost: type.duration,
             rewards: type.rewardsPerHunter.map(r => ({

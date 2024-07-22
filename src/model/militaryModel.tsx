@@ -15,6 +15,7 @@ class ArmyElementModel {
         this.type = popModel.type
 
         this.assignAction = action({
+            id: `assign${popModel.type}to${army.title}`,
             action: () => {popModel.assign(army)},
             disabled: () => {
                 if (army.locked) {
@@ -24,6 +25,7 @@ class ArmyElementModel {
             },
         })
         this.unassignAction = action({
+            id: `unassign${popModel.type}from${army.title}`,
             action: () => {popModel.unassign(army)},
             disabled: () => {
                 if (army.locked) {
