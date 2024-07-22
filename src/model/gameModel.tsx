@@ -9,6 +9,7 @@ import CivilizationsModel from "./civsModel"
 import { WarModel } from "./warModel"
 import { WorkModel } from "./workModel"
 import { CalendarModel } from "./calendarModel"
+import { HungerModel } from "./hungerModel"
 
 export class GameModel implements GameModelInterface {
   tick: number = 0
@@ -20,6 +21,7 @@ export class GameModel implements GameModelInterface {
   military = new MilitaryModel(this.population)
   civilizations = new CivilizationsModel()
   wars = new WarModel(this)
+  hunger = new HungerModel(this.population, this.resources)
 
   filterUnsatisfiableCosts(costs: Amount[]): Amount[] {
     return this.resources.filterUnsatisfiableCosts(costs)
@@ -50,8 +52,7 @@ export class GameModel implements GameModelInterface {
   }
 
   onEndOfSeason() {
-    console.log("END OF SEASON")
-    // TODO hunger
+    this.hunger.feedPops()
   }
 
   production(resourceType: ResourceType): number {

@@ -53,6 +53,10 @@ export class PopModel {
     return this.singlePopProduction.map(r => resources(r.type, r.count * this.count))
   }
 
+  get singlePopFoodConsumption(): number {
+    return this.definition.foodConsumption
+  }
+
   get singlePopConsumption(): ResourceAmount[] {
     return this.definition.consumption.map(r => resources(r.type, r.count))
   }

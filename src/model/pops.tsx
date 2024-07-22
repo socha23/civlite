@@ -1,6 +1,7 @@
 import { ResourceType } from "./resources"
 import { assignResources, Amount, pops, resources, ResourceAmount, WorkAmount, work } from "./amount"
 import { WorkType } from "./work"
+import { SEASON_DURATION } from "./calendarModel"
 
 export enum PopType {
   Idler = "Idler", 
@@ -17,6 +18,7 @@ export enum PopType {
 const DEFAULT_POP_DEFINITION = {
   initialCount: 0,
   timeCost: 5,
+  foodConsumption: 1,
   workCost: [] as WorkAmount[],
   buyCost: [
     pops(PopType.Idler, 1),
@@ -40,26 +42,26 @@ type PopDefinition = typeof DEFAULT_POP_DEFINITION
 const PopTypeDefinitions = {
   [PopType.Idler]: {
     initialCount: 1,
+    foodConsumption: 1,
     buyCost: [resources(ResourceType.Food, 2)],
     timeCost: 3,
     work: [
       work(WorkType.Insight, 0.1)
     ],
-    consumption: [
-      resources(ResourceType.Food, 0.1)
-    ]  
   },
   [PopType.Gatherer]: {
     initialCount: 9,
+    foodConsumption: 1,
     buyCost: [
       pops(PopType.Idler, 1),
       assignResources(ResourceType.Forest, 1)
     ],
     production: [
-      resources(ResourceType.Food, 0.1)
+      resources(ResourceType.Food, 1 / SEASON_DURATION)
     ]  
   },
   [PopType.Laborer]: {
+    foodConsumption: 2,
     buyCost: [
       pops(PopType.Idler, 1),
       resources(ResourceType.Food, 5),
@@ -67,11 +69,9 @@ const PopTypeDefinitions = {
     work: [
       work(WorkType.Labor, 0.2)
     ],
-    consumption: [
-      resources(ResourceType.Food, 1)
-    ]  
   },
   [PopType.Herder]: {
+    foodConsumption: 0,
     workCost: [
       work(WorkType.Labor, 3)
     ],
@@ -85,6 +85,7 @@ const PopTypeDefinitions = {
     ],
   },
   [PopType.Farmer]: {
+    foodConsumption: 0,
     workCost: [
       work(WorkType.Labor, 3)
     ],
@@ -97,7 +98,8 @@ const PopTypeDefinitions = {
     ],
   },
   [PopType.Brave]: {
-    initialCount: 5,
+    foodConsumption: 1,
+    initialCount: 0,
     assignableToArmy: true,
     battleOrder: 10,
     closeAttack: 2,
@@ -105,7 +107,8 @@ const PopTypeDefinitions = {
     marchDuration: 6,
   },
   [PopType.Slinger]: {
-    initialCount: 5,
+    foodConsumption: 1,
+    initialCount: 0,
     assignableToArmy: true,
     battleOrder: 20,
     closeAttack: 1,

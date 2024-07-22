@@ -43,7 +43,7 @@ export const CalendarBox = (p: CalendarProps) =>
         <i className={seasonIcon(p.season)} />
       </div>
       <div style={{
-        width: 80
+        width: 110
       }}>
         {CalendarLabels[p.season]}
       </div>

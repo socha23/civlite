@@ -10,7 +10,7 @@ export enum Season {
 
 const SEASONS = [Season.Spring, Season.Summer, Season.Autumn, Season.Winter]
 
-const SEASON_DURATION = 5
+export const SEASON_DURATION = 15
 
 export class CalendarModel {
   timeUntilEndOfSeason: number = SEASON_DURATION
