@@ -1,7 +1,7 @@
 import React, { PropsWithChildren, ReactNode } from 'react';
 
 import { GameModel } from '../model/gameModel';
-import { Action, ActionState } from '../model/action'
+import { Action, ActionState, unlazyRewards } from '../model/action'
 import { Colors, FontSizes, DividerColors } from './icons';
 import { AmountWithColorProps, Amounts } from './amount';
 import { ActionCommonLabels } from './labels';
@@ -37,7 +37,7 @@ export function propsForAction(model: GameModel, a: Action, params: ActionParms 
     workLeft: a.workLeft,
     timeCost: a.timeAcc.required ? a.timeAcc.required : undefined,
     timeLeft: a.timeAcc.missing, 
-    rewards: a.rewards.map(c => ({...c, color: Colors.default})),
+    rewards: unlazyRewards(a.expectedRewardsAtStart || a.expectedRewards, model).map(c => ({...c, color: Colors.default})),
     completionRatio: a.completionRatio, 
     disabled: a.disabled(model),
     state: a.state,
@@ -248,7 +248,7 @@ const ActionRowsAmountsRow = (p: {label: string, items: AmountWithColorProps[]})
   <Amounts items={p.items}/>
 </div>
 
-const _ActionRow3 = (p: ActionProps & {displayRewards?: boolean}) => {
+const InnerActionRow3 = (p: ActionProps & {displayRewards?: boolean}) => {
   const costs = p.costs || []
   const work = p.workCost || []
 
@@ -313,7 +313,7 @@ export const ActionRow3 = (p: ActionProps & {displayRewards?: boolean}) => <div 
         zIndex: 2,
         padding: 2,
       }}>
-        <_ActionRow3 {...p}/>
+        <InnerActionRow3 {...p}/>
       </div>
       
     </div>

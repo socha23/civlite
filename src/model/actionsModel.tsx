@@ -1,4 +1,5 @@
 import { Action } from "./action"
+import { GameModel } from "./gameModel"
 
 const IN_PROGRESS_ACTIONS : Action[] = []
 
@@ -24,4 +25,8 @@ export function exclusiveActionsInProgress(a: Action): boolean {
     }
     const otherAction = IN_PROGRESS_ACTIONS.find(e => e.exclusivityGroup === a.exclusivityGroup)
     return otherAction !== undefined
+}
+
+export function tickInProgressActions(model: GameModel, deltaS: number) {
+    IN_PROGRESS_ACTIONS.forEach(a => a.onTick(model, deltaS))
 }

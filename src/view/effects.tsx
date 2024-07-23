@@ -70,7 +70,7 @@ addTickListener({
     }
 })
 
-const Effect = (e: Effect) => {
+const EffectElem = (e: Effect) => {
     const coords = getCoords(e.coordsRef)
     if (coords) {
         const top = coords.top + Math.sin(e.direction) * e.lifetime * e.speed
@@ -94,7 +94,7 @@ const Effect = (e: Effect) => {
 
 }
 
-export const Effects = ({}) => {
+export const Effects = () => {
     return <div style={{
         pointerEvents: "none",
         width: "100%",
@@ -103,7 +103,7 @@ export const Effects = ({}) => {
         zIndex: 10,
     }}>
         {
-            effects.map(e => <Effect key={e.id} {...e}/>)
+            effects.map(e => <EffectElem key={e.id} {...e}/>)
         }
     </div>
 }

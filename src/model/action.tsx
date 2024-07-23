@@ -1,8 +1,13 @@
-import { addTickListener, removeTickListener } from "./timer"
 import { Amount, AmountsAccumulator, ExpectedAmount, SingleAmountAccumulator, WorkAmount, isAmount, rollActualAmount } from "./amount"
 import { WorkType } from "./work"
 import { exclusiveActionsInProgress, registerInProgressAction, unregisterInProgressAction } from "./actionsModel"
 import { spawnEffectAwards } from "../view/effects"
+import { GameModel } from "./gameModel"
+
+
+type ActionRewards = (Amount | ExpectedAmount)[]
+
+type PossiblyLazyActionRewards = ActionRewards |  ((m: GameModel) => ActionRewards)
 
 export type ActionParams = {
     id: string
@@ -11,7 +16,7 @@ export type ActionParams = {
     workCost?: WorkAmount[]
     timeCost?: number
 
-    rewards?: (Amount | ExpectedAmount)[]
+    expectedRewards?: PossiblyLazyActionRewards
 }
 
 export interface GameModelInterface {
@@ -26,33 +31,51 @@ export enum ActionState {
     InProgress = 1,
 } 
 
+export function unlazyRewards(rewards: PossiblyLazyActionRewards, model: GameModel) : ActionRewards {
+    if (Array.isArray(rewards)) {
+        return rewards
+    } else {
+        return rewards(model)
+    }
+}
+
+function rollRewards(rewards: ActionRewards): Amount[] {
+    return rewards.map(r => {
+        if (isAmount(r)) {
+            return r
+        } else {
+            return rollActualAmount(r)
+        }
+    })
+}
+
 export abstract class Action {
     id: string
     initialCost: Amount[]
     workAcc: AmountsAccumulator
     timeAcc: SingleAmountAccumulator 
-    rewards: (Amount | ExpectedAmount)[]
-    actualAwards: Amount[] = []
-    checker?: GameModelInterface
+    expectedRewards: ActionRewards | ((m: GameModel) => ActionRewards)
+    expectedRewardsAtStart?: ActionRewards
+    actualRewards: Amount[] = []
     state: ActionState = ActionState.Ready
     exclusivityGroup?: string
 
-    constructor({id, initialCost = [], workCost = [], rewards = [], timeCost, exclusivityGroup}: ActionParams) {
+    constructor({id, initialCost = [], workCost = [], expectedRewards = [], timeCost, exclusivityGroup}: ActionParams) {
         this.id = id
         this.initialCost = initialCost  
         this.exclusivityGroup = exclusivityGroup
-        this.rewards = rewards
+        this.expectedRewards = expectedRewards
         this.timeAcc = new SingleAmountAccumulator(timeCost || 0)
         this.workAcc = new AmountsAccumulator(workCost)
     }
 
     abstract _onAction(): void
 
-    _isDisabled(): any {
+    _isDisabled(model: GameModel): any {
         return false
     }
 
-    _onComplete(): void {
+    _onComplete(model: GameModel): void {
 
     }
 
@@ -60,23 +83,22 @@ export abstract class Action {
         return this.state === ActionState.InProgress
     }
 
-    onAction(checker: GameModelInterface) {
+    onAction(model: GameModel) {
         if (this.state !== ActionState.Ready) {
             return
         }
-        if (checker.filterUnsatisfiableCosts(this.initialCost).length > 0) {
+        if (model.filterUnsatisfiableCosts(this.initialCost).length > 0) {
             return
         }
-        this.checker = checker
-        this.onStart()
+        this.onStart(model)
         this._onAction()
-        this._checkCompletion()
+        this._checkCompletion(model)
     }
 
-    onTick(deltaS: number) {
+    onTick(model: GameModel, deltaS: number) {
         if (this.state === ActionState.InProgress && this.timeAcc) {
             this.timeAcc.add(deltaS)
-            this._checkCompletion()
+            this._checkCompletion(model)
         }
     }
 
@@ -93,56 +115,53 @@ export abstract class Action {
     }
 
 
-    onWork(type: WorkType, amount: number) {
+    onWork(type: WorkType, amount: number, model: GameModel) {
         this.workAcc.add(type, amount)
-        this._checkCompletion()
+        this._checkCompletion(model)
     }
 
-    _checkCompletion() {
+    _checkCompletion(model: GameModel) {
         if (this.workAcc.completed && this.timeAcc.completed) {
-            this.onComplete()
+            this.onComplete(model)
         }
     }
 
-    onStart() {
+    onStart(model: GameModel) {
+        this.expectedRewardsAtStart = unlazyRewards(this.expectedRewards, model)
         if (this.initialCost.length > 0) {
-            this.checker!.onConsume(this.initialCost)
+            model.onConsume(this.initialCost)
         }
         this.workAcc.reset()
         this.timeAcc.reset()
         registerInProgressAction(this)
-        addTickListener(this)
         this.state = ActionState.InProgress
     }
 
-    onComplete() {
-        this.actualAwards = this.rewards.map(r => {
-            if (isAmount(r)) {
-                return r
-            } else {
-                return rollActualAmount(r)
-            }
-        })
-        if (this.rewards.length > 0) {
-            spawnEffectAwards(this.id, this.actualAwards)
-            this.checker!.onProduce(this.actualAwards)
+    onComplete(model: GameModel) {
+        this.actualRewards = rollRewards(this.expectedRewardsAtStart!!)
+        unregisterInProgressAction(this)
+
+        // internal onComplete called after actual awards are rolled, but before they go into effect, to allow modification 
+        this._onComplete(model)
+
+        this.workAcc.reset()
+        if (this.actualRewards.length > 0) {
+            spawnEffectAwards(this.id, this.actualRewards)
+            model.onProduce(this.actualRewards)
         }
         this.state = ActionState.Ready
-        this.workAcc.reset()
-        removeTickListener(this)
-        unregisterInProgressAction(this)
-        this._onComplete()
+        this.expectedRewardsAtStart = undefined
 
     }
 
-    disabled(checker: GameModelInterface): any {
+    disabled(model: GameModel): any {
         if (exclusiveActionsInProgress(this)) {
             return "Exclusive actions in progress"
         }
-        if (checker.filterUnsatisfiableCosts(this.initialCost).length > 0) {
+        if (model.filterUnsatisfiableCosts(this.initialCost).length > 0) {
             return "Initial cost can't be paid"
         }
-        return this._isDisabled()
+        return this._isDisabled(model)
     }
 
     get completionRatio() {
@@ -152,13 +171,13 @@ export abstract class Action {
 
 class InlineAction extends Action {
     action?: () => void
-    __onComplete?: (rewards: Amount[]) => void
-    _disabled?: () => any
+    __onComplete?: (self: InlineAction) => void
+    _disabled?: (model: GameModel) => any
     
     constructor(p: ActionParams & {
         action?: () => void,
-        onComplete?: (rewards: Amount[]) => void,
-        disabled?: () => any,
+        onComplete?: (self: InlineAction) => void,
+        disabled?: (model: GameModel) => any,
     }) {
         super(p)
         this.action = p.action
@@ -172,24 +191,24 @@ class InlineAction extends Action {
         }
     }
 
-    _onComplete(): void {
+    _onComplete(model: GameModel): void {
         if (this.__onComplete) {
-            this.__onComplete(this.actualAwards)
+            this.__onComplete(this)
         }
     }
 
-    _isDisabled() {
+    _isDisabled(model: GameModel) {
         if (!this._disabled) {
             return false
         }
-        return this._disabled()
+        return this._disabled(model)
     }
 }
 
 export function action(p: ActionParams & {
     action?: () => void,
-    onComplete?: (rewards: Amount[]) => void,
-    disabled?: () => any,
+    onComplete?: (self: Action) => void,
+    disabled?: (model: GameModel) => any,
 }): Action {
     return new InlineAction(p);
 }

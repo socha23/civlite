@@ -24,7 +24,7 @@ export const LogView = (p: LogProps) => {
   const [lastMsg, setLastMsg] = useState(0)
   if (p.messages.length > 0) {
     const currentLastIdx = p.messages[p.messages.length - 1].idx
-    if (lastMsg != currentLastIdx) {
+    if (lastMsg !== currentLastIdx) {
       setLastMsg(currentLastIdx)
       setTimeout(() => {
         if (containerRef.current) {

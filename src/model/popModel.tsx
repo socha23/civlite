@@ -25,7 +25,7 @@ export class PopModel {
     })
     this.sellAction = action({      
       id: `sell_${type}`,
-      rewards: this.singlePopSellValue,
+      expectedRewards: this.singlePopSellValue,
       action: () => {this.decCount(1)},
       disabled: () => this.decCountDisabled(1)
     })

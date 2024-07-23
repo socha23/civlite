@@ -1,4 +1,4 @@
-import { spawnEffectAwards, spawnEffectCost } from "../view/effects"
+import { spawnEffectCost } from "../view/effects"
 import { coordsIdPopCount } from "../view/elementCoordinatesHolder"
 import { HungerMessages } from "../view/logMessages"
 import { PopAmount, pops } from "./amount"

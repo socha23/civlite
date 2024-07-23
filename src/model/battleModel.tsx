@@ -234,7 +234,7 @@ export class Battle {
     attacker: Force
     defender: Force
     round: number = 0
-    log: Log = new Log
+    log: Log = new Log()
     onComplete: (attackerWon: boolean) => any
         
     constructor(title: string, attacker: Force, defender: Force, onComplete: (attackerWon: boolean) => any) {

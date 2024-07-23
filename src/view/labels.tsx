@@ -116,11 +116,11 @@ export const HuntingLabels = {
     [HuntType.Small]: {
         title: "Hunt small animals",
         buttonLabel: "Hunt",
-        description: "Hunt small game for food."
+        //description: "Hunt small game for food."
     },
     [HuntType.Large]: {
         title: "Hunt large animals",
         buttonLabel: "Hunt",
-        description: "Hunt big gamefor food."
+        //description: "Hunt big game for food."
     },
 }

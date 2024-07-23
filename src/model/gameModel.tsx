@@ -12,6 +12,7 @@ import { CalendarModel } from "./calendarModel"
 import { HungerModel } from "./hungerModel"
 import { HuntingModel } from "./huntingModel"
 import { Log } from "./log"
+import { tickInProgressActions } from "./actionsModel"
 
 export class GameModel implements GameModelInterface {
   log = new Log()
@@ -19,7 +20,7 @@ export class GameModel implements GameModelInterface {
   calendar = new CalendarModel(this)
   resources = new ResourcesModel()
   population = new PopulationModel()
-  work = new WorkModel()
+  work = new WorkModel(this)
   military = new MilitaryModel(this.population)
   civilizations = new CivilizationsModel()
   wars = new WarModel(this)
@@ -52,6 +53,7 @@ export class GameModel implements GameModelInterface {
     this.calendar.onTick(deltaS)
     this.applyWorkConsumptionAndProduction(deltaS)
     this.hunting.onTick(deltaS)
+    tickInProgressActions(this, deltaS)
   }
 
   onEndOfSeason() {
