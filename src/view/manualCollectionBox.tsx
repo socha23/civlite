@@ -2,16 +2,15 @@ import React from 'react';
 import { Box } from './box'
 import { GameModel } from '../model/gameModel'
 import { ResourceType } from '../model/resources';
-import { GatherActionLabels } from './icons';
-import { ActionProps, ActionRow, ActionRow3, propsForAction } from './action';
+import { ActionProps, ActionRow3, propsForAction } from './action';
 import { ManualResourceGatheringLabels } from './labels';
 import { WorkType } from '../model/work';
 
-export type ResourceGatheringProps = {
+export type ManualCollectionProps = {
   actions: ActionProps[]
 }
 
-export function resourceGatheringProps(model: GameModel): ResourceGatheringProps {
+export function resourceGatheringProps(model: GameModel): ManualCollectionProps {
 
   const typeLabels = (t: ResourceType.Food | WorkType.Insight | WorkType.Labor)  => ({
     title: ManualResourceGatheringLabels[t].ActionTitle,
@@ -21,14 +20,14 @@ export function resourceGatheringProps(model: GameModel): ResourceGatheringProps
 
   return {
     actions: [
-      propsForAction(model, model.resources.resource(ResourceType.Food).gatherAction, typeLabels(ResourceType.Food)),
-      propsForAction(model, model.work.work(WorkType.Labor).gatherAction, typeLabels(WorkType.Labor)),
-      propsForAction(model, model.work.work(WorkType.Insight).gatherAction, typeLabels(WorkType.Insight)),
+      propsForAction(model, model.manualCollection.collectFood, typeLabels(ResourceType.Food)),
+      propsForAction(model, model.manualCollection.collectLabor, typeLabels(WorkType.Labor)),
+      propsForAction(model, model.manualCollection.collectInsight, typeLabels(WorkType.Insight)),
     ]
   }
 }
 
-export const ResourceGatheringBox = (p: ResourceGatheringProps) =>
+export const ManualCollectionBox = (p: ManualCollectionProps) =>
   <Box>
     <div 
     className='dottedDividersParent'

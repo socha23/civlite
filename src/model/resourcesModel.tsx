@@ -1,6 +1,5 @@
-import { Action, action } from "./action"
 import { ResourceType, resourceDefinition } from "./resources"
-import { Amount, isResourceAmount, isResourceType, resources, } from "./amount"
+import { Amount, isResourceAmount, isResourceType, } from "./amount"
 
 class ResourceModel {
     type: ResourceType
@@ -8,7 +7,6 @@ class ResourceModel {
     assigned: number = 0
     assignable: boolean = false
     cap?: number
-    gatherAction: Action
 
     constructor(type: ResourceType) {
         const resDef = resourceDefinition(type)
@@ -18,13 +16,6 @@ class ResourceModel {
         this.assigned = resDef.initialAssigned
         this.cap = resDef.initialCap
         this.assignable = resDef.assignable
- 
-        this.gatherAction = action({
-            id: `gather_${type}`,
-            expectedRewards: [resources(type, 1)],
-            timeCost: resDef.gatherTimeout,
-            exclusivityGroup: "gathering",
-        })
     }
 
     onPlayerProduction() {

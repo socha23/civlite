@@ -1,10 +1,10 @@
 import React, {PropsWithChildren} from 'react';
-import { ActionProps, ActionRow, ActionRow3 } from './action'
+import { ActionProps, ActionRow3 } from './action'
 import { GameModel } from '../model/gameModel'
 import { PopType } from '../model/pops'
 import { InventoryBox, InventoryBoxProps, summaryBoxProps } from './inventoryBox';
 import { Colors, FontSizes } from './icons';
-import { ResourceGatheringBox, ResourceGatheringProps, resourceGatheringProps } from './resourceGatheringBox';
+import { ManualCollectionBox, ManualCollectionProps, resourceGatheringProps } from './manualCollectionBox';
 import { PopBox, PopBoxProps, popBoxProps } from './popBox';
 import { MilitaryProps, MilitaryView, militaryProps } from './military';
 import { CivilizationsView, CivsProps, civsProps } from './civs';
@@ -21,7 +21,7 @@ export type GameViewProps = {
   summary: InventoryBoxProps
   reset: ActionProps
   pops: PopBoxProps[]
-  resourceGathering: ResourceGatheringProps,
+  resourceGathering: ManualCollectionProps,
   military: MilitaryProps,
   civilizations: CivsProps,
   calendar: CalendarProps,
@@ -68,7 +68,7 @@ function popProps(p: GameViewProps, t: PopType) {
   return p.pops.find(pop => pop.popType === t)!!
 }
 
-const _GameView = (p: GameViewProps) =>
+const InnerGameView = (p: GameViewProps) =>
   <div style={{
     display: "flex",
     padding: 10,
@@ -87,7 +87,7 @@ const _GameView = (p: GameViewProps) =>
         <Column>
           <InventoryBox {...p.summary}/>
           <CalendarBox {...p.calendar}/>
-          <ResourceGatheringBox {...p.resourceGathering}/>     
+          <ManualCollectionBox {...p.resourceGathering}/>     
           <PopBox {...popProps(p, PopType.Idler)}/>
           <ActionRow3 {...p.reset}/>
         </Column>
@@ -120,6 +120,6 @@ export const GameView = (p: GameViewProps) => <div style={{
   <div style={{
     zIndex: 0
   }}>
-    <_GameView {...p}/>
+    <InnerGameView {...p}/>
   </div>
 </div>

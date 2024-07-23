@@ -13,14 +13,16 @@ import { HungerModel } from "./hungerModel"
 import { HuntingModel } from "./huntingModel"
 import { Log } from "./log"
 import { tickInProgressActions } from "./actionsModel"
+import { ManualCollectionModel } from "./manualCollectionModel"
 
 export class GameModel implements GameModelInterface {
-  log = new Log()
   civName: string = "The Tribe"
+  log = new Log()
   calendar = new CalendarModel(this)
   resources = new ResourcesModel()
   population = new PopulationModel()
   work = new WorkModel(this)
+  manualCollection = new ManualCollectionModel()
   military = new MilitaryModel(this.population)
   civilizations = new CivilizationsModel()
   wars = new WarModel(this)

@@ -1,5 +1,9 @@
 export enum ResourceType {
     Food = "Food", 
+
+//    WildAnimalsSmall = "WildAnimalsSmall",
+//    WildAnimalsSmall = "WildAnimalsBig",
+
     Forest = "Forest",
     Grassland = "Grassland",
     Herds = "Herds",
@@ -13,7 +17,6 @@ enum ResourceClass {
 
 interface ResourceDefinition {
     class: ResourceClass,
-    gatherTimeout: number,
     initialCap?: number,
     initialCount: number,
     assignable: boolean,
@@ -23,7 +26,6 @@ interface ResourceDefinition {
 export function resourceDefinition(type: ResourceType): ResourceDefinition {
     const result =  {
         class: ResourceClass.Consumable,
-        gatherTimeout: 0,
         initialCap: undefined,
         initialCount: 0,
         initialAssigned: 0,

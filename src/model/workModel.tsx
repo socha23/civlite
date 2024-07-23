@@ -1,24 +1,16 @@
-import { Action, action } from "./action"
 import { listInProgressActions } from "./actionsModel"
-import { Amount, isWorkType, work, } from "./amount"
+import { Amount, isWorkType } from "./amount"
 import { GameModel } from "./gameModel"
-import { WorkDefinitions, WorkType } from "./work"
+import { WorkType } from "./work"
 
 
 class WorkTypeModel {
     type: WorkType
-    gatherAction: Action
     model: GameModel
 
     constructor(type: WorkType, model: GameModel) {
         this.type = type
         this.model = model
-        this.gatherAction = action({
-            id: `work_${type}`,
-            expectedRewards: [work(type, 1)],
-            timeCost: WorkDefinitions[type].gatherTimeout,
-            exclusivityGroup: "gathering"
-        })
     }
 
     add(count: number) {
