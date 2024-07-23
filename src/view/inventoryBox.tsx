@@ -1,14 +1,21 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import { Box } from './box'
 import { GameModel } from '../model/gameModel'
-import { ResourceType, allResourceTypes, resourceDefinition } from '../model/resources';
-import { FontSizes, Icons, DividerColors, Colors, Labels } from './icons';
+import { ResourceType, resourceDefinition } from '../model/resources';
+import { FontSizes, Icons, Colors, Labels } from './icons';
 import { Line, LineProps } from './line';
 
 export type InventoryBoxProps = {
   civName: string
-  inventory: (LineProps & {group: number})[]
+
+  population: LineProps
+  food: LineProps
+  herds: LineProps
+  forest: LineProps
+  grassland: LineProps
 }
+
+type DisplayedResourceType = ResourceType.Herds | ResourceType.Food | ResourceType.Forest | ResourceType.Grassland
 
 const ResourceGroups = {
   [ResourceType.Herds]: 0,  
@@ -17,67 +24,70 @@ const ResourceGroups = {
   [ResourceType.Grassland]: 2,
 }
 
-export function summaryBoxProps(model: GameModel): InventoryBoxProps {
-  const totalPopulation = {
-    icon: Icons.population,
-    label: "Population",
-    value: model.population.total,
-    group: 0,
-  }
-  
-  const resources = allResourceTypes().map(t => {
 
-    const res = model.resources.resource(t)
-    const resDef = resourceDefinition(t)
-    return {
-      icon: Icons[t],
-      label: Labels[t],
-      value: resDef.assignable ? res.unassigned : res.count,
-      max: resDef.assignable ? res.count : res.cap,
-      trend: model.production(t) - model.consumption(t),
-      group: ResourceGroups[t]
-    }})  
+function lineProps(model: GameModel, t: DisplayedResourceType): LineProps {
+  const res = model.resources.resource(t)
+  const resDef = resourceDefinition(t)
   return {
-    civName: model.civName,
-    inventory: [totalPopulation].concat(resources)
+    icon: Icons[t],
+    label: Labels[t],
+    value: resDef.assignable ? res.unassigned : res.count,
+    max: resDef.assignable ? res.count : res.cap,
+    trend: model.production(t) - model.consumption(t),
   }
 }
 
-const Inventory = (p: {items: ({group: number} & LineProps)[], group: number}) => <div 
+export function summaryBoxProps(model: GameModel): InventoryBoxProps {
+  return {
+    civName: model.civName,
+    population: {
+      icon: Icons.population,
+      label: "Population",
+      value: model.population.total,
+    },
+    food: lineProps(model, ResourceType.Food),
+    herds: lineProps(model, ResourceType.Herds),
+    forest: lineProps(model, ResourceType.Forest),
+    grassland: lineProps(model, ResourceType.Grassland),
+  }
+}
+
+const InventoryGroup = (p: PropsWithChildren<{}>) => <div 
   style={{
     display: "flex",
     flexDirection: "column",
+    paddingTop: 4,
+    paddingBottom: 4,
   }}>
-  {
-    p.items
-      .filter(i => i.group === p.group)
-      .map((i, idx) => 
-    <div
-    key={idx}
-    className="dottedDividers"
-    style={{
-      borderWidth: 1,
-      paddingTop: 8,
-      paddingBottom: 6,
-      borderColor: DividerColors.light,
-    }}>
-    <Line {...i}/>
-    </div>)
-  }
+  {p.children}
+</div>
+
+const InventoryItem = (p: LineProps) => <div style={{
+  paddingTop: 4,
+  paddingBottom: 4,
+}}>
+  <Line {...p}/>
 </div>
 
 export const InventoryBox = (p: InventoryBoxProps) =>
   <Box>
-    <div className="dividersParent" style={{
+    <div className="dottedDividersParent" style={{
       display: "flex",
       color: Colors.captions,
       fontSize: FontSizes.normalPlus,
       flexDirection: "column",
-      paddingBottom: 8,
     }}>
-      <Inventory items={p.inventory} group={0}/>
-      <Inventory items={p.inventory} group={1}/>
-      <Inventory items={p.inventory} group={2}/>
+      <InventoryGroup>
+        <InventoryItem {...p.population}/>
+        <InventoryItem {...p.herds}/>
+      </InventoryGroup>
+      <InventoryGroup>
+        <InventoryItem {...p.food}/>
+      </InventoryGroup>
+      <InventoryGroup>  
+        <InventoryItem {...p.forest}/>
+        <InventoryItem {...p.grassland}/>
+      </InventoryGroup>
     </div>
   </Box>
 

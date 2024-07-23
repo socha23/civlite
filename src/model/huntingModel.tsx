@@ -10,10 +10,9 @@ import { ResourceType } from "./resources"
 import { ResourcesModel } from "./resourcesModel"
 import { GameModel } from "./gameModel"
 
-export enum AnimalType {
-    Small = "SmallAnimals",
-    Large = "LargeAnimals"
-}
+export type AnimalType = ResourceType.WildAnimalsSmall | ResourceType.WildAnimalsBig
+const AnimalTypes = [ResourceType.WildAnimalsSmall, ResourceType.WildAnimalsBig] as AnimalType[]
+
 
 export interface AnimalStock {
     type: AnimalType,
@@ -22,13 +21,13 @@ export interface AnimalStock {
   }
 
 const AnimalDefs = {
-    [AnimalType.Small]: {
+    [ResourceType.WildAnimalsSmall]: {
         capPerForest: 10,
-        growthRate: 1.005,
+        growthRate: 0.005,
     },
-    [AnimalType.Large]: {
+    [ResourceType.WildAnimalsBig]: {
         capPerForest: 5,
-        growthRate: 1.002,
+        growthRate: 0.002,
     },
 }
 
@@ -47,17 +46,16 @@ const HuntTypes = {
     [HuntType.Small]: {
         duration: 2,
         rewardsPerHunter: [{type: ResourceType.Food, from: 1, to: 2}],
-        animalType: AnimalType.Small
+        animalType: ResourceType.WildAnimalsSmall as AnimalType
     },
     [HuntType.Large]: {
         duration: 5,
         rewardsPerHunter: [{type: ResourceType.Food, from: 3, to: 5}],
-        animalType: AnimalType.Large
+        animalType: ResourceType.WildAnimalsBig as AnimalType
     },
 }
 
 export class HuntingModel {
-    animalCounts: Map<AnimalType, number> = new Map()
 
     log: Log
     population: PopulationModel
@@ -71,19 +69,26 @@ export class HuntingModel {
         this.population = population
         this.resources = resources
 
-        Object.values(AnimalType).forEach(t => {
-            this.animalCounts.set(t, this.cap(t))
-        })
+        this.setCaps()
+
+        this.fillForestsWithAnimals()
+        
 
         this.smallHuntAction = this.createHuntAction(HuntTypes[HuntType.Small])
         this.largeHuntAction = this.createHuntAction(HuntTypes.Large)
     }
 
+    fillForestsWithAnimals() {
+        AnimalTypes.forEach(t => {
+            this.resources.resource(t).count = this.resources.resource(t).cap!!
+        })
+    }
+
     get stocks(): AnimalStock[] {
-        return Object.values(AnimalType).map(t => ({
+        return AnimalTypes.map(t => ({
             type: t,
-            count: this.animalCounts.get(t)!!,
-            cap: this.cap(t),
+            count: this.resources.resource(t).count,
+            cap: this.resources.resource(t).cap!!,
         }))
     }
 
@@ -97,7 +102,7 @@ export class HuntingModel {
     }
 
     animalCount(t: AnimalType) {
-        return this.animalCounts.get(t)!!
+        return this.resources.resource(t).count
     }
 
     createHuntAction(type: HuntDefinition): Action {
@@ -123,32 +128,26 @@ export class HuntingModel {
                 let count = 0
                 self.actualRewards.forEach(r => count += r.count)
                 this.log.info(<HuntingMessages.HuntComplete animalType={type.animalType} count={count}/>)
-                const currentAnimalCount = this.animalCounts.get(type.animalType)!!
-                const newAnimalCount = Math.max(0, currentAnimalCount - count) 
-                this.animalCounts.set(type.animalType, newAnimalCount)
+                this.resources.resource(type.animalType).sub(count)
             }
         })
     }
 
-    onTick(deltaS: number) {
-        this.applyCaps()
-    }
-
-    applyCaps() {
-        return Object.values(AnimalType).forEach(t => {
-            if ((this.animalCounts.get(t) || 0) > this.cap(t)) {
-                this.animalCounts.set(t, this.cap(t))
-            }
-        })   
+    setCaps() {
+        AnimalTypes.forEach(t => {
+            this.resources.resource(t).cap = this.cap(t)
+        })
+        
     }
 
     multiplyAnimals() {
-        Object.values(AnimalType).forEach(t => {
-            const count = this.animalCounts.get(t) || 0
-            if (count > 1) {                
-                const newCount = count * AnimalDefs[t].growthRate
-                this.animalCounts.set(t, newCount)
-                const added = Math.floor(newCount) - Math.floor(count)
+        AnimalTypes.forEach(t => {
+            const oldCount = this.animalCount(t)
+            if (oldCount > 1) {                
+                const growth = oldCount * AnimalDefs[t].growthRate
+                this.resources.resource(t).add(growth)
+ 
+                const added = Math.floor(this.resources.resource(t).count) - Math.floor(oldCount)
                 if (added > 0) {
                     spawnEffectNumberIncrease(coordsIdHuntStock(t), added)
                 }

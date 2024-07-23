@@ -1,7 +1,7 @@
 import { ResourceType } from '../model/resources';
 import { PopType } from '../model/pops';
 import { WorkType } from '../model/work';
-import { AnimalType, HuntType } from '../model/huntingModel';
+import { HuntType } from '../model/huntingModel';
 
 export const ManualResourceGatheringLabels = {
     [ResourceType.Food]: {
@@ -111,8 +111,8 @@ export const ActionCommonLabels = {
 }
 
 export const HuntingLabels = {
-    [AnimalType.Small]: "Small animals",
-    [AnimalType.Large]: "Large animals",
+    [ResourceType.WildAnimalsSmall]: "Small animals",
+    [ResourceType.WildAnimalsBig]: "Large animals",
     [HuntType.Small]: {
         title: "Hunt small animals",
         buttonLabel: "Hunt",

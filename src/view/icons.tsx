@@ -42,8 +42,12 @@ export const Icons = {
     [PopType.Herder]: 'fa-solid fa-person-walking-with-cane',
     [PopType.Brave]: 'fa-solid fa-person-walking',
     [PopType.Slinger]: 'fa-solid fa-person-walking-arrow-right',
+
     [ResourceType.Herds]: 'fa-solid fa-horse',
     [ResourceType.Food]: 'fa-solid fa-wheat-awn',
+    [ResourceType.WildAnimalsSmall]: 'fa-solid fa-otter',
+    [ResourceType.WildAnimalsBig]: 'fa-solid fa-hippo',
+
     [WorkType.Labor]: 'fa-solid fa-hand',
     [WorkType.Insight]: 'fa-regular fa-lightbulb',
     [ResourceType.Forest]: 'fa-solid fa-tree',
@@ -53,7 +57,7 @@ export const Icons = {
     strength: "fa-solid fa-hand-fist",
     target: "fa-solid fa-crosshairs",
 
-    default: "",
+    default: "fa-solid fa-person",
 }
 
 export const Labels = {

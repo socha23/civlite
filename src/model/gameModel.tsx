@@ -54,7 +54,6 @@ export class GameModel implements GameModelInterface {
     onTick(deltaS)
     this.calendar.onTick(deltaS)
     this.applyWorkConsumptionAndProduction(deltaS)
-    this.hunting.onTick(deltaS)
     tickInProgressActions(this, deltaS)
   }
 
