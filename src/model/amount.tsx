@@ -105,17 +105,36 @@ export function rollActualAmount<T extends ItemType>(a: _ExpectedAmount<T>): _Am
 }
 
 export class AmountsAccumulator {
+
   accs: Map<ItemType, SingleAmountAccumulator> = new Map()
 
-  constructor(amounts: Amount[]) {
-    amounts.forEach(a => {
-      this.accs.set(a.type, new SingleAmountAccumulator(a.count))
+  constructor(amountsOrTypes: (Amount | ItemType)[]) {
+    amountsOrTypes.forEach(a => {
+      if (typeof a === "object") {
+        this.accs.set(a.type, new SingleAmountAccumulator(a.count))
+      } else {
+        this.accs.set(a, new SingleAmountAccumulator(0))
+      }
     })
+  }
+
+  contains(type: ItemType) {
+    return this.accs.has(type)
+  }
+
+  collected(type: ItemType): number {
+    if (!this.accs.has(type)) {
+      throw new Error(`This accumulator doesnt collect ${type}`)
+    } else {
+      return this.accs.get(type)!.collected
+    }
   }
 
   add(type: ItemType, amount: number) {
     if (this.accs.has(type)) {
       this.accs.get(type)!!.add(amount)
+    } else {
+      throw new Error(`This accumulator doesnt collect ${type}`)
     }
   }
 
@@ -128,12 +147,12 @@ export class AmountsAccumulator {
     Array.from(this.accs.values()).forEach(t => t.reset())
   }
 
-  get completionRatio() {
+  completionRatio(types: ItemType[]) {
     let collected = 0
     let required = 0
-    Array.from(this.accs.values()).forEach(t => {
-      required += t.required
-      collected += t.collected
+    types.forEach(t => {
+      required += this.accs.get(t)!.required
+      collected += this.accs.get(t)!.collected
     })
     if (required === 0) {
       return 1
@@ -160,13 +179,13 @@ export class SingleAmountAccumulator {
   required: number
   collected: number
 
-  constructor(required: number) {
+  constructor(required: number, collected: number = 0) {
     this.required = required
-    this.collected = 0
+    this.collected = collected
   }
 
   add(amount: number) {
-    this.collected = Math.min(this.required, this.collected + amount)
+    this.collected += amount
   }
 
   get completed() {
@@ -181,11 +200,11 @@ export class SingleAmountAccumulator {
     if (this.required === 0) {
       return 1
     } else {
-      return this.collected / this.required
+      return Math.min(this.collected, this.required) / this.required
     }
   }
 
   get missing() {
-    return this.required - this.collected
+    return Math.max(0, this.required - this.collected)
   }
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Amount, ExpectedAmount } from '../model/amount';
+import { Amount, ExpectedAmount, ItemType } from '../model/amount';
 import { Colors, FontSizes, Icons } from './icons';
 import { formatNumber } from '../model/utils';
 

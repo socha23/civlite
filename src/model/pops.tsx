@@ -56,6 +56,9 @@ const PopTypeDefinitions = {
       pops(PopType.Idler, 1),
       assignResources(ResourceType.Forest, 1)
     ],
+    work: [
+      work(WorkType.Hunting, 1)
+    ],
     production: [
       resources(ResourceType.Food, 1 / SEASON_DURATION)
     ]  

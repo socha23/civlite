@@ -14,6 +14,7 @@ export type ActionParams = {
     exclusivityGroup?: string
     initialCost?: Amount[]
     workCost?: WorkAmount[]
+    collectedWork?: WorkType[]
     timeCost?: number
 
     expectedRewards?: PossiblyLazyActionRewards
@@ -52,7 +53,8 @@ function rollRewards(rewards: ActionRewards): Amount[] {
 export abstract class Action {
     id: string
     initialCost: Amount[]
-    workAcc: AmountsAccumulator
+    requiredWorkAcc: AmountsAccumulator
+    collectedWorkAcc: AmountsAccumulator
     timeAcc: SingleAmountAccumulator 
     expectedRewards: ActionRewards | ((m: GameModel) => ActionRewards)
     expectedRewardsAtStart?: ActionRewards
@@ -60,13 +62,23 @@ export abstract class Action {
     state: ActionState = ActionState.Ready
     exclusivityGroup?: string
 
-    constructor({id, initialCost = [], workCost = [], expectedRewards = [], timeCost, exclusivityGroup}: ActionParams) {
+    constructor({
+        id, 
+        initialCost = [], 
+        workCost = [], 
+        collectedWork = [],
+        expectedRewards = [], 
+        timeCost, 
+        exclusivityGroup,
+    
+    }: ActionParams) {
         this.id = id
         this.initialCost = initialCost  
         this.exclusivityGroup = exclusivityGroup
         this.expectedRewards = expectedRewards
         this.timeAcc = new SingleAmountAccumulator(timeCost || 0)
-        this.workAcc = new AmountsAccumulator(workCost)
+        this.requiredWorkAcc = new AmountsAccumulator(workCost)
+        this.collectedWorkAcc = new AmountsAccumulator(collectedWork)
     }
 
     abstract _onAction(): void
@@ -103,25 +115,29 @@ export abstract class Action {
     }
 
     get workLeft() {
-        return this.workAcc.missing
+        return this.requiredWorkAcc.missing
     }
 
     get workCost() {
-        return this.workAcc.required
+        return this.requiredWorkAcc.required
     }
 
     needsWorkOfType(type: WorkType) {
-        return this.workAcc.missingOfType(type) > 0
+        return this.requiredWorkAcc.missingOfType(type) > 0 || this.collectedWorkAcc.accs.has(type)
     }
 
 
     onWork(type: WorkType, amount: number, model: GameModel) {
-        this.workAcc.add(type, amount)
+        if (this.requiredWorkAcc.missingOfType(type) > 0) {
+            this.requiredWorkAcc.add(type, amount)
+        } else {
+            this.collectedWorkAcc.add(type, amount)
+        }
         this._checkCompletion(model)
     }
 
     _checkCompletion(model: GameModel) {
-        if (this.workAcc.completed && this.timeAcc.completed) {
+        if (this.requiredWorkAcc.completed && this.timeAcc.completed) {
             this.onComplete(model)
         }
     }
@@ -131,7 +147,7 @@ export abstract class Action {
         if (this.initialCost.length > 0) {
             model.onConsume(this.initialCost)
         }
-        this.workAcc.reset()
+        this.requiredWorkAcc.reset()
         this.timeAcc.reset()
         registerInProgressAction(this)
         this.state = ActionState.InProgress
@@ -144,7 +160,9 @@ export abstract class Action {
         // internal onComplete called after actual awards are rolled, but before they go into effect, to allow modification 
         this._onComplete(model)
 
-        this.workAcc.reset()
+        this.requiredWorkAcc.reset()
+        this.collectedWorkAcc.reset()
+
         if (this.actualRewards.length > 0) {
             spawnEffectAwards(this.id, this.actualRewards)
             model.onProduce(this.actualRewards)
@@ -165,18 +183,18 @@ export abstract class Action {
     }
 
     get completionRatio() {
-        return Math.min(this.workAcc.completionRatio, this.timeAcc.completionRatio)
+        return Math.min(this.requiredWorkAcc.completionRatio(this.workCost.map(c => c.type)), this.timeAcc.completionRatio)
     }
 }
 
 class InlineAction extends Action {
     action?: () => void
-    __onComplete?: (self: InlineAction) => void
+    __onComplete?: (self: InlineAction, model: GameModel) => void
     _disabled?: (model: GameModel) => any
     
     constructor(p: ActionParams & {
         action?: () => void,
-        onComplete?: (self: InlineAction) => void,
+        onComplete?: (self: InlineAction, model: GameModel) => void,
         disabled?: (model: GameModel) => any,
     }) {
         super(p)
@@ -193,7 +211,7 @@ class InlineAction extends Action {
 
     _onComplete(model: GameModel): void {
         if (this.__onComplete) {
-            this.__onComplete(this)
+            this.__onComplete(this, model)
         }
     }
 
@@ -207,7 +225,7 @@ class InlineAction extends Action {
 
 export function action(p: ActionParams & {
     action?: () => void,
-    onComplete?: (self: Action) => void,
+    onComplete?: (self: Action, model: GameModel) => void,
     disabled?: (model: GameModel) => any,
 }): Action {
     return new InlineAction(p);

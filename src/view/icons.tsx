@@ -50,6 +50,8 @@ export const Icons = {
 
     [WorkType.Labor]: 'fa-solid fa-hand',
     [WorkType.Insight]: 'fa-regular fa-lightbulb',
+    [WorkType.Hunting]: 'fa-regular fa-hand',
+
     [ResourceType.Forest]: 'fa-solid fa-tree',
     [ResourceType.Grassland]: 'fa-solid fa-seedling',
     

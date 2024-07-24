@@ -2,13 +2,14 @@ import { spawnEffectNumberIncrease } from "../view/effects"
 import { coordsIdHuntStock } from "../view/elementCoordinatesHolder"
 import { HuntingMessages } from "../view/logMessages"
 import { Action, action } from "./action"
-import { ExpectedResourceAmount } from "./amount"
+import { ExpectedResourceAmount, resources } from "./amount"
 import { Log } from "./log"
 import { PopulationModel } from "./popModel"
 import { PopType } from "./pops"
 import { ResourceType } from "./resources"
 import { ResourcesModel } from "./resourcesModel"
 import { GameModel } from "./gameModel"
+import { WorkType } from "./work"
 
 export type AnimalType = ResourceType.WildAnimalsSmall | ResourceType.WildAnimalsBig
 const AnimalTypes = [ResourceType.WildAnimalsSmall, ResourceType.WildAnimalsBig] as AnimalType[]
@@ -38,19 +39,20 @@ export enum HuntType {
 
 interface HuntDefinition {
     duration: number,
-    rewardsPerHunter: ExpectedResourceAmount[],
+    // hunt will produce between 0 and huntingMultiplier * collectedWork food 
+    huntingMultiplier: number,
     animalType: AnimalType,
 }
 
 const HuntTypes = {
     [HuntType.Small]: {
         duration: 2,
-        rewardsPerHunter: [{type: ResourceType.Food, from: 1, to: 2}],
+        huntingMultiplier: 1,
         animalType: ResourceType.WildAnimalsSmall as AnimalType
     },
     [HuntType.Large]: {
         duration: 5,
-        rewardsPerHunter: [{type: ResourceType.Food, from: 3, to: 5}],
+        huntingMultiplier: 1.2,
         animalType: ResourceType.WildAnimalsBig as AnimalType
     },
 }
@@ -110,25 +112,35 @@ export class HuntingModel {
             id: "hunting" + type.animalType,
             exclusivityGroup: "hunting",
             timeCost: type.duration,
+            collectedWork: [WorkType.Hunting],
             expectedRewards: () => {
                 const hunters = this.huntersCount
                 const animals = this.animalCount(type.animalType)
-                return type.rewardsPerHunter.map(r => ({
-                    type: r.type, 
-                    from: Math.floor(Math.min(r.from * hunters, animals)),
-                    to: Math.floor(Math.min(r.to * hunters, animals)),
-                }))
+                return [{
+                    type: ResourceType.Food,
+                    from: 0,
+                    to: Math.floor(Math.min(
+                            hunters 
+                            * this.population.pop(PopType.Gatherer).singlePopWorkOfType(WorkType.Hunting) 
+                            * type.duration 
+                            * type.huntingMultiplier
+                        , animals))
+                }]
             },
             disabled: (model: GameModel) => {
                 const hunters = model.hunting.huntersCount
                 const animals = model.hunting.animalCount(type.animalType)
                 return hunters === 0 || animals === 0  
             },
-            onComplete: (self: Action) => {
-                let count = 0
-                self.actualRewards.forEach(r => count += r.count)
-                this.log.info(<HuntingMessages.HuntComplete animalType={type.animalType} count={count}/>)
-                this.resources.resource(type.animalType).sub(count)
+            onComplete: (self: Action, model: GameModel) => {
+                const hunted = Math.floor(
+                    Math.random() * Math.min(
+                        model.hunting.animalCount(type.animalType), 
+                        self.collectedWorkAcc.collected(WorkType.Hunting) * type.huntingMultiplier
+                    ))
+                self.actualRewards = [resources(ResourceType.Food, hunted)]
+                this.log.info(<HuntingMessages.HuntComplete animalType={type.animalType} count={hunted}/>)
+                this.resources.resource(type.animalType).sub(hunted)
             }
         })
     }

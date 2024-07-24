@@ -4,6 +4,7 @@ import { sum } from './utils'
 import { popTypeDefinition, PopType } from "./pops"
 import { Amount, ResourceAmount, WorkAmount, isPopAmount, isPopType, isResourceAmount, resources, work } from "./amount"
 import { Assignable } from "./assignable"
+import { WorkType } from "./work"
 
 export class PopModel {
 
@@ -72,6 +73,10 @@ export class PopModel {
 
   get singlePopWork(): WorkAmount[] {
     return this.definition.work.map(r => work(r.type, r.count))
+  }
+
+  singlePopWorkOfType(t: WorkType): number {
+    return this.definition.work.find(w => w.type === t)?.count || 0
   }
 
   get singlePopBalance(): ResourceAmount[] {
