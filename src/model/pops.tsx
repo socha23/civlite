@@ -25,7 +25,6 @@ const DEFAULT_POP_DEFINITION = {
   ] as Amount[],
   production: [] as ResourceAmount[],
   work: [] as WorkAmount[],
-  consumption: [] as ResourceAmount[],
   
   assignableToArmy: false,
   battleOrder: 1,
@@ -60,7 +59,7 @@ const PopTypeDefinitions = {
       work(WorkType.Hunting, 1)
     ],
     production: [
-      resources(ResourceType.Food, 1 / SEASON_DURATION)
+      resources(ResourceType.Food, 0.1)
     ]  
   },
   [PopType.Laborer]: {

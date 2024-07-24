@@ -18,10 +18,13 @@ export function isWorkType(p: ItemType): p is WorkType {
 
 ///////////////////////////////////////////
 
-type _Amount<Type extends ItemType> = {
+interface Countable {
+  count: number
+}
+
+interface _Amount<Type extends ItemType> extends Countable {
   type: Type
   assignment: boolean
-  count: number
 }
 
 export type Amount = _Amount<ItemType>
@@ -207,4 +210,12 @@ export class SingleAmountAccumulator {
   get missing() {
     return Math.max(0, this.required - this.collected)
   }
+}
+
+export function multiply<T extends Countable>(amount: T[], mulBy: number): T[] {
+  return amount.map((a: T) => ({...a, count: a.count * mulBy}))
+}
+
+export function negative<T extends Countable>(amount: T[]): T[] {
+  return amount.map((a: T) => ({...a, count: -a.count}))
 }

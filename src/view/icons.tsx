@@ -69,8 +69,6 @@ export const Labels = {
     WarParty: "War party",
     Execute: "Execute",
     TotalPopulation: "Total population",
-    PerPop: "/ pop",
-    PerSecond: "/ s",
     Plural: {
         [PopType.Idler]: 'Idlers',
         [PopType.Gatherer]: 'Gatherers',

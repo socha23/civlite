@@ -2,7 +2,7 @@ import { ResourceType,  } from "./resources"
 import { Action, action } from "./action"
 import { sum } from './utils'
 import { popTypeDefinition, PopType } from "./pops"
-import { Amount, ResourceAmount, WorkAmount, isPopAmount, isPopType, isResourceAmount, resources, work } from "./amount"
+import { Amount, ItemType, ResourceAmount, WorkAmount, isPopAmount, isPopType, isResourceAmount, multiply, resources, work } from "./amount"
 import { Assignable } from "./assignable"
 import { WorkType } from "./work"
 
@@ -48,47 +48,31 @@ export class PopModel {
   }
 
   get singlePopProduction(): ResourceAmount[] {
-    return this.definition.production.map(r => resources(r.type, r.count))
+    return this.definition.production
+  }
+
+  singlePopProductionOfType(t: ItemType): number {
+    return this.singlePopProduction.find(w => w.type === t)?.count || 0
   }
 
   get production(): ResourceAmount[] {
-    return this.singlePopProduction.map(r => resources(r.type, r.count * this.count))
+    return multiply(this.singlePopProduction, this.count)
   }
 
   get singlePopFoodConsumption(): number {
     return this.definition.foodConsumption
   }
 
-  get singlePopConsumption(): ResourceAmount[] {
-    return this.definition.consumption.map(r => resources(r.type, r.count))
-  }
-
-  get consumption(): ResourceAmount[] {
-    return this.singlePopConsumption.map(r => resources(r.type, r.count * this.count))
-  }
-
   get work(): WorkAmount[] {
-    return this.singlePopWork.map(r => work(r.type, r.count * this.count))
+    return multiply(this.singlePopWork, this.count)
   }
 
   get singlePopWork(): WorkAmount[] {
-    return this.definition.work.map(r => work(r.type, r.count))
+    return this.definition.work
   }
 
   singlePopWorkOfType(t: WorkType): number {
     return this.definition.work.find(w => w.type === t)?.count || 0
-  }
-
-  get singlePopBalance(): ResourceAmount[] {
-    return this.singlePopConsumption.map(r => resources(r.type, -r.count))
-    .concat(this.singlePopProduction)
-    .filter(c => c.count !== 0)
-  }
-
-  get resourceBalance(): ResourceAmount[] {
-    return this.consumption.map(r => resources(r.type, -r.count))
-    .concat(this.production)
-    .filter(c => c.count !== 0)
   }
 
   get unassignedCount() {
@@ -189,15 +173,7 @@ export class PopulationModel {
   }
 
   production(resourceType: ResourceType): number {
-    return sum(this.pops, pop =>
-      sum(pop.production.filter(p => p.type === resourceType), r => r.count)
-    )
-  }
-
-  consumption(resourceType: ResourceType): number {
-    return sum(this.pops, pop =>
-      sum(pop.consumption.filter(p => p.type === resourceType), r => r.count)
-    )
+    return sum(this.pops, pop => pop.singlePopProductionOfType(resourceType) * pop.count)
   }
 
   get total() {

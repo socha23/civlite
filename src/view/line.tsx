@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import { FontSizes, TrendColors } from './icons';
 import { formatNumber } from '../model/utils';
 
@@ -9,6 +9,21 @@ export type LineProps = {
   max?: number
   trend?: number
 }
+
+export const Column = (p: PropsWithChildren<{}>) => <div style={{
+  display: "flex",
+  flexDirection: "column",
+  gap: 4,
+}}>
+  {p.children}
+</div>
+
+export const Row = (p: PropsWithChildren<{}>) => <div style={{
+  display: "flex",
+  gap: 4,
+}}>
+  {p.children}
+</div>
 
 export const ResourceTrend = (p: {delta: number}) => p.delta === 0 ? <span/> : <span style={{
   color: p.delta > 0 ? TrendColors.positive: TrendColors.negative

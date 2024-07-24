@@ -33,11 +33,13 @@ code {
 }
 
 .dottedDividers:not(:last-child) {
+  border-color: #ccc;
   border-bottom-style: dotted;
   border-width: 1px;
 } 
 
 .dottedDividersParent > :not(:last-child) {
+  border-color: #ccc;
   border-bottom-style: dotted;
   border-width: 1px;
 }

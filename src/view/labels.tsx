@@ -102,6 +102,12 @@ export const PopulationUnrecruitLabels = {
     },   
 }
 
+export const PopBoxLabels = {
+    FoodConsumptionPostfix: "/ season",
+    PerPop: "Per pop:",
+    PerSecond: "/ s",
+}
+
 export const ActionCommonLabels = {
     Cost: "Cost:",
     Rewards: "Rewards:",

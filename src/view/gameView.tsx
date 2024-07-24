@@ -83,6 +83,7 @@ const InnerGameView = (p: GameViewProps) =>
       <div style={{
         display: "flex",
         gap: 20,
+        height: "100%",
       }}>
         <Column>
           <InventoryBox {...p.summary}/>

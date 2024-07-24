@@ -33,7 +33,7 @@ function lineProps(model: GameModel, t: DisplayedResourceType): LineProps {
     label: Labels[t],
     value: resDef.assignable ? res.unassigned : res.count,
     max: resDef.assignable ? res.count : res.cap,
-    trend: model.production(t) - model.consumption(t),
+    trend: model.production(t),
   }
 }
 

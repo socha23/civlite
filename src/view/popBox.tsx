@@ -1,13 +1,16 @@
 import React, {PropsWithChildren} from 'react';
 import { Box } from './box'
 import { GameModel } from '../model/gameModel'
-import { ActionProps, ActionButton, propsForAction, ActionRow3 } from './action';
+import { ActionProps, propsForAction, ActionRow3 } from './action';
 import { PopType, isAssignable } from '../model/pops';
 import { FontSizes, TrendColors, DividerColors, Icons, Colors, Labels } from './icons';
 import { formatNumber } from '../model/utils';
-import { ResourceAmount } from '../model/amount';
-import { PopulationRecruitLabels, PopulationUnrecruitLabels } from './labels';
+import { Amount, ResourceAmount, WorkAmount } from '../model/amount';
+import { PopBoxLabels, PopulationRecruitLabels, PopulationUnrecruitLabels } from './labels';
 import { CoordsCatcher, coordsIdPopCount } from './elementCoordinatesHolder';
+import { Row } from './line';
+import { Amounts } from './amount';
+import { ResourceType } from '../model/resources';
 
 export type PopBoxProps = {
   popType: PopType,
@@ -16,8 +19,11 @@ export type PopBoxProps = {
   unassignedCount: number,
   buyAction: ActionProps,
   sellAction: ActionProps,
-  resourceBalance: ResourceAmount[], 
-  singlePopBalance: ResourceAmount[],
+  foodConsumption: number,
+  singlePopWork: WorkAmount[],
+  totalWork: WorkAmount[],
+  singlePopProduction: ResourceAmount[],
+  totalProduction: ResourceAmount[],
 }
 
 export function popBoxProps(model: GameModel, type: PopType): PopBoxProps {
@@ -25,6 +31,7 @@ export function popBoxProps(model: GameModel, type: PopType): PopBoxProps {
   return {
     popType: type,
     popLabel: Labels.Plural[type],
+    foodConsumption: pop.singlePopFoodConsumption,
     count: pop.count,
     unassignedCount: pop.unassignedCount,
     buyAction: propsForAction(model, pop.buyAction, {
@@ -37,12 +44,14 @@ export function popBoxProps(model: GameModel, type: PopType): PopBoxProps {
       buttonLabel: PopulationUnrecruitLabels[type].ButtonTitle,
       //description: PopulationUnrecruitLabels[type].Description,
     }),
-    resourceBalance: pop.resourceBalance,
-    singlePopBalance: pop.singlePopBalance,
+    singlePopWork: pop.singlePopWork,
+    totalWork: pop.work.filter(c => c.count !== 0),
+    singlePopProduction: pop.singlePopProduction,
+    totalProduction: pop.production.filter(c => c.count !== 0),
   }
 }
 
-export const ResourcesList = (p: {items: ResourceAmount[], caption: string, color?: string}) => <div style={{
+export const ResourcesList = (p: {items: Amount[], caption?: string, color?: string}) => <div style={{
   display: "flex",
   gap: 4,
   fontSize: FontSizes.small,
@@ -60,6 +69,50 @@ export const ResourcesList = (p: {items: ResourceAmount[], caption: string, colo
 
 
 
+const PopHeader = (p: PopBoxProps) => <div style={{
+  display: "flex",
+  fontSize: FontSizes.big,
+  alignItems: 'center',
+  color: Colors.captions,
+  paddingBottom: 4,
+}}>
+  <div style={{width: 28, fontSize: FontSizes.normal, textAlign: 'center'}}>
+    <i className={Icons[p.popType]}/>
+  </div>
+  <div style={{flexGrow: 1}}>{p.popLabel}</div>
+    
+  <div style={{
+    width: 80,
+    textAlign: 'right',
+  }}>
+    <CoordsCatcher id={coordsIdPopCount(p.popType)}>
+      {isAssignable(p.popType) ? p.unassignedCount + " / " + p.count : p.count}
+    </CoordsCatcher>
+  </div>
+  <div style={{width: 60, display: 'flex', justifyContent: 'flex-end'}}>
+  </div>
+</div>
+
+
+const PopResources = (p: PopBoxProps) => <div style={{
+  display: "flex",
+  gap: 12,
+  paddingTop: 2,
+  paddingBottom: 2,
+}}>
+  <Row>
+    <Amounts items={[{type: ResourceType.Food, count: -p.foodConsumption}]}/>
+    {PopBoxLabels.FoodConsumptionPostfix}
+  </Row>
+  <Row>
+    <Amounts items={[...p.singlePopProduction, ...p.singlePopWork]}/>
+    {PopBoxLabels.PerSecond}
+  </Row>
+  <div style={{flexGrow: 1}}/>
+  <ResourcesList items={[...p.totalProduction, ...p.totalWork]} />
+
+</div>
+
 export const PopBox = (p: PropsWithChildren<PopBoxProps>) =>
   <Box>
     <div 
@@ -68,39 +121,8 @@ export const PopBox = (p: PropsWithChildren<PopBoxProps>) =>
       paddingTop: 8,
       paddingBottom: 12,
     }}>
-      <div style={{
-        display: "flex",
-        borderColor: DividerColors.light,
-        fontSize: FontSizes.big,
-        alignItems: 'center',
-        color: Colors.captions,
-      }}>
-        <div style={{width: 28, fontSize: FontSizes.normal, textAlign: 'center'}}>
-          <i className={Icons[p.popType]}/>
-        </div>
-        <div style={{flexGrow: 1}}>{p.popLabel}</div>
-          
-        <div style={{
-          width: 80,
-          textAlign: 'right',
-        }}>
-          <CoordsCatcher id={coordsIdPopCount(p.popType)}>
-            {isAssignable(p.popType) ? p.unassignedCount + " / " + p.count : p.count}
-          </CoordsCatcher>
-        </div>
-        <div style={{width: 60, display: 'flex', justifyContent: 'flex-end'}}>
-        </div>
-      </div>
-      <div style={{
-        borderColor: DividerColors.light,
-        paddingTop: 4,
-        paddingBottom: 4,
-        display: "flex",
-      }}>
-        <ResourcesList items={p.singlePopBalance} caption={Labels.PerPop} color={Colors.default}/>
-        <div style={{flexGrow: 1}}/>
-        <ResourcesList items={p.resourceBalance} caption={Labels.PerSecond}/>
-      </div>
+      <PopHeader {...p}/>
+      <PopResources {...p}/>
       <div>
         <ActionRow3 {...p.buyAction}/>
         <ActionRow3 {...p.sellAction} displayRewards={true}/>
