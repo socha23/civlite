@@ -104,10 +104,12 @@ const PopResources = (p: PopBoxProps) => <div style={{
     <Amounts items={[{type: ResourceType.Food, count: -p.foodConsumption}]}/>
     {PopBoxLabels.FoodConsumptionPostfix}
   </Row>
-  <Row>
-    <Amounts items={[...p.singlePopProduction, ...p.singlePopWork]}/>
-    {PopBoxLabels.PerSecond}
+  { p.singlePopProduction.length + p.singlePopWork.length > 0 && 
+    <Row>
+      <Amounts items={[...p.singlePopProduction, ...p.singlePopWork]}/>
+      {PopBoxLabels.PerSecond}
   </Row>
+  }
   <div style={{flexGrow: 1}}/>
   <ResourcesList items={[...p.totalProduction, ...p.totalWork]} />
 
