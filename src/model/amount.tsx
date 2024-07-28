@@ -212,10 +212,19 @@ export class SingleAmountAccumulator {
   }
 }
 
-export function multiply<T extends Countable>(amount: T[], mulBy: number): T[] {
-  return amount.map((a: T) => ({...a, count: a.count * mulBy}))
+interface Countable {
+  count: number
+}
+
+export function multiply<T extends Countable | Countable[]>(amount: T, mulBy: number): T {
+  if (Array.isArray(amount)) {
+    return amount.map(a => ({...a, count: a.count * mulBy})) as T
+  } else {
+    return {...amount, count: amount.count * mulBy}
+  }
 }
 
 export function negative<T extends Countable>(amount: T[]): T[] {
   return amount.map((a: T) => ({...a, count: -a.count}))
 }
+
