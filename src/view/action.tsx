@@ -45,14 +45,14 @@ export function propsForAction(model: GameModel, a: Action, params: ActionParms 
   }
 }
 
-const BUTTON_STYLE = {
+export const BUTTON_STYLE = {
   borderWidth: 1,
   borderStyle: "solid",
   borderColor: Colors.default,
   borderRadius: 4,
 }
 
-const BUTTON_STYLE_ENABLED = {
+export const BUTTON_STYLE_ENABLED = {
   ...BUTTON_STYLE,
   color: "black",
   borderColor: "#666",

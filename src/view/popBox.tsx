@@ -11,6 +11,7 @@ import { CoordsCatcher, coordsIdPopCount } from './elementCoordinatesHolder';
 import { Row } from './line';
 import { Amounts } from './amount';
 import { ResourceType } from '../model/resources';
+import { SwitchExpandToggle, SwitchPanel, SwitchParent } from './switchPanel';
 
 export type PopBoxProps = {
   popType: PopType,
@@ -75,6 +76,7 @@ const PopHeader = (p: PopBoxProps) => <div style={{
   alignItems: 'center',
   color: Colors.captions,
   paddingBottom: 4,
+  gap: 4,
 }}>
   <div style={{width: 28, fontSize: FontSizes.normal, textAlign: 'center'}}>
     <i className={Icons[p.popType]}/>
@@ -89,7 +91,10 @@ const PopHeader = (p: PopBoxProps) => <div style={{
       {isAssignable(p.popType) ? p.unassignedCount + " / " + p.count : p.count}
     </CoordsCatcher>
   </div>
-  <div style={{width: 60, display: 'flex', justifyContent: 'flex-end'}}>
+  <div style={{
+    fontSize: FontSizes.small
+  }}>
+    <SwitchExpandToggle/>
   </div>
 </div>
 
@@ -123,13 +128,15 @@ export const PopBox = (p: PropsWithChildren<PopBoxProps>) =>
       paddingTop: 8,
       paddingBottom: 12,
     }}>
-      <PopHeader {...p}/>
-      <PopResources {...p}/>
-      <div>
-        <ActionRow3 {...p.buyAction}/>
-        <ActionRow3 {...p.sellAction} displayRewards={true}/>
-      </div>
-      {p.children}
+      <SwitchParent>
+        <PopHeader {...p}/>
+        <PopResources {...p}/>
+        <SwitchPanel>
+          <ActionRow3 {...p.buyAction}/>
+          <ActionRow3 {...p.sellAction} displayRewards={true}/>
+        </SwitchPanel>
+        {p.children}
+      </SwitchParent>
     </div>
   </Box>
 

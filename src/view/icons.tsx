@@ -35,6 +35,10 @@ export const FontSizes = {
 }
 
 export const Icons = {
+    PanelExpand: 'fa-solid fa-chevron-down',
+    PanelHide: 'fa-solid fa-chevron-up',
+
+
     [PopType.Idler]: 'fa-solid fa-person',
     [PopType.Gatherer]: 'fa-solid fa-person-hiking',
     [PopType.Laborer]: 'fa-solid fa-person-digging',
