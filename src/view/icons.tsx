@@ -23,6 +23,7 @@ export const Colors = {
     EnemyArmy: "#800",
     ActiveWar: "#800",
     UnsatisfiableCost: "#800",
+    PausedIndicator: "#f00"
 }
 
 
@@ -169,6 +170,9 @@ export const BattleLongDescription = (p: WarProps) => <div>
     }
 </div>
 
+export const MainLabels = {
+    Paused: "Paused"
+}
 
 
 export const TrendColors = {

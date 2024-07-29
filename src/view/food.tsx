@@ -38,7 +38,7 @@ const FoodDetails = (p: FoodProps) => <div style={{
     justifyContent: "start",
     columnGap: 20,
   }}>
-    {p.expectedConsumption.map((p, idx) => <>
+    {p.expectedConsumption.map((p, idx) => <React.Fragment key={p.type}>
       <div style={{
         gridRow: idx,
         gridColumn: 1
@@ -47,7 +47,7 @@ const FoodDetails = (p: FoodProps) => <div style={{
         gridRow: idx,
         gridColumn: 2
       }}>{p.count}</div>
-    </>)}
+    </React.Fragment>)}
   </div>
 </div>
 

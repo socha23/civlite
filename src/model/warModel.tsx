@@ -6,7 +6,6 @@ import { Amount, ExpectedAmount, ExpectedPopAmount, rollActualAmount } from "./a
 import { GameModel } from "./gameModel"
 import { ArmyModel } from "./militaryModel"
 import { PopType } from "./pops"
-import { addTickListener } from "./timer"
 import { WarType, warTypeDefinition } from "./wars"
 
 
@@ -192,7 +191,6 @@ export class WarModel {
 
     constructor(model: GameModel) {
         this.model = model
-        addTickListener(this)
     }
 
     ongoingWarsAgainst(c: CivModel) {

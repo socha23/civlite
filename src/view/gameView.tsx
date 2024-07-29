@@ -1,9 +1,9 @@
-import React, {PropsWithChildren} from 'react';
+import React, {PropsWithChildren, useEffect, useRef} from 'react';
 import { ActionProps, ActionRow3 } from './action'
 import { GameModel } from '../model/gameModel'
 import { PopType } from '../model/pops'
 import { InventoryBox, InventoryBoxProps, summaryBoxProps } from './inventoryBox';
-import { Colors, FontSizes } from './icons';
+import { Colors, FontSizes, Labels, MainLabels } from './icons';
 import { ManualCollectionBox, ManualCollectionProps, resourceGatheringProps } from './manualCollectionBox';
 import { PopBox, PopBoxProps, popBoxProps } from './popBox';
 import { MilitaryProps, MilitaryView, militaryProps } from './military';
@@ -26,6 +26,9 @@ export type GameViewProps = {
   civilizations: CivsProps,
   calendar: CalendarProps,
   hunting: HuntingProps,
+
+  paused: boolean,
+  setPaused: ((t: boolean) => void),
 }
 
 export function gameViewProps(model: GameModel, onReset: () => void): GameViewProps {
@@ -46,6 +49,9 @@ export function gameViewProps(model: GameModel, onReset: () => void): GameViewPr
     civilizations: civsProps(model),
     calendar: calendarProps(model),
     hunting: huntingProps(model),
+
+    paused: model.paused,
+    setPaused: (p) => {model.paused = p}
   }
 }
 
@@ -68,6 +74,14 @@ function popProps(p: GameViewProps, t: PopType) {
   return p.pops.find(pop => pop.popType === t)!!
 }
 
+const PausedIndicator = (p: {paused: boolean}) => <div style={{
+  color: Colors.PausedIndicator,
+  fontSize: FontSizes.xbig,
+}}>
+  {p.paused && MainLabels.Paused}
+
+</div>
+
 const InnerGameView = (p: GameViewProps) =>
   <div style={{
     display: "flex",
@@ -79,7 +93,14 @@ const InnerGameView = (p: GameViewProps) =>
       display: "flex",
       flexDirection: "column",
     }}>
-      <CivName civName={p.civName}/>
+      <div style={{
+        display: "flex",
+        gap: 20,
+        alignItems: "center",
+      }}>
+        <CivName civName={p.civName}/>
+        <PausedIndicator paused={p.paused}/>
+      </div>
       <div style={{
         display: "flex",
         gap: 20,
@@ -116,13 +137,33 @@ const InnerGameView = (p: GameViewProps) =>
     </div>
   </div>
 
-export const GameView = (p: GameViewProps) => <div style={{
-  position: "relative"
-}}>
-  <Effects/>
-  <div style={{
-    zIndex: 0
-  }}>
-    <InnerGameView {...p}/>
+export const GameView = (p: GameViewProps) => {
+
+  const ref = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.focus()
+    }
+  })
+
+  return <div style={{
+    position: "relative",
+    outline: "none",
+  }}
+    ref={ref}
+    tabIndex={0}
+    onKeyDown={e => {
+      if (e.key === ' ') {
+        p.setPaused(!p.paused)
+      }        
+    }}
+  >
+    <Effects/>
+    <div style={{
+      zIndex: 0
+    }}>
+      <InnerGameView {...p}/>
+    </div>
   </div>
-</div>
+  
+}

@@ -16,6 +16,9 @@ import { tickInProgressActions } from "./actionsModel"
 import { ManualCollectionModel } from "./manualCollectionModel"
 
 export class GameModel implements GameModelInterface {
+
+  paused = false
+
   civName: string = "The Tribe"
   log = new Log()
   calendar = new CalendarModel(this)
@@ -51,9 +54,12 @@ export class GameModel implements GameModelInterface {
   }
 
   onTick(deltaS: number) {
-    onTick(deltaS)
+    if (this.paused) {
+      return
+    }
     this.calendar.onTick(deltaS)
     this.applyWorkAndProduction(deltaS)
+    this.wars.onTick(deltaS)
     tickInProgressActions(this, deltaS)
   }
 

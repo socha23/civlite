@@ -2,6 +2,7 @@ import {GameViewProps, gameViewProps} from '../view/gameView'
 import {GameModel} from './gameModel'
 import { PopType } from './pops'
 import { ResourceType } from './resources'
+import { onTick } from './timer'
 
 const MINIMUM_TIME_RESOLUTION_MS = 100
 
@@ -31,6 +32,7 @@ export class GameController {
   }
 
   onTick(deltaS: number) {
+    onTick(deltaS)
     this.model.onTick(deltaS)
   }
 
