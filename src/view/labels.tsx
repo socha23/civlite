@@ -130,3 +130,7 @@ export const HuntingLabels = {
         //description: "Hunt big game for food."
     },
 }
+
+export const FoodLabels = {
+    FoodConsumptionPerSeason: "Consumption / season:"
+}

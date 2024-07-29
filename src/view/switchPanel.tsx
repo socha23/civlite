@@ -1,6 +1,6 @@
 import React, {createContext, useContext, useState} from 'react';
 import { BUTTON_STYLE, BUTTON_STYLE_ENABLED } from './action';
-import { Icons } from './icons';
+import { FontSizes, Icons } from './icons';
 import { useSpring, animated } from '@react-spring/web';
 import { CoordsCatcher, getCoords } from './elementCoordinatesHolder';
 
@@ -34,6 +34,7 @@ export const SwitchExpandToggle = () => {
     ...BUTTON_STYLE,
     ...BUTTON_STYLE_ENABLED,
     height: 16,
+    fontSize: FontSizes.small,
     width: 16,
     borderRadius: 8,
     display: "flex",

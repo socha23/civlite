@@ -53,5 +53,19 @@ export class HungerModel {
         })
         return loses
     }
+
+    get foodConsumptionPerSeason() : {
+        type: PopType,
+        count: number
+    }[] {
+        const listInOrder = Object.values(PopType).sort((a, b) => feedOrder(a) - feedOrder(b))
+        return listInOrder.map(t => {
+            const pop = this.population.pop(t)
+            return {
+                type: t,
+                count: pop.singlePopFoodConsumption * pop.count
+            }
+        }).filter(c => c.count !== 0)
+    }
 }
 

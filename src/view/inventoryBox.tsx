@@ -4,12 +4,12 @@ import { GameModel } from '../model/gameModel'
 import { ResourceType, resourceDefinition } from '../model/resources';
 import { FontSizes, Icons, Colors, Labels } from './icons';
 import { Line, LineProps } from './line';
+import { FoodLinePanel, foodProps, FoodProps } from './food';
 
 export type InventoryBoxProps = {
   civName: string
-
   population: LineProps
-  food: LineProps
+  food: FoodProps
   herds: LineProps
   forest: LineProps
   grassland: LineProps
@@ -45,7 +45,7 @@ export function summaryBoxProps(model: GameModel): InventoryBoxProps {
       label: "Population",
       value: model.population.total,
     },
-    food: lineProps(model, ResourceType.Food),
+    food: foodProps(model),
     herds: lineProps(model, ResourceType.Herds),
     forest: lineProps(model, ResourceType.Forest),
     grassland: lineProps(model, ResourceType.Grassland),
@@ -82,7 +82,7 @@ export const InventoryBox = (p: InventoryBoxProps) =>
         <InventoryItem {...p.herds}/>
       </InventoryGroup>
       <InventoryGroup>
-        <InventoryItem {...p.food}/>
+        <FoodLinePanel {...p.food}/>
       </InventoryGroup>
       <InventoryGroup>  
         <InventoryItem {...p.forest}/>

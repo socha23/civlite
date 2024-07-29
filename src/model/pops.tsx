@@ -58,9 +58,6 @@ const PopTypeDefinitions = {
     work: [
       work(WorkType.Hunting, 1)
     ],
-    production: [
-      resources(ResourceType.Food, 0.1)
-    ]  
   },
   [PopType.Laborer]: {
     foodConsumption: 2,
