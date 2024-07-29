@@ -108,7 +108,9 @@ const InnerGameView = (p: GameViewProps) =>
           <CivilizationsView {...p.civilizations}/>
         </Column>
         <Column>
-          <LogView {...p.log}/>
+          <div style={{maxHeight: 600}}>
+            <LogView {...p.log}/>
+          </div>
         </Column>
       </div>
     </div>
