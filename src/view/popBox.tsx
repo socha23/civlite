@@ -6,7 +6,7 @@ import { PopType, isAssignable } from '../model/pops';
 import { FontSizes, TrendColors, DividerColors, Icons, Colors, Labels } from './icons';
 import { formatNumber } from '../model/utils';
 import { Amount, ResourceAmount, WorkAmount } from '../model/amount';
-import { PopBoxLabels, PopulationRecruitLabels, PopulationUnrecruitLabels } from './labels';
+import { PopBoxLabels, popLabelPlural, PopulationRecruitLabels, PopulationUnrecruitLabels } from './labels';
 import { CoordsCatcher, coordsIdPopCount } from './elementCoordinatesHolder';
 import { Row } from './line';
 import { Amounts } from './amount';
@@ -31,7 +31,7 @@ export function popBoxProps(model: GameModel, type: PopType): PopBoxProps {
   const pop = model.population.pop(type)
   return {
     popType: type,
-    popLabel: Labels.Plural[type],
+    popLabel: popLabelPlural(type),
     foodConsumption: pop.singlePopFoodConsumption,
     count: pop.count,
     unassignedCount: pop.unassignedCount,

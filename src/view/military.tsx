@@ -5,6 +5,7 @@ import { PopType } from '../model/pops';
 import { ArmyLabels, FontSizes, Icons, Labels } from './icons';
 import { ActionProps, propsForAction, ActionButton, ActionRow } from './action';
 import { formatNumber } from '../model/utils';
+import { popLabelPlural } from './labels';
 
 
 
@@ -55,7 +56,7 @@ const ArmyElementView = (e: ArmyElement) => <div style={{
     <i className={Icons[e.type]}/>
   </div>
   <div style={{width: 60,}}>
-    {Labels.Plural[e.type]}
+    {popLabelPlural(e.type)}
   </div>
   <div  style={{width: 20, textAlign: "right"}}>
     {e.count}

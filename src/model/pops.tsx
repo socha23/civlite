@@ -5,7 +5,7 @@ import { SEASON_DURATION } from "./calendarModel"
 
 export enum PopType {
   Idler = "Idler", 
-  Gatherer = "Gatherer", 
+  Hunter = "Hunter", 
   Laborer = "Laborer", 
   Herder = "Herder",
   Farmer = "Farmer",
@@ -46,17 +46,18 @@ const PopTypeDefinitions = {
       work(WorkType.Insight, 0.1)
     ],
   },
-  [PopType.Gatherer]: {
+  [PopType.Hunter]: {
+    timeCost: 3,
     foodConsumption: 1,
     buyCost: [
       pops(PopType.Idler, 1),
-      assignResources(ResourceType.Forest, 1)
     ],
     work: [
       work(WorkType.Hunting, 1)
     ],
   },
   [PopType.Laborer]: {
+    timeCost: 0,
     foodConsumption: 2,
     buyCost: [
       pops(PopType.Idler, 1),
@@ -67,6 +68,7 @@ const PopTypeDefinitions = {
     ],
   },
   [PopType.Herder]: {
+    timeCost: 0,
     foodConsumption: 0,
     workCost: [
       work(WorkType.Labor, 3)
@@ -81,6 +83,7 @@ const PopTypeDefinitions = {
     ],
   },
   [PopType.Farmer]: {
+    timeCost: 0,
     foodConsumption: 0,
     workCost: [
       work(WorkType.Labor, 3)

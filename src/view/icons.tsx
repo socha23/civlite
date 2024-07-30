@@ -41,7 +41,7 @@ export const Icons = {
 
 
     [PopType.Idler]: 'fa-solid fa-person',
-    [PopType.Gatherer]: 'fa-solid fa-person-hiking',
+    [PopType.Hunter]: 'fa-solid fa-person-hiking',
     [PopType.Laborer]: 'fa-solid fa-person-digging',
     [PopType.Farmer]: 'fa-solid fa-person-arrow-up-from-line',
     [PopType.Herder]: 'fa-solid fa-person-walking-with-cane',
@@ -74,15 +74,6 @@ export const Labels = {
     WarParty: "War party",
     Execute: "Execute",
     TotalPopulation: "Total population",
-    Plural: {
-        [PopType.Idler]: 'Idlers',
-        [PopType.Gatherer]: 'Gatherers',
-        [PopType.Laborer]: 'Laborers',
-        [PopType.Herder]: 'Herders',
-        [PopType.Farmer]: 'Farmers',
-        [PopType.Brave]: 'Braves',
-        [PopType.Slinger]: 'Slingers',
-    },
     [ResourceType.Food]: 'Food',
     [ResourceType.Herds]: 'Herds',
     [WorkType.Labor]: 'Labor',
@@ -92,20 +83,8 @@ export const Labels = {
     [WarType.BeatemUp]: "Beat'em up",
     [WarType.CattleRaid]: "Cattle raid",
     [WarType.SlaveRaid]: "Slave raid",
-    [WarType.Subjugation]: "Subjugation",
-    
+    [WarType.Subjugation]: "Subjugation",    
 }
-
-export const GatherActionLabels = {
-    [ResourceType.Herds]: 'Spawn Herd',
-    [ResourceType.Food]: 'Gather Food',
-    [WorkType.Insight]: 'Think',
-    [WorkType.Labor]: 'Perform Labor',
-    [ResourceType.Forest]: 'Spawn Forest',
-    [ResourceType.Grassland]: 'Spawn Grasslands',
-}
-
-
 
 export const ArmyLabels = {
     ArmyAssignmentIdle: ({}) => <span>Idle</span>,

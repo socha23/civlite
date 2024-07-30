@@ -1,6 +1,6 @@
 import React from 'react';
 import { GameModel } from '../model/gameModel'
-import { FoodLabels, } from './labels';
+import { FoodLabels, popLabelPlural, } from './labels';
 import { PopType } from '../model/pops';
 import { ResourceType } from '../model/resources';
 import { LinePanel } from './linePanel';
@@ -42,7 +42,7 @@ const FoodDetails = (p: FoodProps) => <div style={{
       <div style={{
         gridRow: idx,
         gridColumn: 1
-      }}>{Labels.Plural[p.type]}</div>
+      }}>{popLabelPlural(p.type)}</div>
       <div style={{
         gridRow: idx,
         gridColumn: 2

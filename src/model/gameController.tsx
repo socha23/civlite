@@ -43,7 +43,7 @@ export class GameController {
 
   setInitialState() {
     this.model.population.pop(PopType.Idler).incCount(3)
-    this.model.population.pop(PopType.Gatherer).incCount(3)
+    this.model.population.pop(PopType.Hunter).incCount(3)
     this.model.resources.resource(ResourceType.Food).cap = 30
     this.model.resources.resource(ResourceType.Food).count = 10
 

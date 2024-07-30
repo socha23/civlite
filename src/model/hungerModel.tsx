@@ -14,7 +14,7 @@ function feedOrder(t: PopType): number {
         case PopType.Brave:  return 0
         case PopType.Slinger: return 0
         case PopType.Herder: return 1
-        case PopType.Gatherer: return 1
+        case PopType.Hunter: return 1
         case PopType.Farmer: return 1
         case PopType.Laborer: return 2
         case PopType.Idler: return 3

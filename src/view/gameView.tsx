@@ -114,7 +114,7 @@ const InnerGameView = (p: GameViewProps) =>
           <ActionRow3 {...p.reset}/>
         </Column>
         <Column>
-          <PopBox {...popProps(p, PopType.Gatherer)}>
+          <PopBox {...popProps(p, PopType.Hunter)}>
             <HuntingSection {...p.hunting}/>
           </PopBox>
           <PopBox {...popProps(p, PopType.Herder)}/>

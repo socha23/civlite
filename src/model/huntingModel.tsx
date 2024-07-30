@@ -100,7 +100,7 @@ export class HuntingModel {
     }
 
     get huntersCount() {
-        return this.population.pop(PopType.Gatherer).count
+        return this.population.pop(PopType.Hunter).count
     }
 
     animalCount(t: AnimalType) {
@@ -121,7 +121,7 @@ export class HuntingModel {
                     from: 0,
                     to: Math.floor(Math.min(
                             hunters 
-                            * this.population.pop(PopType.Gatherer).singlePopWorkOfType(WorkType.Hunting) 
+                            * this.population.pop(PopType.Hunter).singlePopWorkOfType(WorkType.Hunting) 
                             * type.duration 
                             * type.huntingMultiplier
                         , animals))

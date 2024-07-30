@@ -220,6 +220,7 @@ const ActionRowStartActionButton = (a: ActionProps) => {
       alignItems: "center",
       justifyContent: "center",
       width: 80,
+      minHeight: 20,
       userSelect: "none",
     }} onClick={() => {
       if (a.disabled) {
