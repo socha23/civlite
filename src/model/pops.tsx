@@ -43,7 +43,8 @@ const PopTypeDefinitions = {
     buyCost: [resources(ResourceType.Food, 2)],
     timeCost: 3,
     work: [
-      work(WorkType.Insight, 0.1)
+      work(WorkType.Insight, 0.1),
+      work(WorkType.Gathering, 1),
     ],
   },
   [PopType.Hunter]: {

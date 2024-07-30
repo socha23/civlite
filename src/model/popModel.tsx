@@ -5,6 +5,7 @@ import { popTypeDefinition, PopType } from "./pops"
 import { Amount, ItemType, ResourceAmount, WorkAmount, isPopAmount, isPopType, isResourceAmount, multiply, resources, work } from "./amount"
 import { Assignable } from "./assignable"
 import { WorkType } from "./work"
+import { isWorkNeeded } from "./actionsModel"
 
 export class PopModel {
 
@@ -64,7 +65,10 @@ export class PopModel {
   }
 
   get work(): WorkAmount[] {
-    return multiply(this.singlePopWork, this.count)
+    return multiply(
+      this.singlePopWork.filter(t => isWorkNeeded(t.type)),
+      this.count
+    )
   }
 
   get singlePopWork(): WorkAmount[] {
@@ -142,9 +146,14 @@ export class PopModel {
 }
 
 
+
+function createPopModel(type: PopType): PopModel {
+  return new PopModel(type)
+}
+
 export class PopulationModel {
 
-  pops = Object.values(PopType).map(type => new PopModel(PopType[type]))
+  pops = Object.values(PopType).map(type => createPopModel(type))
 
   pop(type: PopType): PopModel {
     return this.pops.find(m => m.type === type)!

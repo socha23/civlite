@@ -152,6 +152,13 @@ export const HuntingLabels = {
     },
 }
 
+export const GatheringLabels = {
+    GatherAction: {
+        title: "Gather fruit and herbs",
+        buttonLabel: "Gather",
+    }
+}
+
 export const FoodLabels = {
     FoodConsumptionPerSeason: "Consumption / season:"
 }

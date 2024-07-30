@@ -1,5 +1,6 @@
 import { Action } from "./action"
 import { GameModel } from "./gameModel"
+import { WorkType } from "./work"
 
 const IN_PROGRESS_ACTIONS : Action[] = []
 
@@ -29,4 +30,9 @@ export function exclusiveActionsInProgress(a: Action): boolean {
 
 export function tickInProgressActions(model: GameModel, deltaS: number) {
     IN_PROGRESS_ACTIONS.forEach(a => a.onTick(model, deltaS))
+}
+
+export function isWorkNeeded(t: WorkType): boolean {
+    return listInProgressActions()
+            .find(a => a.needsWorkOfType(t)) !== undefined
 }

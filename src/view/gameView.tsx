@@ -13,6 +13,7 @@ import { CalendarBox, CalendarProps, calendarProps } from './calendarBox';
 import { HuntingProps, HuntingSection, huntingProps } from './hunting';
 import { Effects } from './effects';
 import { LogProps, LogView, logProps } from './log';
+import { gatheringProps, GatheringProps, GatheringSection } from './gathering';
 
 
 export type GameViewProps = {
@@ -26,6 +27,7 @@ export type GameViewProps = {
   civilizations: CivsProps,
   calendar: CalendarProps,
   hunting: HuntingProps,
+  gathering: GatheringProps,
 
   paused: boolean,
   setPaused: ((t: boolean) => void),
@@ -49,6 +51,7 @@ export function gameViewProps(model: GameModel, onReset: () => void): GameViewPr
     civilizations: civsProps(model),
     calendar: calendarProps(model),
     hunting: huntingProps(model),
+    gathering: gatheringProps(model),
 
     paused: model.paused,
     setPaused: (p) => {model.paused = p}
@@ -110,7 +113,9 @@ const InnerGameView = (p: GameViewProps) =>
           <InventoryBox {...p.summary}/>
           <CalendarBox {...p.calendar}/>
           <ManualCollectionBox {...p.resourceGathering}/>     
-          <PopBox {...popProps(p, PopType.Idler)}/>
+          <PopBox {...popProps(p, PopType.Idler)}>
+            <GatheringSection {...p.gathering}/>
+          </PopBox>
           <ActionRow3 {...p.reset}/>
         </Column>
         <Column>

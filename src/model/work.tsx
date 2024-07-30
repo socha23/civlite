@@ -1,6 +1,7 @@
 export enum WorkType {
     Labor = "Labor",
     Insight = "Insight",
+    Gathering = "Gathering",
     Hunting = "Hunting",
 }
 

@@ -14,6 +14,7 @@ import { HuntingModel } from "./huntingModel"
 import { Log } from "./log"
 import { tickInProgressActions } from "./actionsModel"
 import { ManualCollectionModel } from "./manualCollectionModel"
+import { GatheringModel } from "./gatheringModel"
 
 export class GameModel implements GameModelInterface {
 
@@ -31,6 +32,8 @@ export class GameModel implements GameModelInterface {
   wars = new WarModel(this)
   hunger = new HungerModel(this.population, this.resources, this.log)
   hunting = new HuntingModel(this.population, this.resources, this.log)
+  gathering = new GatheringModel(this.population, this.resources, this.log)
+  
 
   filterUnsatisfiableCosts(costs: Amount[]): Amount[] {
     return this.resources.filterUnsatisfiableCosts(costs)
