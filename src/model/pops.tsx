@@ -16,7 +16,6 @@ export enum PopType {
 
 
 const DEFAULT_POP_DEFINITION = {
-  initialCount: 0,
   timeCost: 5,
   foodConsumption: 1,
   workCost: [] as WorkAmount[],
@@ -40,7 +39,6 @@ type PopDefinition = typeof DEFAULT_POP_DEFINITION
 
 const PopTypeDefinitions = {
   [PopType.Idler]: {
-    initialCount: 0,
     foodConsumption: 1,
     buyCost: [resources(ResourceType.Food, 2)],
     timeCost: 3,
@@ -49,7 +47,6 @@ const PopTypeDefinitions = {
     ],
   },
   [PopType.Gatherer]: {
-    initialCount: 3,
     foodConsumption: 1,
     buyCost: [
       pops(PopType.Idler, 1),
@@ -98,7 +95,6 @@ const PopTypeDefinitions = {
   },
   [PopType.Brave]: {
     foodConsumption: 1,
-    initialCount: 0,
     assignableToArmy: true,
     battleOrder: 10,
     closeAttack: 2,
@@ -107,7 +103,6 @@ const PopTypeDefinitions = {
   },
   [PopType.Slinger]: {
     foodConsumption: 1,
-    initialCount: 0,
     assignableToArmy: true,
     battleOrder: 20,
     closeAttack: 1,

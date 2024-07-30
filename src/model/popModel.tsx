@@ -31,7 +31,7 @@ export class PopModel {
       disabled: () => this.decCountDisabled(1)
     })
 
-    this._count = this.definition.initialCount
+    this._count = 0
   }
 
   get count() {
