@@ -14,6 +14,7 @@ import { HuntingProps, HuntingSection, huntingProps } from './hunting';
 import { Effects } from './effects';
 import { LogProps, LogView, logProps } from './log';
 import { gatheringProps, GatheringProps, GatheringSection } from './gathering';
+import { HungerWarning } from './food';
 
 
 export type GameViewProps = {
@@ -134,9 +135,10 @@ const InnerGameView = (p: GameViewProps) =>
           <CivilizationsView {...p.civilizations}/>
         </Column>
         <Column>
-          <div style={{maxHeight: 600}}>
+          <div style={{flexGrow: 1, maxHeight: 600}}>
             <LogView {...p.log}/>
           </div>
+          <HungerWarning {...p.summary.food}/>
         </Column>
       </div>
     </div>

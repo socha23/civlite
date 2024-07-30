@@ -8,7 +8,6 @@ import { PopType } from "./pops"
 import { ResourceType } from "./resources"
 import { ResourcesModel } from "./resourcesModel"
 
-
 function feedOrder(t: PopType): number {
     switch (t) {
         case PopType.Brave:  return 0
@@ -32,26 +31,41 @@ export class HungerModel {
         this.resources = resources
     }
 
-    feedPops(): PopAmount[] {
+    simulateConsumption(): {
+        foodConsumed: number,
+        hungerDeaths: PopAmount[]
+    } {
         const listInOrder = Object.values(PopType).sort((a, b) => feedOrder(a) - feedOrder(b))
-        const loses = [] as PopAmount[]
-        const food = this.resources.resource(ResourceType.Food)
+        let foodConsumed = 0
+        let foodLeft = this.resources.resource(ResourceType.Food).count
+        const deaths = [] as PopAmount[]
         listInOrder.forEach(t => {
             const pop = this.population.pop(t)
             const peopleFed = pop.singlePopFoodConsumption > 0 
-                ? Math.min(Math.floor(food.count / pop.singlePopFoodConsumption), pop.count) 
+                ? Math.min(Math.floor(foodLeft / pop.singlePopFoodConsumption), pop.count) 
                 : pop.count
-            const foodConsumed = peopleFed * pop.singlePopFoodConsumption
-            food.sub(foodConsumed)
+            foodConsumed += peopleFed * pop.singlePopFoodConsumption
+            foodLeft -= peopleFed * pop.singlePopFoodConsumption
             if (peopleFed < pop.count) {
                 const hungerDeaths = pop.count - peopleFed
-                pop.decCount(hungerDeaths)
-                this.log.info(<HungerMessages.HungerDeaths type={t} count={hungerDeaths}/>)
-                spawnEffectCost(coordsIdPopCount(t), [pops(t, -hungerDeaths)])
-                loses.push(pops(t, hungerDeaths))
+                deaths.push(pops(t, hungerDeaths))
             }
         })
-        return loses
+        return {
+            foodConsumed: foodConsumed,
+            hungerDeaths: deaths
+        }
+    }
+
+    feedPops(): PopAmount[] {
+        const results = this.simulateConsumption()
+        this.resources.resource(ResourceType.Food).sub(results.foodConsumed)
+        results.hungerDeaths.forEach(d => {
+            this.population.pop(d.type).decCount(d.count)
+            this.log.info(<HungerMessages.HungerDeaths type={d.type} count={d.count}/>)
+            spawnEffectCost(coordsIdPopCount(d.type), [pops(d.type, -d.count)])
+        })
+        return results.hungerDeaths
     }
 
     get foodConsumptionPerSeason() : {

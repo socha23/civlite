@@ -23,7 +23,8 @@ export const Colors = {
     EnemyArmy: "#800",
     ActiveWar: "#800",
     UnsatisfiableCost: "#800",
-    PausedIndicator: "#f00"
+    PausedIndicator: "#f00",
+    Warning: "#800",
 }
 
 

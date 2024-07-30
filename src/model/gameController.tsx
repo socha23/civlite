@@ -32,8 +32,10 @@ export class GameController {
   }
 
   onTick(deltaS: number) {
+    //const logicStartTime = window.performance.now()
     onTick(deltaS)
     this.model.onTick(deltaS)
+    //console.log("Tick took " + (window.performance.now() - logicStartTime))
   }
 
   get viewProps(): GameViewProps {

@@ -4,7 +4,8 @@ import { FoodLabels, popLabelPlural, } from './labels';
 import { PopType } from '../model/pops';
 import { ResourceType } from '../model/resources';
 import { LinePanel } from './linePanel';
-import { FontSizes, Icons, Labels } from './icons';
+import { Colors, FontSizes, Icons, Labels } from './icons';
+import { PopAmount } from '../model/amount';
 
 export type FoodProps = {
   foodCount: number,
@@ -12,7 +13,8 @@ export type FoodProps = {
   expectedConsumption: {
     type: PopType,
     count: number,
-  }[]
+  }[],
+  expectedHungerDeaths: PopAmount[],
 }
 
 export function foodProps(model: GameModel): FoodProps {
@@ -21,6 +23,7 @@ export function foodProps(model: GameModel): FoodProps {
     foodCount: food.count,
     foodCap: food.cap || 0,
     expectedConsumption: model.hunger.foodConsumptionPerSeason,
+    expectedHungerDeaths: model.hunger.simulateConsumption().hungerDeaths,
   }
 }
 
@@ -58,3 +61,19 @@ export const FoodLinePanel = (p: FoodProps) => <LinePanel
   postfix={<div>/ {p.foodCap}</div>}>
   <FoodDetails {...p}/>
 </LinePanel> 
+
+export const HungerWarning = (p: FoodProps) => p.expectedHungerDeaths.length > 0 ? <div style={{
+  display: "flex",
+  flexDirection: "column",
+  gap: 4,
+  borderWidth: 4,
+  borderColor: Colors.Warning,
+}}>
+  <div style={{fontSize: FontSizes.big, color: Colors.Warning}}>{FoodLabels.HungerWarning}</div>
+  <div style={{fontSize: FontSizes.small}}>{FoodLabels.HungerWarningDesc}</div>
+  {
+    p.expectedHungerDeaths.map(d => <div key={d.type}>
+      {d.count} {popLabelPlural(d.type)}  
+    </div>)
+  }
+</div> : <div/>

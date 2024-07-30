@@ -160,5 +160,7 @@ export const GatheringLabels = {
 }
 
 export const FoodLabels = {
-    FoodConsumptionPerSeason: "Consumption / season:"
+    FoodConsumptionPerSeason: "Consumption / season:",
+    HungerWarning: "Hunger warning!",
+    HungerWarningDesc: "Some people will not have enough to eat at the end of the season",
 }
