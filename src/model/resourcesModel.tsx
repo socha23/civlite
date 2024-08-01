@@ -113,4 +113,8 @@ export class ResourcesModel {
     get food() {
         return this.resource(ResourceType.Food)
     }
+
+    get forest() {
+        return this.resource(ResourceType.Forest)
+    }
 }

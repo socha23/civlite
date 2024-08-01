@@ -21,4 +21,8 @@ export class Log {
         return this._messages
     }
 
+    reset() {
+        this._messages = []
+    }
+
 }

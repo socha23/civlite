@@ -122,8 +122,8 @@ const InnerGameView = (p: GameViewProps) =>
         <Column>
           {p.progress.Inventory && <InventoryBox {...p.summary} />}
           {p.progress.Calendar && <CalendarBox {...p.calendar} />}
-          {p.research.availableResearchActions.length > 0 && <ResearchSection {...p.research} />}
           {p.progress.ManualCollection && <ManualCollectionBox {...p.resourceGathering} />}
+          {p.research.availableResearchActions.length > 0 && <ResearchSection {...p.research} />}
         </Column>
         <Column>
           {p.progress.PopEnabled[PopType.Idler] &&
@@ -156,11 +156,12 @@ const InnerGameView = (p: GameViewProps) =>
         <Column>
           {p.progress.Log &&
 
-            <div style={{ flexGrow: 1, maxHeight: 600 }}>
+            <div style={{ flexGrow: 1, maxHeight: 300 }}>
               <LogView {...p.log} />
             </div>
           }
-          <HungerWarning {...p.summary.food} />
+          {p.summary.food.expectedHungerDeaths.length > 0 && <HungerWarning {...p.summary.food} />}
+          
         </Column>
       </div>
     </div>
@@ -178,6 +179,7 @@ export const GameView = (p: GameViewProps) => {
   return <div style={{
     position: "relative",
     outline: "none",
+    userSelect: "none",
   }}
     ref={ref}
     tabIndex={0}

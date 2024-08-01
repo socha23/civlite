@@ -18,6 +18,7 @@ export const Progress = {
     ManualCollection: false,
     ManualResearch: false,
     ManualFood: false,
+    ManualFoodDuration: 3,
     FoodStocks: false,
     ManualLabor: false,
     Military: false,

@@ -15,7 +15,7 @@ export function resourceGatheringProps(model: GameModel): ManualCollectionProps 
 
   const typeLabels = (t: ResourceType.Food | WorkType.Insight | WorkType.Labor) => ({
     title: ManualResourceGatheringLabels[t].ActionTitle,
-    description: ManualResourceGatheringLabels[t].Description,
+    //description: ManualResourceGatheringLabels[t].Description,
     buttonLabel: ManualResourceGatheringLabels[t].ButtonTitle,
   })
 

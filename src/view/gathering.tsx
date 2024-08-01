@@ -34,13 +34,12 @@ const GatheringStats = (p: GatheringActionStats) => <div style={{
   <div style={{textAlign: "right"}}>{GatheringLabels.GathereringBase}</div>
   <div>{p.uncappedFood}</div>
   <div>{p.totalWork} <i className={Icons[WorkType.Gathering]}/> / {p.workPerFood}</div>
-  {
-    p.forestCapApplied && <>
-      <div style={{textAlign: "right"}}>{GatheringLabels.ForestCap}</div>
-      <div style={{color: Colors.Warning}}>{p.forestCap}</div>    
-      <div>{p.forestCount} <i className={Icons[ResourceType.Forest]}/></div>    
-    </>
-  }
+  
+  <div style={{textAlign: "right"}}>{GatheringLabels.ForestCap}</div>
+  <div style={{color: p.forestCap < p.uncappedFood ? Colors.Warning : Colors.default}}>{p.forestCap}</div>    
+  <div>{p.forestCount} <i className={Icons[ResourceType.Forest]}/> * {p.forestCapPerForest}</div>    
+    
+  
 
   <div style={{textAlign: "right"}}>{GatheringLabels.SeasonalMultiplier}</div>
   <div><PercentageModifier value={p.seasonalMultiplier}/></div>

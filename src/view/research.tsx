@@ -3,6 +3,7 @@ import { Box } from './box'
 import { GameModel } from '../model/gameModel'
 import { ActionProps, ActionRow3, propsForAction } from './action';
 import { ResearchLabels } from './labels';
+import { ActionState } from '../model/action';
 
 export type ResearchSectionProps = {
   availableResearchActions: ActionProps[]
@@ -32,7 +33,7 @@ export const ResearchSection = (p: ResearchSectionProps) =>
       marginTop: 4,
       marginBottom: 4,
     }}> {
-      p.availableResearchActions.map(a => <ActionRow3 key={a.id} {...a}/>)
+      p.availableResearchActions.map(a => <ActionRow3 key={a.id} {...a} displayCost={a.state !== ActionState.InProgress }/>)
     }
     </div>
   </Box>

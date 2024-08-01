@@ -194,7 +194,13 @@ const ActionRowsAmountsRow = (p: {label: string, items: AmountWithColorProps[]})
   <Amounts items={p.items}/>
 </div>
 
-const InnerActionRow3 = (p: ActionProps & {showButton: boolean, displayRewards?: boolean}) => {
+const InnerActionRow3 = (p: ActionProps & 
+  {
+    showButton: boolean, 
+    displayRewards?: boolean,
+    displayCost?: boolean,
+  
+  }) => {
   const costs = p.costs || []
   const work = p.workCost || []
 
@@ -223,7 +229,7 @@ const InnerActionRow3 = (p: ActionProps & {showButton: boolean, displayRewards?:
             gap: 8,
           }}>
             {p.timeCost && <ActionRowsAmountsRow items={[{count: p.timeCost, postfix: ActionCommonLabels.Second}]} label={ActionCommonLabels.Time}/>}
-            {totalCostAmounts.length > 0 && <ActionRowsAmountsRow items={totalCostAmounts} label={ActionCommonLabels.Cost}/>}
+            {(p.displayCost === undefined || p.displayCost) && totalCostAmounts.length > 0 && <ActionRowsAmountsRow items={totalCostAmounts} label={ActionCommonLabels.Cost}/>}
             {p.rewards && p.rewards.length > 0 && (p.displayRewards === undefined || p.displayRewards) && <ActionRowsAmountsRow items={p.rewards} label={ActionCommonLabels.Rewards}/>}
           </div>
         }
@@ -238,6 +244,7 @@ const InnerActionRow3 = (p: ActionProps & {showButton: boolean, displayRewards?:
 
 export const ActionRow3 = (p: ActionProps & {
   inTooltip?: boolean, 
+  displayCost?: boolean
   displayRewards?: boolean
 }) => <div style={{
     borderStyle: "solid",

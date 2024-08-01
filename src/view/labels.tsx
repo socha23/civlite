@@ -32,14 +32,14 @@ export const ManualResourceGatheringLabels = {
         Description: "Find some mushrooms and herbs."
     },
     [WorkType.Insight]: {
-        ActionTitle: "Sit and think",
+        ActionTitle: "Think",
         ButtonTitle: "Start",
-        Description: "Ponder the world around you.",
+        Description: "Ponder the world around me.",
     },
     [WorkType.Labor]: {
         ActionTitle: "Manual labor",
         ButtonTitle: "Start",
-        Description: "Roll up your sleeves and get to work."
+        Description: "Roll up my sleeves and get to work."
     },
 }
 

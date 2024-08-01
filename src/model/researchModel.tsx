@@ -26,6 +26,7 @@ class ResearchNode {
                 if (this.definition.onComplete) {
                     this.definition.onComplete(this.model)
                 }
+                model.log.info((this.definition.logTitle || this.definition.title) + " discovered")
             },
 
             disabled: (model) => this.disabled()
