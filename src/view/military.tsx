@@ -2,9 +2,8 @@ import React, { ReactNode } from 'react';
 import { Box } from './box'
 import { GameModel } from '../model/gameModel'
 import { PopType } from '../model/pops';
-import { ArmyLabels, FontSizes, Icons, Labels } from './icons';
-import { ActionProps, propsForAction, ActionButton, ActionRow } from './action';
-import { formatNumber } from '../model/utils';
+import { ArmyLabels, FontSizes, Icons } from './icons';
+import { ActionProps, propsForAction, ActionButton } from './action';
 import { popLabelPlural } from './labels';
 
 

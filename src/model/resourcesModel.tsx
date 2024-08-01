@@ -1,5 +1,7 @@
 import { ResourceType, resourceDefinition } from "./resources"
-import { Amount, isResourceAmount, isResourceType, } from "./amount"
+import { Amount, isResourceAmount, isResourceType, resources, } from "./amount"
+import { spawnEffectCost } from "../view/effects"
+import { coordsIdResourceStock } from "../view/elementCoordinatesHolder"
 
 class ResourceModel {
     type: ResourceType
@@ -31,6 +33,7 @@ class ResourceModel {
 
     sub(amount: number) {
         this.count = Math.max(0, this.count - amount)
+        spawnEffectCost(coordsIdResourceStock(this.type), [resources(this.type, -amount)])
     }
 
     assign(amount: number) {

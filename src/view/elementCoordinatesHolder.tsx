@@ -52,3 +52,7 @@ export function coordsIdPopCount(t: PopType) {
 export function coordsIdHuntStock(t: ResourceType) {
   return `hunting_stock_${t}`
 }
+
+export function coordsIdResourceStock(t: ResourceType) {
+  return `resource_stock_${t}`
+}

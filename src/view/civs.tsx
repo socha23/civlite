@@ -3,7 +3,7 @@ import { Box } from './box'
 import { GameModel } from '../model/gameModel'
 import { PopType } from '../model/pops';
 import { Colors, FontSizes, Icons, Labels } from './icons';
-import { ActionProps, propsForAction, ActionButton } from './action';
+import { ActionProps, propsForAction, ActionButton, ActionRow3 } from './action';
 import { formatNumber } from '../model/utils';
 import { WarProps, WarView, warProps } from './war';
 
@@ -71,14 +71,6 @@ const CivHeader = (p: CivProps) => <div style={{
   </div>
 </div>
 
-const CivAttackActions = (p: CivProps) => <div style={{
-  display: "flex",
-  gap: 4,
-  alignItems: "center"
-}}>
-  {p.attackActions.map((a, idx) => <ActionButton key={idx} {...a}/>)}
-</div>
-
 const CivView = (p: CivProps) => <Box>
 
     <div className="dottedDividersParent" style={{
@@ -91,7 +83,7 @@ const CivView = (p: CivProps) => <Box>
     }}>
       <CivHeader {...p}/>
       <CivStats {...p}/>
-      <CivAttackActions {...p}/>
+      {p.attackActions.map(a => <ActionRow3 key={a.id} {...a}/>)}
       {p.wars.map((w, idx) => <WarView key={idx} {...w}/>)}
     </div>
   </Box>

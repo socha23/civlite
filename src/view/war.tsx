@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 import { FontSizes, BattleLabels, BattleLongDescription, Colors } from './icons';
 import { WarType } from '../model/wars';
 import { War, WarState } from '../model/warModel';
-import { ActionButton, ActionProps, ActionRow2, propsForAction } from './action';
+import { ActionButton, ActionProps, ActionRow3, propsForAction } from './action';
 import { GameModel } from '../model/gameModel';
 import { BattleProps, BattleView, battleProps } from './battle';
 import { Amount, ExpectedAmount, ExpectedPopAmount } from '../model/amount';
@@ -113,20 +113,20 @@ const DuringBattle = (p: {war: WarProps, battle: BattleProps}) => <div style={{
   flexDirection: "column"
 }}>
   {p.war.state === WarState.Battle && 
-    <ActionRow2 {...p.war.actions.fight}><BattleLabels.ArmyInBattle army={p.war.armyTitle}/></ActionRow2>
+    <ActionRow3 {...p.war.actions.fight}><BattleLabels.ArmyInBattle army={p.war.armyTitle}/></ActionRow3>
   }
   {p.war.state === WarState.AfterBattleAttackerLost && 
-    <ActionRow2 {...p.war.actions.retreat}><BattleLabels.ArmyLost army={p.war.armyTitle}/></ActionRow2>
+    <ActionRow3 {...p.war.actions.retreat}><BattleLabels.ArmyLost army={p.war.armyTitle}/></ActionRow3>
   }
   {p.war.state === WarState.AfterBattleAttackerWon && 
-    <ActionRow2 {...p.war.actions.marchBackHome}><BattleLabels.ArmyVictorius army={p.war.armyTitle}/></ActionRow2>
+    <ActionRow3 {...p.war.actions.marchBackHome}><BattleLabels.ArmyVictorius army={p.war.armyTitle}/></ActionRow3>
   }
   <BattleView {...p.battle}/>
 </div>
 
 
 const AfterBattle = (p: {message: string | ReactNode, action: ActionProps, war: WarProps}) => 
-  <ActionRow2 {...p.action}>
+  <ActionRow3 {...p.action}>
     <div style={{
       display: "flex",
       gap: 4,
@@ -135,7 +135,7 @@ const AfterBattle = (p: {message: string | ReactNode, action: ActionProps, war: 
       <div>{p.message}</div>
       {p.war.rewards.length > 0 && <ValueRow description={BattleLabels.Reward} items={p.war.rewards} />}
     </div>
-  </ActionRow2>
+  </ActionRow3>
 
 
 export const WarView = (p: WarProps) => <div style={{

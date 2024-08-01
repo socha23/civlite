@@ -2,9 +2,11 @@ import React, { PropsWithChildren, ReactNode } from 'react';
 import { FontSizes, TrendColors } from './icons';
 import { formatNumber } from '../model/utils';
 import { SwitchExpandToggle, SwitchPanel, SwitchParent } from './switchPanel';
+import { CoordsCatcher } from './elementCoordinatesHolder';
 
 export const LinePanel = (p: PropsWithChildren<{
   icon?: string,
+  coordsId?: string,
   label: string,
   value: number,
   postfix?: ReactNode,
@@ -29,7 +31,7 @@ export const LinePanel = (p: PropsWithChildren<{
         <div style={{
           flexGrow: 1,
           textAlign: "right",
-        }}>{formatNumber(p.value)}</div>
+        }}><CoordsCatcher id={p.coordsId || "none"}>{formatNumber(p.value)}</CoordsCatcher></div>
         <div style={{
           width: 64,
         }}>{p.postfix}</div>

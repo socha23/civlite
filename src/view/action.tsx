@@ -2,7 +2,7 @@ import React, { CSSProperties, PropsWithChildren, ReactNode } from 'react';
 
 import { GameModel } from '../model/gameModel';
 import { Action, ActionState, unlazyRewards } from '../model/action'
-import { Colors, FontSizes, DividerColors } from './icons';
+import { Colors, FontSizes } from './icons';
 import { AmountWithColorProps, Amounts } from './amount';
 import { ActionCommonLabels } from './labels';
 import { CoordsCatcher } from './elementCoordinatesHolder';
@@ -133,53 +133,6 @@ export const ActionButton = (a: ActionProps) => <ActionButtonInner {...a}>
     {a.costs && <Amounts items={a.costs}/>}
  </div>
 </ActionButtonInner>
-
-
-export const ActionRow = (p: ActionProps) => <div className="dottedDividers" style={{
-  display: "flex",
-  borderColor: DividerColors.light,
-  fontSize: FontSizes.small,
-  flexDirection: "column",
-  paddingTop: 8,
-  paddingBottom: 8,
-}}>
-  <div style={{
-    display: "flex",
-    alignItems: "center",
-    gap: 4,
-  }}>
-    <div style={{
-      width: 120,
-    }}>
-      <ActionButton {...p} title={p.title}/>
-    </div>
-    <div style={{
-      width: 120,
-    }}>
-    </div>
-  </div>
-  
-</div>
-
-export const ActionRow2 = (p: PropsWithChildren<ActionProps>) => <div style={{
-    paddingTop: 4,
-    paddingBottom: 4,
-    display: "flex",
-    alignItems: "center",
-    gap: 4,
-  }}>
-    <div style={{
-      flexGrow: 1,
-    }}>
-      {p.children}
-    </div>
-    <div style={{
-      width: 80,
-    }}>
-      <ActionButton {...p} title={p.title}/>
-    </div>
-  </div>
-
 
 
 const ActionRowProgressIndicator = (a: ActionProps) => {
@@ -317,7 +270,7 @@ export const ActionRow3 = (p: ActionProps & {
   </div>
 
 export const SmallButtonAction = (p: ActionProps) => <WithTooltip tooltip={
-  <ActionRow3 {...p} inTooltip={true}/>
+  <ActionRow3 {...p} inTooltip={true} displayRewards={true}/>
 }>
   <ActionButton3 {...p} style={{
     width: 16,

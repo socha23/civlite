@@ -6,6 +6,7 @@ import { ResourceType } from '../model/resources';
 import { LinePanel } from './linePanel';
 import { Colors, FontSizes, Icons, Labels } from './icons';
 import { PopAmount } from '../model/amount';
+import { coordsIdResourceStock } from './elementCoordinatesHolder';
 
 export type FoodProps = {
   foodCount: number,
@@ -60,6 +61,7 @@ const FoodDetails = (p: FoodProps) => <div style={{
 </div>
 
 export const FoodLinePanel = (p: FoodProps) => <LinePanel
+  coordsId={coordsIdResourceStock(ResourceType.Food)}
   icon={Icons[ResourceType.Food]}
   label={Labels[ResourceType.Food]}
   value={p.foodCount}

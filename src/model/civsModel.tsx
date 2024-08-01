@@ -32,7 +32,7 @@ export class CivModel {
     }
 
     availableWarGoals() {
-        return [WarType.BeatemUp, WarType.CattleRaid, WarType.SlaveRaid]
+        return [WarType.BeatemUp, WarType.CattleRaid]
     }
 }
 
