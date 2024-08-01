@@ -14,6 +14,7 @@ export type FoodProps = {
     type: PopType,
     count: number,
   }[],
+  timeUntilHunger: number,
   expectedHungerDeaths: PopAmount[],
 }
 
@@ -23,6 +24,7 @@ export function foodProps(model: GameModel): FoodProps {
     foodCount: food.count,
     foodCap: food.cap || 0,
     expectedConsumption: model.hunger.foodConsumptionPerSeason,
+    timeUntilHunger: model.hunger.timeUntilHunger,
     expectedHungerDeaths: model.hunger.simulateConsumption().hungerDeaths,
   }
 }
@@ -35,6 +37,8 @@ const FoodDetails = (p: FoodProps) => <div style={{
   paddingLeft: 24,
   fontSize: FontSizes.small,
 }}>
+  <div>{FoodLabels.FoodStocks} {p.timeUntilHunger}s</div>
+{/*
   <div>{FoodLabels.FoodConsumptionPerSeason}</div>
   <div style={{
     display: "grid",
@@ -52,6 +56,7 @@ const FoodDetails = (p: FoodProps) => <div style={{
       }}>{p.count}</div>
     </React.Fragment>)}
   </div>
+*/}
 </div>
 
 export const FoodLinePanel = (p: FoodProps) => <LinePanel

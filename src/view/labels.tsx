@@ -124,7 +124,7 @@ export const PopulationUnrecruitLabels = {
 }
 
 export const PopBoxLabels = {
-    FoodConsumptionPostfix: "/ season",
+    FoodConsumptionPostfix: "/ 5s",
     PerPop: "Per pop:",
     PerSecond: "/ s",
 }
@@ -156,10 +156,15 @@ export const GatheringLabels = {
     GatherAction: {
         title: "Gather fruit and herbs",
         buttonLabel: "Gather",
-    }
+    },
+    GathereringBase: "Gathering base:",
+    ForestCap: "Forest cap:",
+    SeasonalMultiplier: "Season modifier:",
+    TotalFood: "Total:",
 }
 
 export const FoodLabels = {
+    FoodStocks: "Food stocks:",
     FoodConsumptionPerSeason: "Consumption / season:",
     HungerWarning: "Hunger warning!",
     HungerWarningDesc: "Some people will not have enough to eat at the end of the season",

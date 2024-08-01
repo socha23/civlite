@@ -32,7 +32,7 @@ export class GameModel implements GameModelInterface {
   wars = new WarModel(this)
   hunger = new HungerModel(this.population, this.resources, this.log)
   hunting = new HuntingModel(this.population, this.resources, this.log)
-  gathering = new GatheringModel(this.population, this.resources, this.log)
+  gathering = new GatheringModel(this.population, this.resources, this.calendar, this.log)
   
 
   filterUnsatisfiableCosts(costs: Amount[]): Amount[] {
@@ -67,10 +67,10 @@ export class GameModel implements GameModelInterface {
   }
 
   onEndOfSeason() {
-    this.hunger.feedPops()
   }
 
   onEndOfTurn() {
+    this.hunger.onEndOfTurn()
     this.hunting.multiplyAnimals()
   }
 

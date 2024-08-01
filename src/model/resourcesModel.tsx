@@ -104,4 +104,8 @@ export class ResourcesModel {
             }
         })
     }
+
+    get food() {
+        return this.resource(ResourceType.Food)
+    }
 }

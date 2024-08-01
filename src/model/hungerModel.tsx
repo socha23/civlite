@@ -20,15 +20,37 @@ function feedOrder(t: PopType): number {
     }
 }
 
+const TURNS_PER_FEEDING = 5
+
 export class HungerModel {
     log: Log
     population: PopulationModel
     resources: ResourcesModel
+    turnsSinceFeeding = 0
 
     constructor(population: PopulationModel, resources: ResourcesModel, log: Log) {
         this.log = log
         this.population = population
         this.resources = resources
+    
+    }
+
+    get consumptionPerFeeding(): number {
+        let total = 0
+        Object.values(PopType).forEach(t => {
+            const pop = this.population.pop(t)
+            total += pop.singlePopFoodConsumption * pop.count
+        })
+        return total
+    }
+
+    get timeUntilHunger() {
+        if (this.consumptionPerFeeding === 0) {
+            return 0
+        }
+        const currentFood = this.resources.food.count
+        return Math.floor(currentFood / this.consumptionPerFeeding) * TURNS_PER_FEEDING 
+            + (TURNS_PER_FEEDING - this.turnsSinceFeeding)
     }
 
     simulateConsumption(): {
@@ -54,6 +76,14 @@ export class HungerModel {
         return {
             foodConsumed: foodConsumed,
             hungerDeaths: deaths
+        }
+    }
+
+    onEndOfTurn() {
+        this.turnsSinceFeeding++
+        if (this.turnsSinceFeeding >= TURNS_PER_FEEDING) {
+            this.feedPops()
+            this.turnsSinceFeeding = 0
         }
     }
 

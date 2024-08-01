@@ -8,11 +8,28 @@ import { ResourceType } from "./resources"
 import { ResourcesModel } from "./resourcesModel"
 import { GameModel } from "./gameModel"
 import { WorkType } from "./work"
+import { CalendarModel } from "./calendarModel"
+import { Season } from "./calendarConsts"
 
-const GATHERING_DURATION = 10
-const GATHERING_WORK_FOR_FOOD = 10
+const GATHERING_DURATION = 5
+const GATHERING_WORK_FOR_FOOD = 2.5
 
-const GATHERING_MULTIPLIER = 1
+export type GatheringActionStats = {
+    gatherersCount: number
+    gatheringDuration: number
+    totalWork: number
+    workPerFood: number
+    uncappedFood: number
+
+    forestCapApplied: boolean
+    forestCount: number
+    forestCap: number
+
+    season: Season
+    seasonalMultiplier: number
+
+    totalFood: number 
+}
 
 
 export class GatheringModel {
@@ -20,13 +37,15 @@ export class GatheringModel {
     log: Log
     population: PopulationModel
     resources: ResourcesModel
+    calendar: CalendarModel
 
     gatherAction: Action
 
-    constructor(population: PopulationModel, resourcesM: ResourcesModel, log: Log) {
+    constructor(population: PopulationModel, resourcesM: ResourcesModel, calendar: CalendarModel, log: Log) {
         this.log = log
         this.population = population
         this.resources = resourcesM
+        this.calendar = calendar
 
         this.gatherAction = action({
             id: "gathering",
@@ -37,24 +56,31 @@ export class GatheringModel {
                 return [{
                     type: ResourceType.Food,
                     assignment: false,
-                    count: Math.min(
-                            Math.round(this.gatherersCount * GATHERING_MULTIPLIER * GATHERING_DURATION / GATHERING_WORK_FOR_FOOD),
-                            Math.round(this.forestCount * GATHERING_MULTIPLIER)
-                    )
+                    count: this.totalExpectedFood
                 }]
             },
             disabled: (model: GameModel) => {
                 return this.gatherersCount === 0 || this.forestCount === 0  
             },
             onComplete: (self: Action, model: GameModel) => {
-                const collected = Math.min(
-                    Math.round(self.collectedWorkAcc.collected(WorkType.Gathering) / GATHERING_WORK_FOR_FOOD * GATHERING_MULTIPLIER),
-                    Math.round(this.forestCount * GATHERING_MULTIPLIER)
-            )
-            self.actualRewards = [resources(ResourceType.Food, collected)]
-            this.log.info(<GatheringMessages.GatheringComplete count={self.actualRewards[0].count}/>)
+                
+                const uncapped =  self.collectedWorkAcc.collected(WorkType.Gathering) / GATHERING_WORK_FOR_FOOD
+                const capped = Math.min(uncapped, this.forestCap)
+                const multiplied = Math.floor(capped * this.seasonalMultiplier)
+                
+                const collected = multiplied
+                self.actualRewards = [resources(ResourceType.Food, collected)]
+                this.log.info(<GatheringMessages.GatheringComplete count={self.actualRewards[0].count}/>)
             }
         })
+    }
+
+    get baseFoodPerGatherer() {
+        return 
+    }
+
+    get workPerGatherer() {
+        return  this.population.pop(PopType.Idler).singlePopWorkOfType(WorkType.Gathering) 
     }
 
     get gatherersCount() {
@@ -63,6 +89,46 @@ export class GatheringModel {
 
     get forestCount() {
         return this.resources.resource(ResourceType.Forest).count
+    }
+
+    get forestCap() {
+        return this.forestCount
+    }
+
+    get seasonalMultiplier() {
+        switch (this.calendar.currentSeason) {
+            case Season.Spring: return 1
+            case Season.Summer: return 1.25
+            case Season.Autumn: return 1.5
+            case Season.Winter: return 0.5
+        }
+    }
+
+    get expectedUncapped() {
+        return this.gatherersCount * GATHERING_DURATION * this.workPerGatherer / GATHERING_WORK_FOR_FOOD
+    }
+
+    get totalExpectedFood() {
+        const uncapped =  this.expectedUncapped
+        const capped = Math.min(uncapped, this.forestCap)
+        const multiplied = Math.floor(capped * this.seasonalMultiplier)
+        return multiplied
+    }
+
+    get gatheringStats(): GatheringActionStats {
+        return {
+            gatherersCount: this.gatherersCount,
+            gatheringDuration: GATHERING_DURATION,
+            totalWork: this.gatherersCount * GATHERING_DURATION * this.workPerGatherer,
+            workPerFood: GATHERING_WORK_FOR_FOOD,
+            uncappedFood: this.expectedUncapped,
+            forestCapApplied: this.expectedUncapped > this.forestCap,
+            forestCount: this.forestCount,
+            forestCap: this.forestCap,
+            seasonalMultiplier: this.seasonalMultiplier,
+            totalFood: this.totalExpectedFood, 
+            season: this.calendar.currentSeason,           
+        }
     }
 }
 

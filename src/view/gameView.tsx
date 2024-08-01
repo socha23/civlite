@@ -117,7 +117,7 @@ const InnerGameView = (p: GameViewProps) =>
           <PopBox {...popProps(p, PopType.Idler)}>
             <GatheringSection {...p.gathering}/>
           </PopBox>
-          <ActionRow3 {...p.reset}/>
+          
         </Column>
         <Column>
           <PopBox {...popProps(p, PopType.Hunter)}>

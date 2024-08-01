@@ -25,6 +25,7 @@ export const Colors = {
     UnsatisfiableCost: "#800",
     PausedIndicator: "#f00",
     Warning: "#800",
+    Positive: "#0a0",
 }
 
 
@@ -81,6 +82,7 @@ export const Labels = {
     [WorkType.Labor]: 'Labor',
     [WorkType.Insight]: 'Insight',
     [ResourceType.Forest]: 'Forest',
+    Forests: "Forests",
     [ResourceType.Grassland]: 'Grassland',
     [WarType.BeatemUp]: "Beat'em up",
     [WarType.CattleRaid]: "Cattle raid",
