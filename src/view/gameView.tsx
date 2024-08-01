@@ -19,6 +19,7 @@ import { TooltipOverlay, WithTooltip } from './tooltips';
 import { MouseCatcher } from './mouseCatcher';
 import { ResearchSection, researchSectionProps, ResearchSectionProps } from './research';
 import { ProgressType } from '../model/progress';
+import { GameLost } from './gameLost';
 
 
 export type GameViewProps = {
@@ -39,6 +40,7 @@ export type GameViewProps = {
 
   paused: boolean,
   setPaused: ((t: boolean) => void),
+  gameLost: boolean,
 }
 
 export function gameViewProps(model: GameModel, onReset: () => void): GameViewProps {
@@ -63,7 +65,8 @@ export function gameViewProps(model: GameModel, onReset: () => void): GameViewPr
     research: researchSectionProps(model),
 
     paused: model.paused,
-    setPaused: (p) => { model.paused = p }
+    setPaused: (p) => { model.paused = p },
+    gameLost: model.gameLost,
   }
 }
 
@@ -178,6 +181,8 @@ export const GameView = (p: GameViewProps) => {
 
   return <div style={{
     position: "relative",
+    width: "100%",
+    height: "100%",
     outline: "none",
     userSelect: "none",
   }}
@@ -189,9 +194,12 @@ export const GameView = (p: GameViewProps) => {
       }
     }}
   >
+    {p.gameLost && <GameLost reset={p.reset}/>}
     <Effects />
     <TooltipOverlay />
     <div style={{
+      width: "100%",
+      height: "100%",
       zIndex: 0
     }}>
       <MouseCatcher>

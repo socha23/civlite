@@ -1,4 +1,5 @@
 import { action, Action } from "./action";
+import { isWorkNeeded } from "./actionsModel";
 import { resources, work } from "./amount";
 import { ResourceType } from "./resources";
 import { WorkType } from "./work";
@@ -19,8 +20,11 @@ export class ManualCollectionModel {
         this.collectInsight = action({
             id: "collect_insight",
             expectedRewards: [work(WorkType.Insight, 1)],
-            timeCost: 3,
-            exclusivityGroup: "manualCollection"
+            timeCost: 1,
+            exclusivityGroup: "manualCollection",
+            disabled: (model) => {
+                return !isWorkNeeded(WorkType.Insight)
+            }
         })
         this.collectLabor = action({
             id: "collect_labor",

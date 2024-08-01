@@ -49,9 +49,10 @@ export const ResearchDefinitions: ResearchDefinition[] = [
             model.progress.FoodStocks = true
             model.progress.ResourceEnabled[ResourceType.Forest] = true
             model.progress.PopEnabled[PopType.Idler] = true
+            model.progress.GameLostEnabled = true
+
             model.resources.food.add(10)
             model.resources.forest.add(3)
-
             model.population.idlers.add(2)
 
         }

@@ -13,6 +13,7 @@ export const Progress = {
     },
 
     CivName: "What's going on?",
+    GameLostEnabled: false,
     PopulationDisplay: false,
     HungerWarnings: false,
     ManualCollection: false,
@@ -26,6 +27,7 @@ export const Progress = {
     Calendar: false,
     Log: false,
 
+
     ResourceEnabled: {
         [ResourceType.Food]: false,
         [ResourceType.Herds]: false,
@@ -37,5 +39,8 @@ export const Progress = {
 export type ProgressType = typeof Progress
 
 export function resetProgress(): ProgressType {
-    return {...Progress}
+    return {...Progress,
+        PopEnabled: {...Progress.PopEnabled},
+        ResourceEnabled: {...Progress.ResourceEnabled},
+    }
 }

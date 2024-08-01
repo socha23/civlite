@@ -39,7 +39,6 @@ class ResearchNode {
 
     get prerequisitesMet(): boolean {
         const requiredResearch = this.definition.requiredResearch || []
-        console.log(requiredResearch)
         let result = true
         requiredResearch.forEach(r => {
             if (!this.model.research.node(r).completed)

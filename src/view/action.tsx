@@ -69,6 +69,7 @@ const BUTTON_STYLE_DISABLED = {
   cursor: "not-allowed",
 }
 
+
 const ActionButtonInner = (a: PropsWithChildren<ActionProps>) =>
   <div style={{
       zIndex: 0,
@@ -148,8 +149,7 @@ const ActionRowProgressIndicator = (a: ActionProps) => {
   </div>
 } 
 
-
-const ActionButton3 = (a: PropsWithChildren<ActionProps & {style?: CSSProperties}>) => {
+export const ActionButton3 = (a: PropsWithChildren<ActionProps & {style?: CSSProperties}>) => {
   const enabled = !a.disabled && (a.state === ActionState.Ready)
   const buttonStyle = enabled ? BUTTON_STYLE_ENABLED : BUTTON_STYLE_DISABLED
   return <CoordsCatcher id={a.id}>  

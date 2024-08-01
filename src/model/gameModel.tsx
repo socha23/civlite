@@ -39,6 +39,8 @@ export class GameModel implements GameModelInterface {
 
   progress = resetProgress()
 
+  gameLost = false
+
   filterUnsatisfiableCosts(costs: Amount[]): Amount[] {
     return this.resources.filterUnsatisfiableCosts(costs)
       .concat(this.population.filterUnsatisfiableCosts(costs))
@@ -61,13 +63,21 @@ export class GameModel implements GameModelInterface {
   }
 
   onTick(deltaS: number) {
-    if (this.paused) {
+    if (this.paused || this.gameLost) {
       return
     }
     this.calendar.onTick(deltaS)
     this.applyWorkAndProduction(deltaS)
     this.wars.onTick(deltaS)
     tickInProgressActions(this, deltaS)
+
+    this.checkGameLostCondition()
+  }
+
+  checkGameLostCondition() {
+    if (this.progress.GameLostEnabled && this.population.total === 0) {
+      this.gameLost = true
+    }
   }
 
   onEndOfSeason() {
