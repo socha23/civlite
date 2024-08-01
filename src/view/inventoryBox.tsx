@@ -5,14 +5,15 @@ import { ResourceType, resourceDefinition } from '../model/resources';
 import { FontSizes, Icons, Colors, Labels } from './icons';
 import { Line, LineProps } from './line';
 import { FoodLinePanel, foodProps, FoodProps } from './food';
+import { ProgressType } from '../model/progress';
 
 export type InventoryBoxProps = {
-  civName: string
   population: LineProps
   food: FoodProps
   herds: LineProps
   forest: LineProps
   grassland: LineProps
+  progress: ProgressType
 }
 
 type DisplayedResourceType = ResourceType.Herds | ResourceType.Food | ResourceType.Forest | ResourceType.Grassland
@@ -39,7 +40,7 @@ function lineProps(model: GameModel, t: DisplayedResourceType): LineProps {
 
 export function summaryBoxProps(model: GameModel): InventoryBoxProps {
   return {
-    civName: model.civName,
+    progress: model.progress,
     population: {
       icon: Icons.population,
       label: "Population",
@@ -77,17 +78,23 @@ export const InventoryBox = (p: InventoryBoxProps) =>
       fontSize: FontSizes.normalPlus,
       flexDirection: "column",
     }}>
-      <InventoryGroup>
+      {p.progress.PopulationDisplay && <InventoryGroup>
         <InventoryItem {...p.population}/>
-        <InventoryItem {...p.herds}/>
-      </InventoryGroup>
+        {p.progress.ResourceEnabled[ResourceType.Herds] &&
+          <InventoryItem {...p.herds}/>
+        }
+      </InventoryGroup>}
+      {p.progress.ResourceEnabled[ResourceType.Food] &&
       <InventoryGroup>
         <FoodLinePanel {...p.food}/>
       </InventoryGroup>
+      }
+      {p.progress.ResourceEnabled[ResourceType.Forest] &&
       <InventoryGroup>  
         <InventoryItem {...p.forest}/>
-        <InventoryItem {...p.grassland}/>
+        {p.progress.ResourceEnabled[ResourceType.Grassland] && <InventoryItem {...p.grassland}/>}
       </InventoryGroup>
+      }
     </div>
   </Box>
 

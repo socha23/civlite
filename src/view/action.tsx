@@ -224,7 +224,7 @@ const InnerActionRow3 = (p: ActionProps & {showButton: boolean, displayRewards?:
           }}>
             {p.timeCost && <ActionRowsAmountsRow items={[{count: p.timeCost, postfix: ActionCommonLabels.Second}]} label={ActionCommonLabels.Time}/>}
             {totalCostAmounts.length > 0 && <ActionRowsAmountsRow items={totalCostAmounts} label={ActionCommonLabels.Cost}/>}
-            {p.rewards && p.rewards.length > 0 && p.displayRewards && <ActionRowsAmountsRow items={p.rewards} label={ActionCommonLabels.Rewards}/>}
+            {p.rewards && p.rewards.length > 0 && (p.displayRewards === undefined || p.displayRewards) && <ActionRowsAmountsRow items={p.rewards} label={ActionCommonLabels.Rewards}/>}
           </div>
         }
       </div>

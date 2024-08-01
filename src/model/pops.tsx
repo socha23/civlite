@@ -9,7 +9,6 @@ export enum PopType {
   Laborer = "Laborer", 
   Herder = "Herder",
   Farmer = "Farmer",
-
   Brave = "Brave",
   Slinger = "Slinger",
 }

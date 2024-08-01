@@ -19,7 +19,7 @@ export class ManualCollectionModel {
         this.collectInsight = action({
             id: "collect_insight",
             expectedRewards: [work(WorkType.Insight, 1)],
-            timeCost: 5,
+            timeCost: 3,
             exclusivityGroup: "manualCollection"
         })
         this.collectLabor = action({

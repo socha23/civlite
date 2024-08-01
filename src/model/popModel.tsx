@@ -23,7 +23,7 @@ export class PopModel {
       initialCost: this.definition.buyCost,
       workCost: this.definition.workCost,
       timeCost: this.definition.timeCost,
-      onComplete: () => {this.incCount(1)}
+      onComplete: () => {this.add(1)}
     })
     this.sellAction = action({      
       id: `sell_${type}`,
@@ -113,7 +113,7 @@ export class PopModel {
     return to.unassignDisabled(this.type)
   }
 
-  incCount(howMuch: number) {
+  add(howMuch: number) {
     this._count += howMuch
   }
 
@@ -176,7 +176,7 @@ export class PopulationModel {
   onProduce(costs: Amount[]) {
     costs.forEach(c => {
         if (isPopAmount(c)) {
-            this.pop(c.type).incCount(c.count)
+            this.pop(c.type).add(c.count)
         }
     })
   }
@@ -187,6 +187,10 @@ export class PopulationModel {
 
   get total() {
     return sum(this.pops, pop => pop.count)
+  }
+
+  get idlers() {
+    return this.pop(PopType.Idler)
   }
 
 }

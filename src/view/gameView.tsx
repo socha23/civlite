@@ -1,4 +1,4 @@
-import React, {PropsWithChildren, useEffect, useRef} from 'react';
+import React, { PropsWithChildren, useEffect, useRef } from 'react';
 import { ActionProps, ActionRow3 } from './action'
 import { GameModel } from '../model/gameModel'
 import { PopType } from '../model/pops'
@@ -17,11 +17,15 @@ import { gatheringProps, GatheringProps, GatheringSection } from './gathering';
 import { HungerWarning } from './food';
 import { TooltipOverlay, WithTooltip } from './tooltips';
 import { MouseCatcher } from './mouseCatcher';
+import { ResearchSection, researchSectionProps, ResearchSectionProps } from './research';
+import { ProgressType } from '../model/progress';
 
 
 export type GameViewProps = {
   log: LogProps,
-  civName: string,
+
+  progress: ProgressType,
+
   summary: InventoryBoxProps
   reset: ActionProps
   pops: PopBoxProps[]
@@ -31,6 +35,7 @@ export type GameViewProps = {
   calendar: CalendarProps,
   hunting: HuntingProps,
   gathering: GatheringProps,
+  research: ResearchSectionProps,
 
   paused: boolean,
   setPaused: ((t: boolean) => void),
@@ -38,7 +43,7 @@ export type GameViewProps = {
 
 export function gameViewProps(model: GameModel, onReset: () => void): GameViewProps {
   return {
-    civName: model.civName,
+    progress: model.progress,
     log: logProps(model.log),
     summary: summaryBoxProps(model),
     pops: model.population.pops.map(p => popBoxProps(model, p.type)),
@@ -55,13 +60,14 @@ export function gameViewProps(model: GameModel, onReset: () => void): GameViewPr
     calendar: calendarProps(model),
     hunting: huntingProps(model),
     gathering: gatheringProps(model),
+    research: researchSectionProps(model),
 
     paused: model.paused,
-    setPaused: (p) => {model.paused = p}
+    setPaused: (p) => { model.paused = p }
   }
 }
 
-export const CivName = (p: {civName: string}) => <div style={{
+export const CivName = (p: { civName: string }) => <div style={{
   fontSize: FontSizes.xbig,
   color: Colors.captions,
 }}>{p.civName}</div>
@@ -80,7 +86,7 @@ function popProps(p: GameViewProps, t: PopType) {
   return p.pops.find(pop => pop.popType === t)!!
 }
 
-const PausedIndicator = (p: {paused: boolean}) => <div style={{
+const PausedIndicator = (p: { paused: boolean }) => <div style={{
   color: Colors.PausedIndicator,
   fontSize: FontSizes.xbig,
 }}>
@@ -102,10 +108,11 @@ const InnerGameView = (p: GameViewProps) =>
       <div style={{
         display: "flex",
         gap: 20,
+        paddingBottom: 8,
         alignItems: "center",
       }}>
-        <CivName civName={p.civName}/>
-        <PausedIndicator paused={p.paused}/>
+        <CivName civName={p.progress.CivName} />
+        <PausedIndicator paused={p.paused} />
       </div>
       <div style={{
         display: "flex",
@@ -113,36 +120,47 @@ const InnerGameView = (p: GameViewProps) =>
         height: "100%",
       }}>
         <Column>
-          <WithTooltip tooltip={<div>BOOO</div>}>
-            <InventoryBox {...p.summary}/>
-          </WithTooltip>
-          <CalendarBox {...p.calendar}/>
-          <ManualCollectionBox {...p.resourceGathering}/>     
-          <PopBox {...popProps(p, PopType.Idler)}>
-            <GatheringSection {...p.gathering}/>
-          </PopBox>
-          
+          {p.progress.Inventory && <InventoryBox {...p.summary} />}
+          {p.progress.Calendar && <CalendarBox {...p.calendar} />}
+          {p.research.availableResearchActions.length > 0 && <ResearchSection {...p.research} />}
+          {p.progress.ManualCollection && <ManualCollectionBox {...p.resourceGathering} />}
         </Column>
         <Column>
-          <PopBox {...popProps(p, PopType.Hunter)}>
-            <HuntingSection {...p.hunting}/>
-          </PopBox>
-          <PopBox {...popProps(p, PopType.Herder)}/>
-          <PopBox {...popProps(p, PopType.Farmer)}/>
+          {p.progress.PopEnabled[PopType.Idler] &&
+            <PopBox {...popProps(p, PopType.Idler)}>
+              <GatheringSection {...p.gathering} />
+            </PopBox>
+          }
+          {p.progress.PopEnabled[PopType.Hunter] &&
+            <PopBox {...popProps(p, PopType.Hunter)}>
+              <HuntingSection {...p.hunting} />
+            </PopBox>
+          }
+          {p.progress.PopEnabled[PopType.Herder] &&
+            <PopBox {...popProps(p, PopType.Herder)} />}
+          {p.progress.PopEnabled[PopType.Farmer] &&
+            <PopBox {...popProps(p, PopType.Farmer)} />}
         </Column>
         <Column>
-          <PopBox {...popProps(p, PopType.Brave)}/>
-          <PopBox {...popProps(p, PopType.Slinger)}/>
-          <MilitaryView {...p.military}/>
+          {p.progress.PopEnabled[PopType.Brave] &&
+            <PopBox {...popProps(p, PopType.Brave)} />}
+          {p.progress.PopEnabled[PopType.Slinger] &&
+            <PopBox {...popProps(p, PopType.Slinger)} />}
+          {p.progress.Military &&
+            <MilitaryView {...p.military} />
+          }
         </Column>
         <Column>
-          <CivilizationsView {...p.civilizations}/>
+          <CivilizationsView {...p.civilizations} />
         </Column>
         <Column>
-          <div style={{flexGrow: 1, maxHeight: 600}}>
-            <LogView {...p.log}/>
-          </div>
-          <HungerWarning {...p.summary.food}/>
+          {p.progress.Log &&
+
+            <div style={{ flexGrow: 1, maxHeight: 600 }}>
+              <LogView {...p.log} />
+            </div>
+          }
+          <HungerWarning {...p.summary.food} />
         </Column>
       </div>
     </div>
@@ -166,18 +184,18 @@ export const GameView = (p: GameViewProps) => {
     onKeyDown={e => {
       if (e.key === ' ') {
         p.setPaused(!p.paused)
-      }        
+      }
     }}
   >
-    <Effects/>
-    <TooltipOverlay/>
+    <Effects />
+    <TooltipOverlay />
     <div style={{
       zIndex: 0
     }}>
       <MouseCatcher>
-        <InnerGameView {...p}/>
+        <InnerGameView {...p} />
       </MouseCatcher>
     </div>
   </div>
-  
+
 }

@@ -29,20 +29,17 @@ export const ManualResourceGatheringLabels = {
     [ResourceType.Food]: {
         ActionTitle: "Gather food",
         ButtonTitle: "Start",
-        Description: "Collect some mushrooms and herbs. " +
-            "This will produce a small amount of food."
+        Description: "Find some mushrooms and herbs."
     },
     [WorkType.Insight]: {
         ActionTitle: "Sit and think",
         ButtonTitle: "Start",
-        Description: "Relax, look into the sky and ponder the world surrounding you. " +
-            "This will produce a small amount of insight."
+        Description: "Ponder the world around you.",
     },
     [WorkType.Labor]: {
         ActionTitle: "Manual labor",
         ButtonTitle: "Start",
-        Description: "Roll up your sleeves and get to work. " +
-            "This will produce a small amount of labor."
+        Description: "Roll up your sleeves and get to work."
     },
 }
 
@@ -168,4 +165,8 @@ export const FoodLabels = {
     FoodConsumptionPerSeason: "Consumption / season:",
     HungerWarning: "Hunger warning!",
     HungerWarningDesc: "Some people will not have enough to eat at the end of the season",
+}
+
+export const ResearchLabels = {
+    ButtonTitle: "Research"
 }

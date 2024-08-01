@@ -37,6 +37,8 @@ export class CivModel {
 }
 
 function defaultCivs(): CivParams[] {
+    return []
+    /*
     return [
         {
             title: "Assholes from the plains",
@@ -59,6 +61,7 @@ function defaultCivs(): CivParams[] {
             strength: 120,
         },
     ]
+        */
 }
 
 export default class CivilizationsModel {

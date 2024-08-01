@@ -7,8 +7,10 @@ import { LinePanel } from './linePanel';
 import { Colors, FontSizes, Icons, Labels } from './icons';
 import { PopAmount } from '../model/amount';
 import { coordsIdResourceStock } from './elementCoordinatesHolder';
+import { ProgressType } from '../model/progress';
 
 export type FoodProps = {
+  progress: ProgressType,
   foodCount: number,
   foodCap: number,
   expectedConsumption: {
@@ -22,6 +24,7 @@ export type FoodProps = {
 export function foodProps(model: GameModel): FoodProps {
   const food = model.resources.resource(ResourceType.Food)
   return {
+    progress: model.progress,
     foodCount: food.count,
     foodCap: food.cap || 0,
     expectedConsumption: model.hunger.foodConsumptionPerSeason,
@@ -38,7 +41,9 @@ const FoodDetails = (p: FoodProps) => <div style={{
   paddingLeft: 24,
   fontSize: FontSizes.small,
 }}>
-  <div>{FoodLabels.FoodStocks} {p.timeUntilHunger}s</div>
+  {p.progress.FoodStocks &&
+    <div>{FoodLabels.FoodStocks} {p.timeUntilHunger}s</div>
+}
 {/*
   <div>{FoodLabels.FoodConsumptionPerSeason}</div>
   <div style={{

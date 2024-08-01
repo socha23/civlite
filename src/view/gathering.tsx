@@ -9,6 +9,7 @@ import { PopType } from '../model/pops';
 import { ResourceType } from '../model/resources';
 import { WorkType } from '../model/work';
 import { PercentageModifier } from './amount';
+import { ProgressType } from '../model/progress';
 
 export type GatheringProps = {
   gatherAction: ActionProps,
@@ -18,7 +19,7 @@ export type GatheringProps = {
 export function gatheringProps(model: GameModel): GatheringProps {
   return {
     gatherAction: propsForAction(model, model.gathering.gatherAction, GatheringLabels.GatherAction),
-    gatherStats: model.gathering.gatheringStats
+    gatherStats: model.gathering.gatheringStats,
   }
 }
 
