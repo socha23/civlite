@@ -1,7 +1,7 @@
 import React, {PropsWithChildren} from 'react';
 import { Box } from './box'
 import { GameModel } from '../model/gameModel'
-import { ActionProps, propsForAction, ActionRow3 } from './action';
+import { ActionProps, propsForAction, ActionRow3, SmallButtonAction } from './action';
 import { PopType, isAssignable } from '../model/pops';
 import { FontSizes, TrendColors, DividerColors, Icons, Colors, Labels } from './icons';
 import { formatNumber } from '../model/utils';
@@ -91,10 +91,11 @@ const PopHeader = (p: PopBoxProps) => <div style={{
       {isAssignable(p.popType) ? p.unassignedCount + " / " + p.count : p.count}
     </CoordsCatcher>
   </div>
+  <SmallButtonAction {...p.buyAction} buttonLabel={<i className={Icons.Plus}/>}/>
+  <SmallButtonAction {...p.sellAction} buttonLabel={<i className={Icons.Minus}/>}/>
   <div style={{
     fontSize: FontSizes.small
   }}>
-    <SwitchExpandToggle/>
   </div>
 </div>
 
@@ -128,15 +129,9 @@ export const PopBox = (p: PropsWithChildren<PopBoxProps>) =>
       paddingTop: 8,
       paddingBottom: 12,
     }}>
-      <SwitchParent>
-        <PopHeader {...p}/>
-        <PopResources {...p}/>
-        <SwitchPanel>
-          <ActionRow3 {...p.buyAction}/>
-          <ActionRow3 {...p.sellAction} displayRewards={true}/>
-        </SwitchPanel>
-        {p.children}
-      </SwitchParent>
+      <PopHeader {...p}/>
+      <PopResources {...p}/>
+      {p.children}
     </div>
   </Box>
 

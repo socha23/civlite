@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, ReactNode } from 'react';
+import React, { CSSProperties, PropsWithChildren, ReactNode } from 'react';
 
 import { GameModel } from '../model/gameModel';
 import { Action, ActionState, unlazyRewards } from '../model/action'
@@ -6,6 +6,7 @@ import { Colors, FontSizes, DividerColors } from './icons';
 import { AmountWithColorProps, Amounts } from './amount';
 import { ActionCommonLabels } from './labels';
 import { CoordsCatcher } from './elementCoordinatesHolder';
+import { WithTooltip } from './tooltips';
 
 interface ActionParms {
   title?: string,
@@ -133,21 +134,6 @@ export const ActionButton = (a: ActionProps) => <ActionButtonInner {...a}>
  </div>
 </ActionButtonInner>
 
-export const SmallIconButton = (a: ActionProps) => <div style={{
-  width: 16,
-  height: 16,
-}}>
-  <ActionButtonInner {...a}>
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    }}>
-      <i style={{fontSize: 8}} className='fa-solid fa-plus'/>
-    </div>
-    
-  </ActionButtonInner>
-</div>
 
 export const ActionRow = (p: ActionProps) => <div className="dottedDividers" style={{
   display: "flex",
@@ -210,17 +196,16 @@ const ActionRowProgressIndicator = (a: ActionProps) => {
 } 
 
 
-const ActionRowStartActionButton = (a: ActionProps) => {
+const ActionButton3 = (a: PropsWithChildren<ActionProps & {style?: CSSProperties}>) => {
   const enabled = !a.disabled && (a.state === ActionState.Ready)
   const buttonStyle = enabled ? BUTTON_STYLE_ENABLED : BUTTON_STYLE_DISABLED
   return <CoordsCatcher id={a.id}>  
     <div style={{
       ...buttonStyle,
+      ...a.style,
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      width: 80,
-      minHeight: 20,
       userSelect: "none",
     }} onClick={() => {
       if (a.disabled) {
@@ -229,11 +214,18 @@ const ActionRowStartActionButton = (a: ActionProps) => {
         a.action()
       }
     }}>
-      {a.buttonLabel || a.title}
+      {a.children}
     </div>
   </CoordsCatcher>
 }
 
+const ActionRowStartActionButton = (a: ActionProps) => <ActionButton3 style={{
+  width: 80,
+  minHeight: 20,
+}} {...a}>
+   {a.buttonLabel || a.title}
+</ActionButton3>
+  
 const ActionRowTitle = (p: ActionProps) => <div style={{
   fontWeight: "bold",
 }}>
@@ -249,7 +241,7 @@ const ActionRowsAmountsRow = (p: {label: string, items: AmountWithColorProps[]})
   <Amounts items={p.items}/>
 </div>
 
-const InnerActionRow3 = (p: ActionProps & {displayRewards?: boolean}) => {
+const InnerActionRow3 = (p: ActionProps & {showButton: boolean, displayRewards?: boolean}) => {
   const costs = p.costs || []
   const work = p.workCost || []
 
@@ -283,7 +275,7 @@ const InnerActionRow3 = (p: ActionProps & {displayRewards?: boolean}) => {
           </div>
         }
       </div>
-      {p.state === ActionState.InProgress ? <ActionRowProgressIndicator {...p}/> : <ActionRowStartActionButton {...p}/>}
+      {p.showButton && (p.state === ActionState.InProgress ? <ActionRowProgressIndicator {...p}/> : <ActionRowStartActionButton {...p}/>)}
     </div>
     <div>
       {p.description}
@@ -291,11 +283,15 @@ const InnerActionRow3 = (p: ActionProps & {displayRewards?: boolean}) => {
   </div>
 }
 
-export const ActionRow3 = (p: ActionProps & {displayRewards?: boolean}) => <div style={{
+export const ActionRow3 = (p: ActionProps & {
+  inTooltip?: boolean, 
+  displayRewards?: boolean
+}) => <div style={{
     borderStyle: "solid",
     borderWidth: 2,
     borderColor: p.state === ActionState.InProgress ? Colors.active : "transparent",
-    borderRadius: 6,
+    borderRadius: p.inTooltip ? 0 : 6,
+    fontSize: FontSizes.small,
   }}>
     <div style={{
       position: "relative",
@@ -314,8 +310,21 @@ export const ActionRow3 = (p: ActionProps & {displayRewards?: boolean}) => <div 
         zIndex: 2,
         padding: 2,
       }}>
-        <InnerActionRow3 {...p}/>
+        <InnerActionRow3 showButton={!p.inTooltip} {...p}/>
       </div>
       
     </div>
   </div>
+
+export const SmallButtonAction = (p: ActionProps) => <WithTooltip tooltip={
+  <ActionRow3 {...p} inTooltip={true}/>
+}>
+  <ActionButton3 {...p} style={{
+    width: 16,
+    height: 16,
+    borderRadius: 4,
+    fontSize: FontSizes.small,
+  }}>  
+    {p.buttonLabel}
+  </ActionButton3>
+</WithTooltip>

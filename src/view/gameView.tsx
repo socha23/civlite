@@ -15,6 +15,8 @@ import { Effects } from './effects';
 import { LogProps, LogView, logProps } from './log';
 import { gatheringProps, GatheringProps, GatheringSection } from './gathering';
 import { HungerWarning } from './food';
+import { TooltipOverlay, WithTooltip } from './tooltips';
+import { MouseCatcher } from './mouseCatcher';
 
 
 export type GameViewProps = {
@@ -111,7 +113,9 @@ const InnerGameView = (p: GameViewProps) =>
         height: "100%",
       }}>
         <Column>
-          <InventoryBox {...p.summary}/>
+          <WithTooltip tooltip={<div>BOOO</div>}>
+            <InventoryBox {...p.summary}/>
+          </WithTooltip>
           <CalendarBox {...p.calendar}/>
           <ManualCollectionBox {...p.resourceGathering}/>     
           <PopBox {...popProps(p, PopType.Idler)}>
@@ -166,10 +170,13 @@ export const GameView = (p: GameViewProps) => {
     }}
   >
     <Effects/>
+    <TooltipOverlay/>
     <div style={{
       zIndex: 0
     }}>
-      <InnerGameView {...p}/>
+      <MouseCatcher>
+        <InnerGameView {...p}/>
+      </MouseCatcher>
     </div>
   </div>
   

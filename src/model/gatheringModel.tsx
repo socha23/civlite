@@ -23,6 +23,7 @@ export type GatheringActionStats = {
 
     forestCapApplied: boolean
     forestCount: number
+    forestCapPerForest: number
     forestCap: number
 
     season: Season
@@ -91,8 +92,12 @@ export class GatheringModel {
         return this.resources.resource(ResourceType.Forest).count
     }
 
+    get forestCapPerForest() {
+        return 1
+    }
+
     get forestCap() {
-        return this.forestCount
+        return this.forestCount * this.forestCapPerForest
     }
 
     get seasonalMultiplier() {
@@ -124,6 +129,7 @@ export class GatheringModel {
             uncappedFood: this.expectedUncapped,
             forestCapApplied: this.expectedUncapped > this.forestCap,
             forestCount: this.forestCount,
+            forestCapPerForest: this.forestCapPerForest,
             forestCap: this.forestCap,
             seasonalMultiplier: this.seasonalMultiplier,
             totalFood: this.totalExpectedFood, 

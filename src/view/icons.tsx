@@ -41,6 +41,8 @@ export const Icons = {
     PanelExpand: 'fa-solid fa-chevron-down',
     PanelHide: 'fa-solid fa-chevron-up',
 
+    Plus: 'fa-solid fa-plus',
+    Minus: 'fa-solid fa-minus',
 
     [PopType.Idler]: 'fa-solid fa-person',
     [PopType.Hunter]: 'fa-solid fa-person-hiking',
