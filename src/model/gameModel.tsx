@@ -17,6 +17,7 @@ import { ManualCollectionModel } from "./manualCollectionModel"
 import { GatheringModel } from "./gatheringModel"
 import { ResearchModel } from "./researchModel"
 import { resetProgress } from "./progress"
+import { CheatsModel } from "./cheatsModel"
 
 export class GameModel implements GameModelInterface {
 
@@ -39,6 +40,7 @@ export class GameModel implements GameModelInterface {
 
   progress = resetProgress()
 
+  cheats = new CheatsModel(this)
   gameLost = false
 
   filterUnsatisfiableCosts(costs: Amount[]): Amount[] {

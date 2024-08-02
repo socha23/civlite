@@ -1,6 +1,4 @@
 import { Action, action } from "./action"
-import { ResourceType, resourceDefinition } from "./resources"
-import { Amount, ResourceAmount, isResourceAmount, isResourceType, resources } from "./amount"
 import { ResearchDefinition, ResearchDefinitions } from "./research"
 import { GameModel } from "./gameModel"
 
@@ -22,15 +20,22 @@ class ResearchNode {
             workCost: definition.workCost,
 
             onComplete: (self, model) => {
-                this.completed = true
-                if (this.definition.onComplete) {
-                    this.definition.onComplete(this.model)
-                }
-                model.log.info((this.definition.logTitle || this.definition.title) + " discovered")
+                this.complete()
             },
 
             disabled: (model) => this.disabled()
         })
+    }
+
+    complete() {
+        if (this.completed) {
+            return
+        }
+        this.completed = true
+        if (this.definition.onComplete) {
+            this.definition.onComplete(this.model)
+        }
+        this.model.log.info((this.definition.logTitle || this.definition.title) + " discovered")
     }
 
     get available() {

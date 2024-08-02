@@ -149,7 +149,11 @@ const ActionRowProgressIndicator = (a: ActionProps) => {
   </div>
 } 
 
-export const ActionButton3 = (a: PropsWithChildren<ActionProps & {style?: CSSProperties}>) => {
+export const ActionButton3 = (a: PropsWithChildren<ActionProps & {style?: CSSProperties}>) => <ActionButton3Inner {...a}>
+    {a.buttonLabel || a.title}
+</ActionButton3Inner>
+
+const ActionButton3Inner = (a: PropsWithChildren<ActionProps & {style?: CSSProperties}>) => {
   const enabled = !a.disabled && (a.state === ActionState.Ready)
   const buttonStyle = enabled ? BUTTON_STYLE_ENABLED : BUTTON_STYLE_DISABLED
   return <CoordsCatcher id={a.id}>  
@@ -172,12 +176,12 @@ export const ActionButton3 = (a: PropsWithChildren<ActionProps & {style?: CSSPro
   </CoordsCatcher>
 }
 
-const ActionRowStartActionButton = (a: ActionProps) => <ActionButton3 style={{
+const ActionRowStartActionButton = (a: ActionProps) => <ActionButton3Inner style={{
   width: 80,
   minHeight: 20,
 }} {...a}>
    {a.buttonLabel || a.title}
-</ActionButton3>
+</ActionButton3Inner>
   
 const ActionRowTitle = (p: ActionProps) => <div style={{
   fontWeight: "bold",
@@ -279,12 +283,12 @@ export const ActionRow3 = (p: ActionProps & {
 export const SmallButtonAction = (p: ActionProps) => <WithTooltip tooltip={
   <ActionRow3 {...p} inTooltip={true} displayRewards={true}/>
 }>
-  <ActionButton3 {...p} style={{
+  <ActionButton3Inner {...p} style={{
     width: 16,
     height: 16,
     borderRadius: 4,
     fontSize: FontSizes.small,
   }}>  
     {p.buttonLabel}
-  </ActionButton3>
+  </ActionButton3Inner>
 </WithTooltip>

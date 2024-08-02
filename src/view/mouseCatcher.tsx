@@ -12,7 +12,7 @@ export function getMouseY() {
 }
 
 export const MouseCatcher = (p: PropsWithChildren<{}>) => {
-  return <div onMouseMove={e => {
+  return <div style={{height: "100%"}} onMouseMove={e => {
     mouseX = e.clientX
     mouseY = e.clientY
   }}>

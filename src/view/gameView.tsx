@@ -20,6 +20,7 @@ import { MouseCatcher } from './mouseCatcher';
 import { ResearchSection, researchSectionProps, ResearchSectionProps } from './research';
 import { ProgressType } from '../model/progress';
 import { GameLost } from './gameLost';
+import { CheatsPanel, cheatsProps, CheatsProps } from './cheats';
 
 
 export type GameViewProps = {
@@ -41,6 +42,7 @@ export type GameViewProps = {
   paused: boolean,
   setPaused: ((t: boolean) => void),
   gameLost: boolean,
+  cheats: CheatsProps,
 }
 
 export function gameViewProps(model: GameModel, onReset: () => void): GameViewProps {
@@ -67,6 +69,7 @@ export function gameViewProps(model: GameModel, onReset: () => void): GameViewPr
     paused: model.paused,
     setPaused: (p) => { model.paused = p },
     gameLost: model.gameLost,
+    cheats: cheatsProps(model),
   }
 }
 
@@ -203,7 +206,18 @@ export const GameView = (p: GameViewProps) => {
       zIndex: 0
     }}>
       <MouseCatcher>
-        <InnerGameView {...p} />
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+        }}>
+          <div style={{
+            flexGrow: 1,
+          }}>
+            <InnerGameView {...p} />
+          </div>
+          <CheatsPanel {...p.cheats}/>
+        </div>
       </MouseCatcher>
     </div>
   </div>
