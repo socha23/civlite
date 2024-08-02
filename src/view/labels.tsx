@@ -2,6 +2,7 @@ import { ResourceType } from '../model/resources';
 import { PopType } from '../model/pops';
 import { WorkType } from '../model/work';
 import { HuntType } from '../model/huntingModel';
+import { HungerModel, TURNS_PER_FEEDING } from '../model/hungerModel';
 
 export function popLabelSingular(t: PopType): string {
     if (t === PopType.Idler) {
@@ -121,7 +122,7 @@ export const PopulationUnrecruitLabels = {
 }
 
 export const PopBoxLabels = {
-    FoodConsumptionPostfix: "/ 5s",
+    FoodConsumptionPostfix: "/ " + TURNS_PER_FEEDING + "s",
     PerPop: "Per pop:",
     PerSecond: "/ s",
 }

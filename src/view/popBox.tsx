@@ -23,6 +23,7 @@ export type PopBoxProps = {
   foodConsumption: number,
   singlePopWork: WorkAmount[],
   totalWork: WorkAmount[],
+  actualWork: WorkAmount[],
   singlePopProduction: ResourceAmount[],
   totalProduction: ResourceAmount[],
 }
@@ -32,7 +33,7 @@ export function popBoxProps(model: GameModel, type: PopType): PopBoxProps {
   return {
     popType: type,
     popLabel: popLabelPlural(type),
-    foodConsumption: pop.singlePopFoodConsumption,
+    foodConsumption: pop.singlePopFoodConsumption * pop.count,
     count: pop.count,
     unassignedCount: pop.unassignedCount,
     buyAction: propsForAction(model, pop.buyAction, {
@@ -46,9 +47,10 @@ export function popBoxProps(model: GameModel, type: PopType): PopBoxProps {
       //description: PopulationUnrecruitLabels[type].Description,
     }),
     singlePopWork: pop.singlePopWork,
-    totalWork: pop.work.filter(c => c.count !== 0),
+    totalWork: pop.totalPopWork,
+    actualWork: pop.actualWork.filter(c => c.count !== 0),
     singlePopProduction: pop.singlePopProduction,
-    totalProduction: pop.production.filter(c => c.count !== 0),
+    totalProduction: pop.totalPopProduction,
   }
 }
 
@@ -110,14 +112,14 @@ const PopResources = (p: PopBoxProps) => <div style={{
     <Amounts items={[{type: ResourceType.Food, count: -p.foodConsumption}]}/>
     {PopBoxLabels.FoodConsumptionPostfix}
   </Row>
-  { p.singlePopProduction.length + p.singlePopWork.length > 0 && 
+  { p.totalProduction.length + p.totalWork.length > 0 && 
     <Row>
-      <Amounts items={[...p.singlePopProduction, ...p.singlePopWork]}/>
+      <Amounts items={[...p.totalProduction, ...p.totalWork]}/>
       {PopBoxLabels.PerSecond}
   </Row>
   }
   <div style={{flexGrow: 1}}/>
-  <ResourcesList items={[...p.totalProduction, ...p.totalWork]} />
+  <ResourcesList items={[...p.totalProduction, ...p.actualWork]} />
 
 </div>
 

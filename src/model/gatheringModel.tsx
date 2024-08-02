@@ -12,7 +12,7 @@ import { CalendarModel } from "./calendarModel"
 import { Season } from "./calendarConsts"
 
 const GATHERING_DURATION = 5
-const GATHERING_WORK_FOR_FOOD = 2.5
+const GATHERING_WORK_FOR_FOOD = 5
 
 export type GatheringActionStats = {
     gatherersCount: number
@@ -92,7 +92,7 @@ export class GatheringModel {
     }
 
     get forestCapPerForest() {
-        return 2
+        return 1
     }
 
     get forestCap() {

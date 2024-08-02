@@ -15,6 +15,8 @@ class ResearchNode {
         this.action = action({
             id: definition.id,
 
+            exclusivityGroup: definition.exclusivityGroup || "research",
+
             timeCost: definition.timeCost,
             initialCost: definition.initialCost,
             workCost: definition.workCost,
@@ -35,7 +37,7 @@ class ResearchNode {
         if (this.definition.onComplete) {
             this.definition.onComplete(this.model)
         }
-        this.model.log.info((this.definition.logTitle || this.definition.title) + " discovered")
+        this.model.log.info(this.definition.title + " discovered")
     }
 
     get available() {
@@ -53,7 +55,7 @@ class ResearchNode {
     }
 
     disabled() {
-        return !this.prerequisitesMet && this.completed
+        return !this.prerequisitesMet || this.completed
     }
 
     get title() {
@@ -62,6 +64,10 @@ class ResearchNode {
 
     get description() {
         return this.definition.description || ""
+    }
+
+    get flavorText() {
+        return this.definition.flavorText || ""
     }
 }
 

@@ -15,7 +15,10 @@ export function researchSectionProps(model: GameModel): ResearchSectionProps {
     availableResearchActions: model.research.availableResearch.map(node => propsForAction(
       model, node.action, {
         title: node.title,
-        description: node.description,
+        description: <div style={{display: "flex", flexDirection: "column", gap: 4}}>
+          <div>{node.description}</div>
+          <div style={{fontStyle: "italic"}}>{node.flavorText}</div>
+        </div>,
         buttonLabel: node.definition.buttonTitle || ResearchLabels.ButtonTitle
       }
     ))

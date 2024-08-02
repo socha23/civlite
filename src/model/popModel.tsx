@@ -56,25 +56,30 @@ export class PopModel {
     return this.singlePopProduction.find(w => w.type === t)?.count || 0
   }
 
-  get production(): ResourceAmount[] {
-    return multiply(this.singlePopProduction, this.count)
+  get totalPopProduction(): ResourceAmount[] {
+    return multiply(this.singlePopProduction, this.count).filter(a => a.count !== 0)
+
   }
 
   get singlePopFoodConsumption(): number {
     return this.definition.foodConsumption
   }
 
-  get work(): WorkAmount[] {
+  get actualWork(): WorkAmount[] {
     return multiply(
-      this.singlePopWork.filter(t => isWorkNeeded(t.type)),
+        this.singlePopWork.filter(t => isWorkNeeded(t.type)),
       this.count
-    )
+    ).filter(a => a.count !== 0)
   }
 
   get singlePopWork(): WorkAmount[] {
     return this.definition.work
   }
 
+  get totalPopWork(): WorkAmount[] {
+    return multiply(this.singlePopWork, this.count)
+  }
+  
   singlePopWorkOfType(t: WorkType): number {
     return this.definition.work.find(w => w.type === t)?.count || 0
   }

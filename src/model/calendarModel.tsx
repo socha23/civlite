@@ -4,7 +4,7 @@ import { GameModel } from "./gameModel"
 
 const SEASONS = [Season.Spring, Season.Summer, Season.Autumn, Season.Winter]
 
-export const SEASON_DURATION = 15
+export const SEASON_DURATION = 30
 export const TURN_DURATION = 1
 
 export class CalendarModel {

@@ -96,10 +96,10 @@ export class GameModel implements GameModelInterface {
 
   applyWorkAndProduction(deltaS: number) {
     this.population.pops.forEach(pop => {
-      pop.production.forEach(res => {
+      pop.totalPopProduction.forEach(res => {
         this.resources.resource(res.type).add(res.count * deltaS)
       })
-     pop.work.forEach(w => {
+     pop.actualWork.forEach(w => {
         this.work.work(w.type).add(w.count * deltaS)
       })
     })

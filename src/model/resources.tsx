@@ -29,7 +29,6 @@ export const ResourceDefinitions = {
         initialCap: 0,    
     },
     [ResourceType.Forest]: {
-        class: ResourceClass.Assignable,
     },
     [ResourceType.Grassland]: {
         class: ResourceClass.Assignable,

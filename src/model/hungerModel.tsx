@@ -20,7 +20,7 @@ function feedOrder(t: PopType): number {
     }
 }
 const HUNGER_DEATH_CHANCE = 0.5
-const TURNS_PER_FEEDING = 5
+export const TURNS_PER_FEEDING = 10
 
 export class HungerModel {
     log: Log
@@ -46,12 +46,17 @@ export class HungerModel {
 
     get timeUntilHunger() {
         const currentFood = this.resources.food.count
-        if (currentFood === 0 || this.consumptionPerFeeding === 0) {
+        const consumption = this.consumptionPerFeeding
+        if (currentFood === 0 || consumption === 0) {
             return 0
         }
-        return Math.floor(currentFood / this.consumptionPerFeeding) * TURNS_PER_FEEDING 
-            + (TURNS_PER_FEEDING - this.turnsSinceFeeding)
-    }
+        if (currentFood < consumption) {
+            return TURNS_PER_FEEDING - this.turnsSinceFeeding
+        } else {
+            return Math.floor(TURNS_PER_FEEDING * currentFood / consumption) - this.turnsSinceFeeding
+            
+        }
+   }
 
     simulateConsumption(): {
         foodConsumed: number,
@@ -97,9 +102,11 @@ export class HungerModel {
                     deaths++
                 }
             }
-            this.population.pop(d.type).decCount(deaths)
-            this.log.info(<HungerMessages.HungerDeaths type={d.type} count={deaths}/>)
-            spawnEffectCost(coordsIdPopCount(d.type), [pops(d.type, -deaths)])
+            if (deaths > 0) {
+                this.population.pop(d.type).decCount(deaths)
+                this.log.info(<HungerMessages.HungerDeaths type={d.type} count={deaths}/>)
+                spawnEffectCost(coordsIdPopCount(d.type), [pops(d.type, -deaths)])    
+            }
         })
     }
 

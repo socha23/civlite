@@ -24,9 +24,9 @@ export const ResearchDefinitions: ResearchDefinition[] = [
     {
         id: "enable_food_gathering",
         requiredResearch: ["enable_insight"],
-        title: "...I am hungry",
-        logTitle: "Manual food collection",
-        description: "I need to get some food.",
+        title: "Food",
+        flavorText: "...I am hungry",
+        description: "Enables manual food collection",
         workCost: [insight(3)],
         onComplete: (model) => {
             model.progress.ManualFood = true
@@ -37,9 +37,9 @@ export const ResearchDefinitions: ResearchDefinition[] = [
     {
         id: "basic_tribe",
         requiredResearch: ["enable_food_gathering"],
-        title: "Those people are hungry too",
-        logTitle: "Gatherers",
-        description: "We have something in common. Perhaps I should lead them.",
+        title: "Tribe",
+        description: "Enables Gatherers",
+        flavorText: "We have something in common. Perhaps I could lead them?",
         initialCost: [resources(ResourceType.Food, 3)],
         workCost: [insight(3)],
         onComplete: (model) => {
@@ -60,9 +60,9 @@ export const ResearchDefinitions: ResearchDefinition[] = [
     {
         id: "upgrade_manual_food_collection",
         requiredResearch: ["enable_food_gathering"],
-        title: "What if I ate this fruit?",
-        logTitle: "New edible fruit",
-        description: "Upgrade manual food collection speed.",
+        title: "Edible fruit",
+        description: "Upgrade manual food collection speed",
+        flavorText: "What if I ate this?",
         workCost: [insight(5)],
         onComplete: (model) => {
             model.manualCollection.collectFood.timeAcc.required = 2
@@ -71,9 +71,9 @@ export const ResearchDefinitions: ResearchDefinition[] = [
     {
         id: "enable_calendar",
         requiredResearch: ["enable_insight"],
-        title: "Ponder the passage of time",
-        logTitle: "Timekeeping",
-        description: "World around me changes in a cycle.",
+        title: "Basic timekeeping",
+        description: "Shows Calendar and Log",
+        flavorText: "World around me changes in a cycle",
         workCost: [insight(5)],
         onComplete: (model) => {
             model.log.reset()
@@ -84,9 +84,9 @@ export const ResearchDefinitions: ResearchDefinition[] = [
     {
         id: "enable_idler_insight",
         requiredResearch: ["basic_tribe"],
-        title: "Refine grunts into speech",
-        logTitle: "Speech",
+        title: "Speech",
         description: "Enable Gatherer insight",
+        flavorText: "Refine our grunts into proper speech",
         workCost: [insight(5)],
         onComplete: (model) => {
             model.population.idlers.definition.work.push(insight(0.1))
@@ -96,6 +96,8 @@ export const ResearchDefinitions: ResearchDefinition[] = [
 
 export type ResearchDefinition = {
     id: string,
+
+    exclusivityGroup?: string,
     
     timeCost?: number,
     workCost?: WorkAmount[],
@@ -104,9 +106,9 @@ export type ResearchDefinition = {
     requiredResearch?: string[],
 
     title: string,
-    logTitle?: string,
     buttonTitle?: string,
     description?: string,
+    flavorText?: string,
 
     onComplete?: ((model: GameModel) => void)
   }
