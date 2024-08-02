@@ -3,11 +3,10 @@ import { GameModel } from '../model/gameModel'
 import { FoodLabels, popLabelPlural, } from './labels';
 import { PopType } from '../model/pops';
 import { ResourceType } from '../model/resources';
-import { LinePanel } from './linePanel';
 import { Colors, FontSizes, Icons, Labels } from './icons';
 import { PopAmount } from '../model/amount';
-import { coordsIdResourceStock } from './elementCoordinatesHolder';
 import { ProgressType } from '../model/progress';
+import { Line } from './line';
 
 export type FoodProps = {
   progress: ProgressType,
@@ -65,14 +64,18 @@ const FoodDetails = (p: FoodProps) => <div style={{
 */}
 </div>
 
-export const FoodLinePanel = (p: FoodProps) => <LinePanel
-  coordsId={coordsIdResourceStock(ResourceType.Food)}
-  icon={Icons[ResourceType.Food]}
+export const FoodLinePanel = (p: FoodProps) => <div style={{
+  display: "flex",
+  flexDirection: "column",
+}}>
+  <Line 
+  icon={Icons[ResourceType.Food]} 
   label={Labels[ResourceType.Food]}
   value={p.foodCount}
-  postfix={<div>/ {p.foodCap}</div>}>
+  max={p.foodCap}
+/>
   <FoodDetails {...p}/>
-</LinePanel> 
+</div>
 
 export const HungerWarning = (p: FoodProps) => p.expectedHungerDeaths.length > 0 ? <div style={{
   display: "flex",
