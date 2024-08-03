@@ -1,4 +1,5 @@
 import {GameViewProps, gameViewProps} from '../view/gameView'
+import { loadSounds } from '../view/sounds'
 import {GameModel} from './gameModel'
 import { PopType } from './pops'
 import { ResourceType } from './resources'
@@ -13,6 +14,7 @@ export class GameController {
 
   constructor() {
     this.setInitialState()
+    loadSounds()
   }
 
   onReset() {

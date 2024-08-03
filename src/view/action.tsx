@@ -7,6 +7,7 @@ import { AmountWithColorProps, Amounts } from './amount';
 import { ActionCommonLabels } from './labels';
 import { CoordsCatcher } from './elementCoordinatesHolder';
 import { WithTooltip } from './tooltips';
+import { soundClick } from './sounds';
 
 interface ActionParms {
   title?: string,
@@ -168,6 +169,7 @@ const ActionButton3Inner = (a: PropsWithChildren<ActionProps & {style?: CSSPrope
       if (a.disabled) {
         console.log(a.disabled)
       } else if (enabled) {
+        soundClick()
         a.action()
       }
     }}>
