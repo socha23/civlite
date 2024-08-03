@@ -4,15 +4,16 @@ import { GameModel } from '../model/gameModel'
 import { ActionProps, ActionRow3, propsForAction } from './action';
 import { ResearchLabels } from './labels';
 import { ActionState } from '../model/action';
+import { UpgradeType } from '../model/upgrade';
 
-export type ResearchSectionProps = {
+export type UpgradeSectionProps = {
   availableResearchActions: ActionProps[]
 }
 
-export function researchSectionProps(model: GameModel): ResearchSectionProps {
+export function upgradeSectionProps(model: GameModel, type: UpgradeType): UpgradeSectionProps {
 
   return {
-    availableResearchActions: model.research.availableResearch.map(node => propsForAction(
+    availableResearchActions: model.upgrades.uncompletedAvailableUpgrades(type).map(node => propsForAction(
       model, node.action, {
         title: node.title,
         description: <div style={{display: "flex", flexDirection: "column", gap: 4}}>
@@ -25,7 +26,7 @@ export function researchSectionProps(model: GameModel): ResearchSectionProps {
   }
 }
 
-export const ResearchSection = (p: ResearchSectionProps) =>
+export const UpgradeSection = (p: UpgradeSectionProps) =>
   <Box>
     <div 
     className='dottedDividersParent'

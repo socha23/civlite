@@ -30,18 +30,19 @@ export const ManualResourceGatheringLabels = {
     [ResourceType.Food]: {
         ActionTitle: "Gather food",
         ButtonTitle: "Start",
-        Description: "Find some mushrooms and herbs."
+        Description: "Find some mushrooms and herbs"
     },
     [WorkType.Insight]: {
         ActionTitle: "Think",
         ButtonTitle: "Start",
-        Description: "Ponder the world around me.",
+        Description: "Ponder the world around me",
     },
     [WorkType.Labor]: {
         ActionTitle: "Manual labor",
         ButtonTitle: "Start",
-        Description: "Roll up my sleeves and get to work."
+        Description: "Roll up my sleeves and get to work"
     },
+    NoInsightNeeded: "No Research selected",
 }
 
 export const PopulationRecruitLabels = {

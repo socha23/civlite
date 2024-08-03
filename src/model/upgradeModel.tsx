@@ -1,14 +1,14 @@
 import { Action, action } from "./action"
-import { ResearchDefinition, ResearchDefinitions } from "./research"
+import { UpgradeDefinition, UpgradeDefinitions, UpgradeType } from "./upgrade"
 import { GameModel } from "./gameModel"
 
-class ResearchNode {
+class UpgradeNode {
     model: GameModel
-    definition: ResearchDefinition
+    definition: UpgradeDefinition
     completed: boolean = false
     action: Action
 
-    constructor(model: GameModel, definition: ResearchDefinition) {
+    constructor(model: GameModel, definition: UpgradeDefinition) {
         this.model = model
         this.definition = definition
 
@@ -40,15 +40,19 @@ class ResearchNode {
         this.model.log.info(this.definition.title + " discovered")
     }
 
+    get type(): UpgradeType {
+        return this.definition.type || UpgradeType.Research
+    }
+
     get available() {
         return this.prerequisitesMet && !this.completed
     }
 
     get prerequisitesMet(): boolean {
-        const requiredResearch = this.definition.requiredResearch || []
+        const requiredResearch = this.definition.requiredUpgrades || []
         let result = true
         requiredResearch.forEach(r => {
-            if (!this.model.research.node(r).completed)
+            if (!this.model.upgrades.node(r).completed)
                 result = false
         })
         return result
@@ -71,25 +75,31 @@ class ResearchNode {
     }
 }
 
-export class ResearchModel {
+export class UpgradeModel {
+
+    availableUpgrades: UpgradeNode[] = []
     model: GameModel
-    nodes = new Map<string, ResearchNode>
-    nodesA = [] as ResearchNode[]
+    allNodes = new Map<string, UpgradeNode>
+    allNodesA = [] as UpgradeNode[]
 
     constructor(model: GameModel) {
         this.model = model
-        ResearchDefinitions.forEach(def => {
-            const node = new ResearchNode(model, def)
-            this.nodes.set(def.id, node)
-            this.nodesA.push(node)
+        UpgradeDefinitions.forEach(def => {
+            const node = new UpgradeNode(model, def)
+            this.allNodes.set(def.id, node)
+            this.allNodesA.push(node)
         })
     }
 
-    node(id: string): ResearchNode {
-        return this.nodes.get(id)!!
+    addAvailableUpgrade(id: string) {
+        this.availableUpgrades.push(this.node(id))
     }
 
-    get availableResearch(): ResearchNode[] {
-        return this.nodesA.filter(n => n.available)
+    node(id: string): UpgradeNode {
+        return this.allNodes.get(id)!!
+    }
+
+    uncompletedAvailableUpgrades(type: UpgradeType): UpgradeNode[] {
+        return this.availableUpgrades.filter(n => !n.completed && n.type === type)
     }
 }

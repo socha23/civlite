@@ -15,9 +15,10 @@ import { Log } from "./log"
 import { tickInProgressActions } from "./actionsModel"
 import { ManualCollectionModel } from "./manualCollectionModel"
 import { GatheringModel } from "./gatheringModel"
-import { ResearchModel } from "./researchModel"
+import { UpgradeModel } from "./upgradeModel"
 import { resetProgress } from "./progress"
 import { CheatsModel } from "./cheatsModel"
+import { STARTING_UPGRADES } from "./upgrade"
 
 export class GameModel implements GameModelInterface {
 
@@ -36,12 +37,16 @@ export class GameModel implements GameModelInterface {
   hunger = new HungerModel(this.population, this.resources, this.log)
   hunting = new HuntingModel(this.population, this.resources, this.log)
   gathering = new GatheringModel(this.population, this.resources, this.calendar, this.log)
-  research = new ResearchModel(this)
+  upgrades = new UpgradeModel(this)
 
   progress = resetProgress()
 
   cheats = new CheatsModel(this)
   gameLost = false
+
+  constructor() {
+    STARTING_UPGRADES.forEach(r => {this.upgrades.addAvailableUpgrade(r)})
+  }
 
   filterUnsatisfiableCosts(costs: Amount[]): Amount[] {
     return this.resources.filterUnsatisfiableCosts(costs)

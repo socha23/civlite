@@ -17,10 +17,11 @@ import { gatheringProps, GatheringProps, GatheringSection } from './gathering';
 import { HungerWarning } from './food';
 import { TooltipOverlay, WithTooltip } from './tooltips';
 import { MouseCatcher } from './mouseCatcher';
-import { ResearchSection, researchSectionProps, ResearchSectionProps } from './research';
+import { UpgradeSection, upgradeSectionProps, UpgradeSectionProps } from './upgrades';
 import { ProgressType } from '../model/progress';
 import { GameLost } from './gameLost';
 import { CheatsPanel, cheatsProps, CheatsProps } from './cheats';
+import { UpgradeType } from '../model/upgrade';
 
 
 export type GameViewProps = {
@@ -37,7 +38,7 @@ export type GameViewProps = {
   calendar: CalendarProps,
   hunting: HuntingProps,
   gathering: GatheringProps,
-  research: ResearchSectionProps,
+  research: UpgradeSectionProps,
 
   paused: boolean,
   setPaused: ((t: boolean) => void),
@@ -64,7 +65,7 @@ export function gameViewProps(model: GameModel, onReset: () => void): GameViewPr
     calendar: calendarProps(model),
     hunting: huntingProps(model),
     gathering: gatheringProps(model),
-    research: researchSectionProps(model),
+    research: upgradeSectionProps(model, UpgradeType.Research),
 
     paused: model.paused,
     setPaused: (p) => { model.paused = p },
@@ -83,6 +84,7 @@ const Column = (p: PropsWithChildren) => <div className="dividersParent" style={
   display: "flex",
   flexDirection: "column",
   gap: 4,
+  height: "100%",
 }}>
   {p.children}
 </div>
@@ -106,6 +108,7 @@ const InnerGameView = (p: GameViewProps) =>
     padding: 10,
     fontSize: FontSizes.small,
     color: Colors.default,
+    height: "100%",
   }}>
     <div style={{
       display: "flex",
@@ -129,8 +132,8 @@ const InnerGameView = (p: GameViewProps) =>
           {p.progress.Inventory && <InventoryBox {...p.summary} />}
           {p.progress.Calendar && <CalendarBox {...p.calendar} />}
           {p.progress.ManualCollection && <ManualCollectionBox {...p.resourceGathering} />}
-          {p.research.availableResearchActions.length > 0 && <ResearchSection {...p.research} />}
-        </Column>
+          {p.research.availableResearchActions.length > 0 && <UpgradeSection {...p.research} />}
+          </Column>
         <Column>
           {p.progress.PopEnabled[PopType.Idler] &&
             <PopBox {...popProps(p, PopType.Idler)}>
@@ -160,7 +163,7 @@ const InnerGameView = (p: GameViewProps) =>
           <CivilizationsView {...p.civilizations} />
         </Column>
         <Column>
-          {p.progress.Log &&
+        {p.progress.Log &&
 
             <div style={{ flexGrow: 1, maxHeight: 300 }}>
               <LogView {...p.log} />

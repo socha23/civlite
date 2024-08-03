@@ -1,6 +1,5 @@
-import { Action, action } from "./action"
-import { ResourceType, resourceDefinition } from "./resources"
-import { Amount, ResourceAmount, WorkAmount, isResourceAmount, isResourceType, resources, work } from "./amount"
+import { ResourceType } from "./resources"
+import { ResourceAmount, WorkAmount, resources, work } from "./amount"
 import { GameModel } from "./gameModel"
 import { WorkType } from "./work"
 import { PopType } from "./pops"
@@ -9,7 +8,16 @@ function insight(count: number): WorkAmount {
     return work(WorkType.Insight, count)
 }
 
-export const ResearchDefinitions: ResearchDefinition[] = [
+
+
+export enum UpgradeType {
+    Init = "Init",
+    Research = "Research"
+}
+
+export const STARTING_UPGRADES = ["enable_insight"]
+
+export const UpgradeDefinitions: UpgradeDefinition[] = [
     {
         id: "enable_insight",
         title: "The New Beginning",
@@ -19,11 +27,12 @@ export const ResearchDefinitions: ResearchDefinition[] = [
         onComplete: (model) => {
             model.progress.ManualCollection = true
             model.progress.ManualResearch = true
+
+            model.upgrades.addAvailableUpgrade("enable_food_gathering")
         }
     },
     {
         id: "enable_food_gathering",
-        requiredResearch: ["enable_insight"],
         title: "Food",
         flavorText: "...I am hungry",
         description: "Enables manual food collection",
@@ -32,15 +41,32 @@ export const ResearchDefinitions: ResearchDefinition[] = [
             model.progress.ManualFood = true
             model.progress.Inventory = true
             model.progress.ResourceEnabled[ResourceType.Food] = true
+        
+            model.upgrades.addAvailableUpgrade("research_pack_primitive")
+        }
+    },
+    {
+        id: "research_pack_primitive",
+        title: "Basic Tribe Pack",
+        flavorText: "I am not alone",
+        description: "Enables basic tribal upgrades",
+        initialCost: [resources(ResourceType.Food, 3)],
+        onComplete: (model) => {
+            model.progress.ManualFood = true
+            model.progress.Inventory = true
+            model.progress.ResourceEnabled[ResourceType.Food] = true
+        
+            model.upgrades.addAvailableUpgrade("basic_tribe")
+            model.upgrades.addAvailableUpgrade("upgrade_manual_food_collection")
+            model.upgrades.addAvailableUpgrade("enable_calendar")
+            model.upgrades.addAvailableUpgrade("enable_idler_insight")
         }
     },
     {
         id: "basic_tribe",
-        requiredResearch: ["enable_food_gathering"],
         title: "Tribe",
         description: "Enables Gatherers",
         flavorText: "We have something in common. Perhaps I could lead them?",
-        initialCost: [resources(ResourceType.Food, 3)],
         workCost: [insight(3)],
         onComplete: (model) => {
             model.progress.CivName = "The Tribe"
@@ -59,7 +85,6 @@ export const ResearchDefinitions: ResearchDefinition[] = [
     },
     {
         id: "upgrade_manual_food_collection",
-        requiredResearch: ["enable_food_gathering"],
         title: "Edible fruit",
         description: "Upgrade manual food collection speed",
         flavorText: "What if I ate this?",
@@ -70,7 +95,6 @@ export const ResearchDefinitions: ResearchDefinition[] = [
     },
     {
         id: "enable_calendar",
-        requiredResearch: ["enable_insight"],
         title: "Basic timekeeping",
         description: "Shows Calendar and Log",
         flavorText: "World around me changes in a cycle",
@@ -83,7 +107,7 @@ export const ResearchDefinitions: ResearchDefinition[] = [
     },
     {
         id: "enable_idler_insight",
-        requiredResearch: ["basic_tribe"],
+        requiredUpgrades: ["basic_tribe"],
         title: "Speech",
         description: "Enable Gatherer insight",
         flavorText: "Refine our grunts into proper speech",
@@ -94,8 +118,10 @@ export const ResearchDefinitions: ResearchDefinition[] = [
     },
 ]
 
-export type ResearchDefinition = {
+export type UpgradeDefinition = {
     id: string,
+
+    type?: UpgradeType
 
     exclusivityGroup?: string,
     
@@ -103,7 +129,7 @@ export type ResearchDefinition = {
     workCost?: WorkAmount[],
     initialCost?: ResourceAmount[], 
 
-    requiredResearch?: string[],
+    requiredUpgrades?: string[],
 
     title: string,
     buttonTitle?: string,

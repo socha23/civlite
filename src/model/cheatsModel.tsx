@@ -8,9 +8,10 @@ export class CheatsModel {
         action({
             id: "basicResearch",
             onComplete: () => {
-                this.completeResearch([
+                this.completeUpgrade([
                     "enable_calendar",
                     "enable_insight",
+                    "research_pack_primitive",
                     "enable_food_gathering",
                     "basic_tribe",
                     "upgrade_manual_food_collection",
@@ -24,9 +25,9 @@ export class CheatsModel {
         this.model = model
     }
 
-    completeResearch(nodeIds: string[]) {
+    completeUpgrade(nodeIds: string[]) {
         nodeIds.forEach(n => {
-            this.model.research.node(n).complete()
+            this.model.upgrades.node(n).complete()
         })
     }
 }

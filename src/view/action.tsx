@@ -198,13 +198,15 @@ const ActionRowsAmountsRow = (p: {label: string, items: AmountWithColorProps[]})
   <Amounts items={p.items}/>
 </div>
 
-const InnerActionRow3 = (p: ActionProps & 
-  {
-    showButton: boolean, 
-    displayRewards?: boolean,
-    displayCost?: boolean,
-  
-  }) => {
+
+type ActionRowParams = ActionProps & {
+  inTooltip?: boolean,
+  showButton?: boolean, 
+  displayRewards?: boolean,
+  displayCost?: boolean,
+}
+
+const InnerActionRow3 = (p: PropsWithChildren<ActionRowParams>) => {
   const costs = p.costs || []
   const work = p.workCost || []
 
@@ -243,14 +245,13 @@ const InnerActionRow3 = (p: ActionProps &
     <div>
       {p.description}
     </div>
+    {
+      p.children && <div>{p.children}</div>
+    }
   </div>
 }
 
-export const ActionRow3 = (p: ActionProps & {
-  inTooltip?: boolean, 
-  displayCost?: boolean
-  displayRewards?: boolean
-}) => <div style={{
+export const ActionRow3 = (p: PropsWithChildren<ActionRowParams>) => <div style={{
     borderStyle: "solid",
     borderWidth: 2,
     borderColor: p.state === ActionState.InProgress ? Colors.active : "transparent",

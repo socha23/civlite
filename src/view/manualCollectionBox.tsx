@@ -6,9 +6,14 @@ import { ActionProps, ActionRow3, propsForAction } from './action';
 import { ManualResourceGatheringLabels } from './labels';
 import { WorkType } from '../model/work';
 import { ProgressType } from '../model/progress';
+import { isWorkNeeded } from '../model/actionsModel';
+import { Colors } from './icons';
 
 export type ManualCollectionProps = {
-  actions: ActionProps[],
+  research?: ActionProps,
+  researchNeeded: boolean,
+  food?: ActionProps,
+  labor?: ActionProps,
 }
 
 export function resourceGatheringProps(model: GameModel): ManualCollectionProps {
@@ -18,21 +23,21 @@ export function resourceGatheringProps(model: GameModel): ManualCollectionProps 
     //description: ManualResourceGatheringLabels[t].Description,
     buttonLabel: ManualResourceGatheringLabels[t].ButtonTitle,
   })
+  const result: ManualCollectionProps = {
+    researchNeeded: isWorkNeeded(WorkType.Insight)
+  }
 
-  const actions = []
   if (model.progress.ManualResearch) {
-    actions.push(propsForAction(model, model.manualCollection.collectInsight, typeLabels(WorkType.Insight)))
+    result.research = propsForAction(model, model.manualCollection.collectInsight, typeLabels(WorkType.Insight))
   }
   if (model.progress.ManualFood) {
-    actions.push(propsForAction(model, model.manualCollection.collectFood, typeLabels(ResourceType.Food)))
+    result.food = propsForAction(model, model.manualCollection.collectFood, typeLabels(ResourceType.Food))
   }
   if (model.progress.ManualLabor) {
-    actions.push(propsForAction(model, model.manualCollection.collectLabor, typeLabels(WorkType.Labor)))
+    result.labor = propsForAction(model, model.manualCollection.collectLabor, typeLabels(WorkType.Labor))
 
   }
-  return {
-    actions: actions
-  }
+  return result
 }
 
 export const ManualCollectionBox = (p: ManualCollectionProps) =>
@@ -45,9 +50,16 @@ export const ManualCollectionBox = (p: ManualCollectionProps) =>
         gap: 4,
         marginTop: 4,
         marginBottom: 4,
-      }}> {
-        p.actions.map((a, idx) => <ActionRow3 key={idx} {...a} displayRewards={true}/>)
+      }}> 
+      {
+        p.research && <ActionRow3 displayRewards={true} {...p.research}>
+          {!p.researchNeeded && <div style={{color: Colors.Warning}}>
+              {ManualResourceGatheringLabels.NoInsightNeeded}
+            </div>}
+        </ActionRow3>
       }
+      {p.food && <ActionRow3 {...p.food} displayRewards={true}/>}
+      {p.labor && <ActionRow3 {...p.labor} displayRewards={true}/>}
     </div>
   </Box>
 
