@@ -241,8 +241,8 @@ const InnerActionRow3 = (p: PropsWithChildren<ActionRowParams>) => {
             gap: 8,
           }}>
             {p.timeCost && <ActionRowsAmountsRow items={[{count: p.timeCost, postfix: ActionCommonLabels.Second}]} label={ActionCommonLabels.Time}/>}
+            {displayWork && <Amounts items={work}/>}
             {displayCosts && <ActionRowsAmountsRow items={costs} label={ActionCommonLabels.Cost}/>}
-            {displayWork && <ActionRowsAmountsRow items={work} label={ActionCommonLabels.Work}/>}
             {displayRewards && <ActionRowsAmountsRow items={rewards} label={ActionCommonLabels.Rewards}/>}
           </div>
         }

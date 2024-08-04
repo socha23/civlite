@@ -130,7 +130,7 @@ export const PopBoxLabels = {
 }
 
 export const ActionCommonLabels = {
-    Work: "Required:",
+    Work: "",
     Cost: "Cost:",
     Rewards: "Rewards:",
     Time: "Time:",

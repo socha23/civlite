@@ -120,7 +120,9 @@ export class HungerModel {
             }
         })
         results.consumption.forEach(c => {
-            spawnEffectCost(coordsIdPopCount(c.type), [resources(ResourceType.Food, c.value)])
+            if (c.value > 0) {
+                spawnEffectCost(coordsIdPopCount(c.type), [resources(ResourceType.Food, c.value)])
+            }
         })
     }
 
