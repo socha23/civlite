@@ -26,6 +26,9 @@ export const Colors = {
     PausedIndicator: "#f00",
     Warning: "#800",
     Positive: "#0a0",
+
+    Research: "#cee0ed",
+    Pack: "#FFB22C",
 }
 
 

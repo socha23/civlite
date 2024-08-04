@@ -12,6 +12,7 @@ import { FlashingBorderEffect, getEffects, RollupEffect } from './actionEffects'
 
 interface ActionParms {
   title?: string,
+  color?: string,
   buttonLabel?: ReactNode | string
   description?: ReactNode | string
 }
@@ -43,7 +44,7 @@ export function propsForAction(model: GameModel, a: Action, params: ActionParms 
   return {
     id: a.id,
     action: () => a.onAction(model),
-    cancel: () => a.onCancel(model),
+    cancel: a.cancellable ? () => a.onCancel(model) : undefined,
     autoStartOnComplete: a.autoStartOnComplete,
     setAutoStartOnComplete: (s) => {a.autoStartOnComplete = s},
     costs: a.initialCost(model).map(c => ({...c, color: model.canPay(c) ? Colors.default: Colors.UnsatisfiableCost})),
@@ -55,6 +56,7 @@ export function propsForAction(model: GameModel, a: Action, params: ActionParms 
     completionRatio: a.completionRatio, 
     disabled: a.disabled(model),
     state: a.state,
+    color: a.color,
     ...params,
   }
 }
@@ -259,11 +261,11 @@ const InnerActionRow3 = (p: PropsWithChildren<ActionRowParams>) => {
   return <div style={{
     display: "flex",
     flexDirection: "column",
+    padding: 2,
     gap: 4,
   }}>
     <div style={{
       display: "flex",
-      height: 24,
     }}>
       <div style={{
         display: "flex",
@@ -298,9 +300,12 @@ const InnerActionRow3 = (p: PropsWithChildren<ActionRowParams>) => {
 }
 
 export const ActionRow3 = (p: PropsWithChildren<ActionRowParams>) => { 
+  const paramsColor = p.color || Colors.active
+  const inProgressColor = p.state === ActionState.InProgress ? paramsColor : "transparent"
+  
   const wrapperStyle: CSSProperties = {
     boxShadow: "",
-    borderColor: p.state === ActionState.InProgress ? Colors.active : "transparent",
+    borderColor: inProgressColor,
     borderStyle: "solid",
     borderWidth: 2,
     borderRadius: p.inTooltip ? 0 : 6,
@@ -313,9 +318,9 @@ export const ActionRow3 = (p: PropsWithChildren<ActionRowParams>) => {
 
   getEffects(p.id).forEach(effect => {
     if (effect instanceof FlashingBorderEffect) {
-      wrapperStyle.boxShadow = `0 0 ${effect.animation.value("flashRadius")}px ${effect.flashColor}`
-      wrapperStyle.borderColor = effect.flashColor
-      innerWrapperStyle.boxShadow = `inset 0 0 ${effect.animation.value("flashRadius")}px ${effect.flashColor}`
+      wrapperStyle.boxShadow = `0 0 ${effect.animation.value("flashRadius")}px ${paramsColor}`
+      wrapperStyle.borderColor = paramsColor
+      innerWrapperStyle.boxShadow = `inset 0 0 ${effect.animation.value("flashRadius")}px ${paramsColor}`
     }
     if (effect instanceof RollupEffect) {
       wrapperStyle.height = effect.animation.value("height")
@@ -335,7 +340,7 @@ export const ActionRow3 = (p: PropsWithChildren<ActionRowParams>) => {
         zIndex: 1,
         width: (100 * (p.completionRatio || 0)) + "%",
         height: "100%",
-        backgroundColor: p.state === ActionState.InProgress ? Colors.active : "transparent",
+        backgroundColor: inProgressColor,
       }}/>
       <div style={{
         position: "relative",

@@ -27,6 +27,8 @@ export const Progress = {
     Calendar: false,
     Log: false,
 
+    GatheringAutomationEnabled: false,
+    GatheringDurationControlEnabled: false,
 
     ResourceEnabled: {
         [ResourceType.Food]: false,

@@ -69,10 +69,6 @@ addTickListener({
     }
 })
 
-
-
-
-
 type FlashingBorderA = {
     flashRadius: number 
 }
@@ -103,16 +99,11 @@ type FlashingBorderParams = {
     duration: number, 
     flashDuration: number,
     flashRadius: number, 
-    flashColor: string
-
 }
 
 export class FlashingBorderEffect extends AnimatedActionEffect<FlashingBorderA> {
-    flashColor: string
-
     constructor(p: FlashingBorderParams) {
         super(p.id, flashRadiusAnimation(p.id, p.duration, p.flashDuration, p.flashRadius))
-        this.flashColor = p.flashColor
     }
 }
 
@@ -122,7 +113,6 @@ export function spawnActionCompleted(actionId: string, duration: number = 2, num
         duration: duration,
         flashDuration: duration / numFlashes,
         flashRadius: 20,
-        flashColor: "#FFB22C"
     }))
 }
 

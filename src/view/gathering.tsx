@@ -14,12 +14,14 @@ import { ProgressType } from '../model/progress';
 export type GatheringProps = {
   gatherAction: ActionProps,
   gatherStats: GatheringActionStats,
+  progress: ProgressType,
 }
 
 export function gatheringProps(model: GameModel): GatheringProps {
   return {
     gatherAction: propsForAction(model, model.gathering.gatherAction, GatheringLabels.GatherAction),
     gatherStats: model.gathering.gatheringStats,
+    progress: model.progress,
   }
 }
 
@@ -58,13 +60,15 @@ export const GatheringSection = (p: GatheringProps) => <div style={{
   gap: 4,
 }}>
   <GatheringStats {...p.gatherStats}/>
-  <AutostartSection {...p.gatherAction}>
+  {
+    p.progress.GatheringAutomationEnabled && <AutostartSection {...p.gatherAction}>
     <div style={{
       width: 160
     }}>
     {GatheringLabels.AutomateGathering}
     </div>
   </AutostartSection>
+  }
   <ActionRow3 {...p.gatherAction} displayRewards={true}/>
 </div>
 

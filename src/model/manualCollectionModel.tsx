@@ -35,5 +35,8 @@ export class ManualCollectionModel {
             timeCost: 5,
             exclusivityGroup: "manualCollection"
         })
+        this.collectFood.cancellable = false
+        this.collectInsight.cancellable = false
+        this.collectLabor.cancellable = false
     }
 }

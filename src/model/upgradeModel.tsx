@@ -3,6 +3,7 @@ import { UpgradeDefinition, UpgradeDefinitions, UpgradeType } from "./upgrade"
 import { GameModel } from "./gameModel"
 import { SoundType } from "../view/sounds"
 import { spawnActionCompleted, spawnRollUp } from "../view/actionEffects"
+import { Colors } from "../view/icons"
 
 const DECAY = {
     [UpgradeType.Init]: 0,
@@ -16,6 +17,12 @@ const SOUNDS_ON_COMPLETE = {
     [UpgradeType.Pack]: SoundType.OpenPack,
 }
 
+
+const COLORS = {
+    [UpgradeType.Init]: Colors.Research,
+    [UpgradeType.Research]: Colors.Research,
+    [UpgradeType.Pack]: Colors.Pack,
+}
 export class UpgradeNode {
     model: GameModel
     definition: UpgradeDefinition
@@ -43,6 +50,7 @@ export class UpgradeNode {
                 this.complete()
             },
 
+            color: COLORS[this.type],
             disabled: (model) => this.disabled()
         })
     }

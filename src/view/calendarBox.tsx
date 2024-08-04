@@ -33,7 +33,7 @@ export const CalendarBox = (p: CalendarProps) =>
       alignItems: "center",
       gap: 4,
       marginTop: 4,
-      marginBottom: 4,
+      marginBottom: 8,
       fontSize: FontSizes.normalPlus,
     }}>
       <div style={{

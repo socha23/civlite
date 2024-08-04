@@ -5,21 +5,14 @@ import { ActionProps, ActionRow3, propsForAction } from './action';
 import { UpgradeLabels } from './labels';
 import { ActionState } from '../model/action';
 import { UpgradeType, } from '../model/upgrade';
-import { UpgradeNode } from '../model/upgradeModel';
-import { CoordsCatcher, coordsIdActionWrapper } from './coordsCatcher';
 
 export type UpgradeProps = {
   action: ActionProps
   completed: boolean
 }
-
-
 export type UpgradeSectionProps = {
   upgrades: UpgradeProps[]
 }
-
-
-
 
 export function upgradeSectionProps(model: GameModel, types: UpgradeType[]): UpgradeSectionProps {
 

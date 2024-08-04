@@ -21,6 +21,8 @@ export type ActionParams = {
     expectedRewards?: PossiblyLazyActionRewards
 
     soundOnComplete?: SoundType
+    color?: string
+
 }
 
 export interface GameModelInterface {
@@ -64,9 +66,12 @@ export abstract class Action {
     actualRewards: Amount[] = []
     state: ActionState = ActionState.Ready
     exclusivityGroup?: string
+
     soundOnComplete?: SoundType
+    color?: string
 
     autoStartOnComplete: boolean = false 
+    cancellable = true
 
     constructor({
         id, 
@@ -76,7 +81,8 @@ export abstract class Action {
         expectedRewards = [], 
         timeCost, 
         exclusivityGroup,
-        soundOnComplete
+        soundOnComplete,
+        color
     
     }: ActionParams) {
         this.id = id
@@ -87,6 +93,7 @@ export abstract class Action {
         this.requiredWorkAcc = new AmountsAccumulator(workCost)
         this.collectedWorkAcc = new AmountsAccumulator(collectedWork)
         this.soundOnComplete = soundOnComplete
+        this.color = color
     }
 
     abstract _onAction(): void
