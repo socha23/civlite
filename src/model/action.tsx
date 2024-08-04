@@ -13,7 +13,7 @@ type PossiblyLazyActionRewards = ActionRewards |  ((m: GameModel) => ActionRewar
 export type ActionParams = {
     id: string
     exclusivityGroup?: string
-    initialCost?: Amount[]
+    initialCost?: (m: GameModel) => Amount[]
     workCost?: WorkAmount[]
     collectedWork?: WorkType[]
     timeCost?: number
@@ -55,7 +55,7 @@ function rollRewards(rewards: ActionRewards): Amount[] {
 
 export abstract class Action {
     id: string
-    initialCost: Amount[]
+    initialCost: (m: GameModel) => Amount[]
     requiredWorkAcc: AmountsAccumulator
     collectedWorkAcc: AmountsAccumulator
     timeAcc: SingleAmountAccumulator 
@@ -66,9 +66,11 @@ export abstract class Action {
     exclusivityGroup?: string
     soundOnComplete?: SoundType
 
+    autoStartOnComplete: boolean = false 
+
     constructor({
         id, 
-        initialCost = [], 
+        initialCost = () => [], 
         workCost = [], 
         collectedWork = [],
         expectedRewards = [], 
@@ -105,12 +107,20 @@ export abstract class Action {
         if (this.state !== ActionState.Ready) {
             return
         }
-        if (model.filterUnsatisfiableCosts(this.initialCost).length > 0) {
+        if (model.filterUnsatisfiableCosts(this.initialCost(model)).length > 0) {
             return
         }
         this.onStart(model)
         this._onAction()
         this._checkCompletion(model)
+    }
+
+    onCancel(model: GameModel) {
+        unregisterInProgressAction(this)
+        this.requiredWorkAcc.reset()
+        this.collectedWorkAcc.reset()
+        this.state = ActionState.Ready
+        this.expectedRewardsAtStart = undefined
     }
 
     onTick(model: GameModel, deltaS: number) {
@@ -132,7 +142,6 @@ export abstract class Action {
         return this.requiredWorkAcc.missingOfType(type) > 0 || this.collectedWorkAcc.accs.has(type)
     }
 
-
     onWork(type: WorkType, amount: number, model: GameModel) {
         if (this.requiredWorkAcc.missingOfType(type) > 0) {
             this.requiredWorkAcc.add(type, amount)
@@ -150,9 +159,10 @@ export abstract class Action {
 
     onStart(model: GameModel) {
         this.expectedRewardsAtStart = unlazyRewards(this.expectedRewards, model)
-        if (this.initialCost.length > 0) {
-            spawnEffectCost(this.id, this.initialCost)
-            model.onConsume(this.initialCost)
+        const cost = this.initialCost(model)
+        if (cost.length > 0) {
+            spawnEffectCost(this.id, cost)
+            model.onConsume(cost)
         }
         this.requiredWorkAcc.reset()
         this.timeAcc.reset()
@@ -174,13 +184,17 @@ export abstract class Action {
 
         this.state = ActionState.Ready
         this.expectedRewardsAtStart = undefined
+
+        if (this.autoStartOnComplete && !this.disabled(model)) {
+            this.onAction(model)
+        }
     }
 
     disabled(model: GameModel): any {
         if (exclusiveActionsInProgress(this)) {
             return "Exclusive actions in progress"
         }
-        if (model.filterUnsatisfiableCosts(this.initialCost).length > 0) {
+        if (model.filterUnsatisfiableCosts(this.initialCost(model)).length > 0) {
             return "Initial cost can't be paid"
         }
         return this._isDisabled(model)

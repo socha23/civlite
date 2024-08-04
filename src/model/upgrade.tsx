@@ -31,6 +31,8 @@ export const UpgradeDefinitions: UpgradeDefinition[] = [
             model.progress.ManualResearch = true
 
             model.upgrades.addAvailableUpgrade("enable_food_gathering")
+            model.upgrades.addAvailableUpgrade("enable_calendar")
+            model.upgrades.addAvailableUpgrade("research_pack_primitive")
         }
     },
     {
@@ -44,7 +46,6 @@ export const UpgradeDefinitions: UpgradeDefinition[] = [
             model.progress.Inventory = true
             model.progress.ResourceEnabled[ResourceType.Food] = true
         
-            model.upgrades.addAvailableUpgrade("research_pack_primitive")
         }
     },
     {
@@ -53,6 +54,7 @@ export const UpgradeDefinitions: UpgradeDefinition[] = [
         type: UpgradeType.Pack,
         flavorText: "I am not alone",
         description: "Enables basic tribal upgrades",
+        timeCost: 3,
         initialCost: [resources(ResourceType.Food, 3)],
         onComplete: (model) => {
             model.progress.ManualFood = true
@@ -61,7 +63,6 @@ export const UpgradeDefinitions: UpgradeDefinition[] = [
         
             model.upgrades.addAvailableUpgrade("basic_tribe")
             model.upgrades.addAvailableUpgrade("upgrade_manual_food_collection")
-            model.upgrades.addAvailableUpgrade("enable_calendar")
             model.upgrades.addAvailableUpgrade("enable_idler_insight")
         }
     },
@@ -99,13 +100,12 @@ export const UpgradeDefinitions: UpgradeDefinition[] = [
     {
         id: "enable_calendar",
         title: "Basic timekeeping",
-        description: "Shows Calendar and Log",
+        description: "Shows Calendar",
         flavorText: "World around me changes in a cycle",
-        workCost: [insight(5)],
+        workCost: [insight(2)],
         onComplete: (model) => {
             model.log.reset()
             model.progress.Calendar = true
-            model.progress.Log = true
         }
     },
     {

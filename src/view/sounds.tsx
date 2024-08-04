@@ -9,6 +9,7 @@ export enum SoundType {
   OpenPack = "OpenPack",
   FeedPops = "FeedPops",
   EndOfSeason = "EndOfSeason",
+  NewPop = "NewPop",
 }
 
 /*
@@ -21,9 +22,12 @@ eight = 4s
 */
 
 class Sound {
+  
     buffer?: AudioBuffer
+    gain: number
 
-    constructor(url: string) {
+    constructor(url: string, gain: number = 1) { 
+      this.gain = gain
       const req = new XMLHttpRequest()
       req.open("GET", url, true)
       req.responseType = 'arraybuffer'
@@ -38,9 +42,16 @@ class Sound {
       if (!this.buffer) {
         return
       }
+
+      const gainNode = CONTEXT.createGain()
+      gainNode.connect(CONTEXT.destination)
+      gainNode.gain.value = this.gain
+
+
       const source = CONTEXT.createBufferSource()
       source.buffer = this.buffer
-      source.connect(CONTEXT.destination)
+      source.connect(gainNode)
+      
       source.start()  
     }
 }
@@ -49,18 +60,21 @@ const Click = new Sound("click.wav")
 const DjembeBass = new Sound("djembe_bass.wav")
 const DjembeTone = new Sound("djembe_tone.wav")
 const DjembeRoll1 = new Sound("djembe_roll1.wav")
-const AztecBass = new Sound("bass_drum_aztec1.wav")
+const AztecBass1 = new Sound("bass_drum_aztec1.wav")
+const AztecBass2 = new Sound("bass_drum_aztec2.wav")
 const CongaRoll1 = new Sound("conga_roll1.wav")
+const CongaRoll2 = new Sound("conga_roll2.wav")
+const Castagnette = new Sound("castagnette1.wav", 0.5)
 
 
 export function playSound(type: SoundType) {
   switch (type) {
     case SoundType.Click: {return Click.play()} 
-    case SoundType.CollectFood: {return DjembeBass.play()} 
+    case SoundType.CollectFood: {return Castagnette.play()} 
     case SoundType.CollectInsight: {return DjembeTone.play()} 
     case SoundType.ResearchComplete: {return DjembeRoll1.play()} 
-    case SoundType.FeedPops: {return AztecBass.play()} 
-    case SoundType.FeedPops: {return AztecBass.play()}   
+    case SoundType.FeedPops: {return AztecBass1.play()} 
+    case SoundType.NewPop: {return CongaRoll2.play()}   
     case SoundType.OpenPack: {return CongaRoll1.play()}
   }
 }

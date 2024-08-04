@@ -1,6 +1,6 @@
 import React, { ReactElement, ReactNode } from 'react';
 import { GameModel } from '../model/gameModel'
-import { ActionProps, propsForAction, ActionRow3 } from './action';
+import { ActionProps, propsForAction, ActionRow3, AutostartSection } from './action';
 import { GatheringLabels, popLabelPlural, } from './labels';
 import { GatheringActionStats } from '../model/gatheringModel';
 import { Colors, Icons, Labels } from './icons';
@@ -58,6 +58,13 @@ export const GatheringSection = (p: GatheringProps) => <div style={{
   gap: 4,
 }}>
   <GatheringStats {...p.gatherStats}/>
+  <AutostartSection {...p.gatherAction}>
+    <div style={{
+      width: 160
+    }}>
+    {GatheringLabels.AutomateGathering}
+    </div>
+  </AutostartSection>
   <ActionRow3 {...p.gatherAction} displayRewards={true}/>
 </div>
 

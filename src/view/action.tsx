@@ -17,24 +17,35 @@ interface ActionParms {
 
 export interface ActionProps extends ActionParms {
   id: string,
+  disabled?: any
+  state: ActionState
+
   action: () => void,
+  cancel?: () => void,
+
+  autoStartOnComplete?: boolean,
+  setAutoStartOnComplete?: (a: boolean) => void,
+
   costs?: AmountWithColorProps[]
   workCost?: AmountWithColorProps[],
   workLeft?: AmountWithColorProps[],
   timeCost?: number,
   timeLeft?: number,
-  rewards?: AmountWithColorProps[]
-  disabled?: any
+  
   completionRatio?: number
-  state: ActionState
-  description?: ReactNode | string
+
+  rewards?: AmountWithColorProps[]
+  
 }
 
 export function propsForAction(model: GameModel, a: Action, params: ActionParms = {}): ActionProps {
   return {
     id: a.id,
     action: () => a.onAction(model),
-    costs: a.initialCost.map(c => ({...c, color: model.canPay(c) ? Colors.default: Colors.UnsatisfiableCost})),
+    cancel: () => a.onCancel(model),
+    autoStartOnComplete: a.autoStartOnComplete,
+    setAutoStartOnComplete: (s) => {a.autoStartOnComplete = s},
+    costs: a.initialCost(model).map(c => ({...c, color: model.canPay(c) ? Colors.default: Colors.UnsatisfiableCost})),
     workCost: a.workCost,
     workLeft: a.workLeft,
     timeCost: a.timeAcc.required ? a.timeAcc.required : undefined,
@@ -143,12 +154,39 @@ const ActionRowProgressIndicator = (a: ActionProps) => {
     amounts.push({count: a.timeLeft, postfix: ActionCommonLabels.Second})
   }
   return <div style={{
-    fontSize: FontSizes.normal,
-    fontWeight: "bold",
+    display: "flex",
+    gap: 4,
+    width: 100,
   }}>
-      <Amounts items={amounts} vertical={true}/>
-  </div>
-} 
+    {
+      a.cancel && <ActionButton3Inner 
+      id={a.id + "_cancel"}
+      action={a.cancel}
+      cancel={() => {}}
+      state={ActionState.Ready}
+      style={{
+        paddingTop: 2,
+        paddingLeft: 4,
+        paddingBottom: 2,
+        paddingRight: 4,
+      }}
+    >
+      {ActionCommonLabels.Cancel}
+    </ActionButton3Inner>
+
+    }
+    <div style={{flexGrow: 1}}/>
+
+    <div style={{
+        fontSize: FontSizes.normal,
+        fontWeight: "bold",
+      }}>
+        <Amounts items={amounts} vertical={true}/>
+    </div>
+ </div>
+  
+  
+ } 
 
 export const ActionButton3 = (a: PropsWithChildren<ActionProps & {style?: CSSProperties}>) => <ActionButton3Inner {...a}>
     {a.buttonLabel || a.title}
@@ -157,8 +195,7 @@ export const ActionButton3 = (a: PropsWithChildren<ActionProps & {style?: CSSPro
 const ActionButton3Inner = (a: PropsWithChildren<ActionProps & {style?: CSSProperties}>) => {
   const enabled = !a.disabled && (a.state === ActionState.Ready)
   const buttonStyle = enabled ? BUTTON_STYLE_ENABLED : BUTTON_STYLE_DISABLED
-  return <CoordsCatcher id={a.id}>  
-    <div style={{
+  return <div style={{
       ...buttonStyle,
       ...a.style,
       display: "flex",
@@ -175,7 +212,6 @@ const ActionButton3Inner = (a: PropsWithChildren<ActionProps & {style?: CSSPrope
     }}>
       {a.children}
     </div>
-  </CoordsCatcher>
 }
 
 const ActionRowStartActionButton = (a: ActionProps) => <ActionButton3Inner style={{
@@ -247,7 +283,9 @@ const InnerActionRow3 = (p: PropsWithChildren<ActionRowParams>) => {
           </div>
         }
       </div>
-      {p.showButton && (p.state === ActionState.InProgress ? <ActionRowProgressIndicator {...p}/> : <ActionRowStartActionButton {...p}/>)}
+      <CoordsCatcher id={p.id}>
+        {p.showButton && (p.state === ActionState.InProgress ? <ActionRowProgressIndicator {...p}/> : <ActionRowStartActionButton {...p}/>)}
+      </CoordsCatcher>
     </div>
     <div>
       {p.description}
@@ -300,3 +338,28 @@ export const SmallButtonAction = (p: ActionProps) => <WithTooltip tooltip={
     {p.buttonLabel}
   </ActionButton3Inner>
 </WithTooltip>
+
+
+export const CheckBox = (p: {value: boolean, setValue: (b: boolean) => void}) => <div 
+  onClick={e => {
+    p.setValue(!p.value)
+  }}
+  style={{
+    width: 20,
+    height: 20,
+    fontSize: 20,
+  }}
+>
+  <i className={p.value ? 'fa-regular fa-square-check' : 'fa-regular fa-square'}/>
+</div>
+
+export const AutostartSection = (p: PropsWithChildren<ActionProps>) => <div style={{
+  display: "flex",
+  gap: 4,
+  alignItems: "center"
+}}>
+  <div>{p.children}</div>
+  {p.autoStartOnComplete !== undefined && p.setAutoStartOnComplete !== undefined 
+    && <CheckBox value={p.autoStartOnComplete!!} setValue={b => {p.setAutoStartOnComplete!!(b)}}/>
+  }
+</div>

@@ -130,6 +130,7 @@ export const PopBoxLabels = {
 }
 
 export const ActionCommonLabels = {
+    Cancel: "Cancel",
     Work: "",
     Cost: "Cost:",
     Rewards: "Rewards:",
@@ -162,6 +163,7 @@ export const GatheringLabels = {
     ForestCap: "Forest cap:",
     SeasonalMultiplier: "Season modifier:",
     TotalFood: "Total:",
+    AutomateGathering: "Continuous gathering",
 }
 
 export const FoodLabels = {

@@ -133,7 +133,14 @@ export const PopBox = (p: PropsWithChildren<PopBoxProps>) =>
     }}>
       <PopHeader {...p}/>
       <PopResources {...p}/>
-      {p.children}
+      <div style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 4,
+      }}>
+        {p.children}
+        <ActionRow3 {...p.buyAction} displayRewards={false}/>
+      </div>
     </div>
   </Box>
 

@@ -27,7 +27,7 @@ export class UpgradeNode {
             exclusivityGroup: definition.exclusivityGroup || "research",
 
             timeCost: definition.timeCost,
-            initialCost: definition.initialCost,
+            initialCost: () => definition.initialCost || [],
             workCost: definition.workCost,
 
             soundOnComplete: SOUNDS_ON_COMPLETE[this.type],

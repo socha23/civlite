@@ -2,6 +2,7 @@ import { ResourceType } from "./resources"
 import { assignResources, Amount, pops, resources, ResourceAmount, WorkAmount, work } from "./amount"
 import { WorkType } from "./work"
 import { SEASON_DURATION } from "./calendarModel"
+import { GameModel } from "./gameModel"
 
 export enum PopType {
   Idler = "Idler", 
@@ -18,7 +19,7 @@ const DEFAULT_POP_DEFINITION = {
   timeCost: 5,
   foodConsumption: 1,
   workCost: [] as WorkAmount[],
-  buyCost: [
+  buyCost: (model: GameModel) => [
     pops(PopType.Idler, 1),
   ] as Amount[],
   production: [] as ResourceAmount[],
@@ -39,7 +40,11 @@ type PopDefinition = typeof DEFAULT_POP_DEFINITION
 const PopTypeDefinitions = {
   [PopType.Idler]: {
     foodConsumption: 1,
-    buyCost: [resources(ResourceType.Food, 2)],
+    buyCost: (m: GameModel) => {
+      const FOOD_PER_EXISTING_POP = 5
+      const existingPops = m.population.total
+      return [resources(ResourceType.Food, existingPops * FOOD_PER_EXISTING_POP)]
+    },
     timeCost: 3,
     work: [
       work(WorkType.Gathering, 1),
@@ -48,7 +53,7 @@ const PopTypeDefinitions = {
   [PopType.Hunter]: {
     timeCost: 3,
     foodConsumption: 1,
-    buyCost: [
+    buyCost: () => [
       pops(PopType.Idler, 1),
     ],
     work: [
@@ -58,7 +63,7 @@ const PopTypeDefinitions = {
   [PopType.Laborer]: {
     timeCost: 0,
     foodConsumption: 2,
-    buyCost: [
+    buyCost: () => [
       pops(PopType.Idler, 1),
       resources(ResourceType.Food, 5),
     ],
@@ -72,7 +77,7 @@ const PopTypeDefinitions = {
     workCost: [
       work(WorkType.Labor, 3)
     ],
-    buyCost: [
+    buyCost: () => [
       pops(PopType.Idler, 1),
       assignResources(ResourceType.Herds, 1),
       assignResources(ResourceType.Grassland, 1),
@@ -87,7 +92,7 @@ const PopTypeDefinitions = {
     workCost: [
       work(WorkType.Labor, 3)
     ],
-    buyCost: [
+    buyCost: () => [
       pops(PopType.Idler, 1),
       assignResources(ResourceType.Grassland, 1),
     ],

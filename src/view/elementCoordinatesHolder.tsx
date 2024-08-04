@@ -37,11 +37,9 @@ export function getCoords(id: string): Coords | undefined {
 
 export const CoordsCatcher = (p: PropsWithChildren<{id: string}>) => {
   const ref = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    if (ref.current) {
-      registerCoords(p.id, ref.current.getBoundingClientRect())
-    }  
-  })
+  if (ref.current) {
+    registerCoords(p.id, ref.current.getBoundingClientRect())
+  }  
   return <div ref={ref}>{p.children}</div>
 }
 

@@ -2,10 +2,13 @@ import { ResourceType,  } from "./resources"
 import { Action, action } from "./action"
 import { sum } from './utils'
 import { popTypeDefinition, PopType } from "./pops"
-import { Amount, ItemType, ResourceAmount, WorkAmount, isPopAmount, isPopType, isResourceAmount, multiply, resources, work } from "./amount"
+import { Amount, ItemType, ResourceAmount, WorkAmount, isPopAmount, isPopType, isResourceAmount, multiply, pops, resources, work } from "./amount"
 import { Assignable } from "./assignable"
 import { WorkType } from "./work"
 import { isWorkNeeded } from "./actionsModel"
+import { SoundType } from "../view/sounds"
+import { spawnEffectAwards } from "../view/effects"
+import { coordsIdPopCount } from "../view/elementCoordinatesHolder"
 
 export class PopModel {
 
@@ -23,11 +26,12 @@ export class PopModel {
       initialCost: this.definition.buyCost,
       workCost: this.definition.workCost,
       timeCost: this.definition.timeCost,
-      onComplete: () => {this.add(1)}
+      expectedRewards: [pops(type, 1)],
+      soundOnComplete: SoundType.NewPop
     })
     this.sellAction = action({      
       id: `sell_${type}`,
-      expectedRewards: this.singlePopSellValue,
+      expectedRewards: [],
       action: () => {this.decCount(1)},
       disabled: () => this.decCountDisabled(1)
     })
@@ -41,11 +45,6 @@ export class PopModel {
 
   get definition() {
     return popTypeDefinition(this.type)
-  }
-
-  get singlePopSellValue(): Amount[] {
-    return this.definition.buyCost.filter(
-      a =>isPopAmount(a) || (isResourceAmount(a) && a.assignment))
   }
 
   get singlePopProduction(): ResourceAmount[] {

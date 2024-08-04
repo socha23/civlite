@@ -53,8 +53,8 @@ export const ManualCollectionBox = (p: ManualCollectionProps) =>
       }}> 
       {
         p.research && <ActionRow3 displayRewards={true} {...p.research}>
-          {!p.researchNeeded && <div style={{color: Colors.Warning}}>
-              {ManualResourceGatheringLabels.NoInsightNeeded}
+          {<div style={{color: Colors.Warning, height: 12,}}>
+              {!p.researchNeeded && ManualResourceGatheringLabels.NoInsightNeeded}
             </div>}
         </ActionRow3>
       }

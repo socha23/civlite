@@ -68,7 +68,7 @@ export class GatheringModel {
                 
                 const uncapped =  self.collectedWorkAcc.collected(WorkType.Gathering) / GATHERING_WORK_FOR_FOOD
                 const capped = Math.min(uncapped, this.forestCap)
-                const multiplied = Math.floor(capped * this.seasonalMultiplier)
+                const multiplied = Math.ceil(capped * this.seasonalMultiplier)
                 
                 const collected = multiplied
                 self.actualRewards = [resources(ResourceType.Food, collected)]
@@ -117,7 +117,7 @@ export class GatheringModel {
     get totalExpectedFood() {
         const uncapped =  this.expectedUncapped
         const capped = Math.min(uncapped, this.forestCap)
-        const multiplied = Math.floor(capped * this.seasonalMultiplier)
+        const multiplied = Math.ceil(capped * this.seasonalMultiplier)
         return multiplied
     }
 
