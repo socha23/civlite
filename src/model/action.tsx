@@ -1,9 +1,9 @@
 import { Amount, AmountsAccumulator, ExpectedAmount, SingleAmountAccumulator, WorkAmount, isAmount, rollActualAmount } from "./amount"
 import { WorkType } from "./work"
 import { exclusiveActionsInProgress, registerInProgressAction, unregisterInProgressAction } from "./actionsModel"
-import { spawnEffectAwards, spawnEffectCost } from "../view/effects"
+import { spawnEffectCost } from "../view/effects"
 import { GameModel } from "./gameModel"
-import { playSound, SoundType } from "../view/sounds"
+import { SoundType } from "../view/sounds"
 
 
 type ActionRewards = (Amount | ExpectedAmount)[]
@@ -170,16 +170,10 @@ export abstract class Action {
         this.requiredWorkAcc.reset()
         this.collectedWorkAcc.reset()
 
-        if (this.actualRewards.length > 0) {
-            spawnEffectAwards(this.id, this.actualRewards)
-            model.onProduce(this.actualRewards)
-        }
-        if (this.soundOnComplete) {
-            playSound(this.soundOnComplete)
-        }
+        model.onActionComplete(this)
+
         this.state = ActionState.Ready
         this.expectedRewardsAtStart = undefined
-
     }
 
     disabled(model: GameModel): any {

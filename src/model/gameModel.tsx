@@ -1,4 +1,4 @@
-import { GameModelInterface } from "./action"
+import { Action, GameModelInterface } from "./action"
 import { Amount } from "./amount"
 import { ResourceType } from "./resources"
 import { PopulationModel } from "./popModel"
@@ -20,6 +20,7 @@ import { resetProgress } from "./progress"
 import { CheatsModel } from "./cheatsModel"
 import { STARTING_UPGRADES } from "./upgrade"
 import { AudioModel } from "./audioModel"
+import { spawnEffectAwards } from "../view/effects"
 
 export class GameModel implements GameModelInterface {
 
@@ -60,6 +61,15 @@ export class GameModel implements GameModelInterface {
     this.population.onConsume(costs)
   }
 
+  onActionComplete(action: Action) {
+    this.audio.onActionComplete(action)
+    if (action.actualRewards) {
+      spawnEffectAwards(action.id, action.actualRewards)
+      this.onProduce(action.actualRewards)
+
+    }
+  }
+
   onProduce(value: Amount[]) {
     this.work.add(value)
     this.resources.add(value)
@@ -81,6 +91,8 @@ export class GameModel implements GameModelInterface {
     tickInProgressActions(this, deltaS)
 
     this.checkGameLostCondition()
+
+    this.audio.onTick(deltaS)
   }
 
   checkGameLostCondition() {

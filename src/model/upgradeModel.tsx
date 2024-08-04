@@ -1,7 +1,7 @@
 import { Action, action } from "./action"
 import { UpgradeDefinition, UpgradeDefinitions, UpgradeType } from "./upgrade"
 import { GameModel } from "./gameModel"
-import { playSound, SoundType } from "../view/sounds"
+import { SoundType } from "../view/sounds"
 
 
 export class UpgradeNode {
@@ -23,6 +23,8 @@ export class UpgradeNode {
             initialCost: definition.initialCost,
             workCost: definition.workCost,
 
+            soundOnComplete: SoundType.ResearchComplete,
+
             onComplete: (self, model) => {
                 this.complete()
             },
@@ -39,7 +41,6 @@ export class UpgradeNode {
         if (this.definition.onComplete) {
             this.definition.onComplete(this.model)
         }
-        this.model.audio.onUpgradeComplete(this)
         this.model.log.info(this.definition.title + " discovered")
     }
 

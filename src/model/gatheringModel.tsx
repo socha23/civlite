@@ -10,6 +10,7 @@ import { GameModel } from "./gameModel"
 import { WorkType } from "./work"
 import { CalendarModel } from "./calendarModel"
 import { Season } from "./calendarConsts"
+import { SoundType } from "../view/sounds"
 
 const GATHERING_DURATION = 5
 const GATHERING_WORK_FOR_FOOD = 5
@@ -52,6 +53,7 @@ export class GatheringModel {
             exclusivityGroup: "gathering",
             timeCost: GATHERING_DURATION,
             collectedWork: [WorkType.Gathering],
+            soundOnComplete: SoundType.CollectFood,
             expectedRewards: () => {
                 return [{
                     type: ResourceType.Food,
