@@ -1,16 +1,12 @@
 import React, { ReactNode } from "react"
 import { Amount } from "../model/amount"
 import { addTickListener } from "../model/timer"
-import { gaussRandom } from "../model/utils"
 import { Colors, FontSizes } from "./icons"
 import { getCoords } from "./coordsCatcher"
 import { Amounts, AmountWithColorProps } from "./amount"
-import { SoundDing } from "./sounds"
+import { Animation } from "./animations"
 
 type EffectValue = AmountWithColorProps[] | string | ReactNode
-
-let autoinc = 0
-
 type FrameParams = {
     x?: number
     y?: number
@@ -18,95 +14,19 @@ type FrameParams = {
     fontSize?: number
 }
 
-type AnimationFrame = {
-    time: number
-    params: FrameParams
-}
-
-class Animation {
-    duration: number
-    lifetime: number = 0
-
-    frames: AnimationFrame[]
-
-    constructor(p: {
-        from: FrameParams,
-        to: FrameParams, 
-        duration?: number,
-        additionalFrames?: AnimationFrame[]
-        }) {
-        this.frames = [
-            {
-                time: 0,
-                params: p.from,
-            },
-            ...(p.additionalFrames || []),
-            {
-                time: 1,
-                params: p.to,
-            }
-        ]        
-        this.duration = p.duration || 3
-    }
-
-    onTick(deltaS: number) {
-        this.lifetime += deltaS
-    }
-
-    get complete() {
-        return this.lifetime > this.duration
-    }
-
-    value(id: keyof (FrameParams)): number {
-        const completion = Math.min(1, this.lifetime / this.duration)
-        let lastValue = 0
-        let lastTime = 0
-        for (let i = 0; i < this.frames.length; i++) {
-            const f = this.frames[i]
-            if (f.params[id] !== undefined) {
-                if (f.time < completion) {
-                    lastTime = f.time
-                    lastValue = f.params[id]!!
-                } else {
-                    const timeSinceLast = completion - lastTime
-                    const totalTimePerChange = f.time - lastTime
-                    const currentValue = f.params[id]!!
-                    return lastValue + (currentValue - lastValue) * (timeSinceLast / totalTimePerChange)
-                }
-            }
-        }
-        return lastValue
-    }
-
-    get x() {
-        return this.value("x")
-    }
-
-    get y() {
-        return this.value("y")
-    }
-
-    get opacity() {
-        return this.value("opacity")
-    }
-
-    get fontSize() {
-        return this.value("fontSize")
-    }
-}
-
+let autoinc = 0
 
 class AnimatedEffect {
     id: string
     coordsId: string
-    animation: Animation
+    animation: Animation<FrameParams>
     value: EffectValue
 
     constructor(p: {
         id: string, 
         coordsId: string,
         value: EffectValue, 
-        animation: Animation,
+        animation: Animation<FrameParams>,
     }) {
         this.id = p.id
         this.coordsId = p.coordsId
@@ -119,10 +39,10 @@ class AnimatedEffect {
             id: this.id,
             coordsId: this.coordsId,
             value: this.value,
-            x: this.animation.x,
-            y: this.animation.y,
-            opacity: this.animation.opacity,
-            fontSize: this.animation.fontSize,
+            x: this.animation.value("x"),
+            y: this.animation.value("y"),
+            opacity: this.animation.value("opacity"),
+            fontSize: this.animation.value("fontSize"),
         }
     }
 
@@ -147,14 +67,8 @@ export function currentEffects(): AnimatedEffect[] {
 
 addTickListener({
     onTick(deltaS: number) {
-        const newEffects: AnimatedEffect[] = []
-        effects.forEach(e => {
-            e.onTick(deltaS)
-            if (!e.shouldBeDespawned()) {
-                newEffects.push(e)
-            }
-        })
-        effects = newEffects
+        effects.forEach(e => {e.onTick(deltaS)})
+        effects = effects.filter(e => !e.animation.complete)
     }
 })
 
@@ -264,22 +178,20 @@ export function spawnEffect(id: string, value: EffectValue, p: {
         y: Math.sin(dir) * distanceFrom,
         opacity: 1,
         fontSize: 20,
+        time: 0,
     }
     const to = {
         x: Math.cos(dir) * distance,
         y: Math.sin(dir) * distance,
         fontSize: 30,
         opacity: 0,
+        time: duration,
     }
     registerEffect(new AnimatedEffect({
         id: id + autoinc++,
         coordsId: id,
         value,
-        animation: new Animation({
-            from,
-            to,
-            duration,
-        }),
+        animation: new Animation(id, [from, to]),
     }))
 }
 

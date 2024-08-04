@@ -2,8 +2,13 @@ import { Action, action } from "./action"
 import { UpgradeDefinition, UpgradeDefinitions, UpgradeType } from "./upgrade"
 import { GameModel } from "./gameModel"
 import { SoundType } from "../view/sounds"
+import { spawnActionCompleted, spawnRollUp } from "../view/actionEffects"
 
-
+const DECAY = {
+    [UpgradeType.Init]: 0,
+    [UpgradeType.Research]: 0.75,
+    [UpgradeType.Pack]: 2.75,
+}
 
 const SOUNDS_ON_COMPLETE = {
     [UpgradeType.Init]: SoundType.ResearchComplete,
@@ -51,6 +56,18 @@ export class UpgradeNode {
             this.definition.onComplete(this.model)
         }
         this.model.log.info(this.definition.title + " discovered")
+    
+        if (this.type === UpgradeType.Pack) {
+            spawnActionCompleted(this.action.id, 2.5, 16)
+            spawnRollUp(this.action.id, 0.25, 2.5)
+        }
+
+        if (this.type === UpgradeType.Research) {
+            spawnActionCompleted(this.action.id, 0.5, 1)
+            spawnRollUp(this.action.id, 0.25, 0.5)
+        }
+
+    
     }
 
     get type(): UpgradeType {
@@ -118,10 +135,10 @@ export class UpgradeModel {
         return this.allNodes.get(id)!!
     }
 
-    visibleUpgrades(type: UpgradeType, timeSinceCompleted: number): UpgradeNode[] {
+    visibleUpgrades(types: UpgradeType[]): UpgradeNode[] {
         return this.availableUpgrades.filter(n => 
-            (n.timeSinceCompleted < timeSinceCompleted)
-            && n.type === type)
+            (n.timeSinceCompleted <= DECAY[n.type])
+            && types.includes(n.type))
     }
 
     onTick(deltaS: number) {

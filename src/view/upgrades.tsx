@@ -8,8 +8,6 @@ import { UpgradeType, } from '../model/upgrade';
 import { UpgradeNode } from '../model/upgradeModel';
 import { CoordsCatcher, coordsIdActionWrapper } from './coordsCatcher';
 
-export const STAYS_AFTER_COMPLETION_DURATION = 3
-
 export type UpgradeProps = {
   action: ActionProps
   completed: boolean
@@ -25,10 +23,7 @@ export type UpgradeSectionProps = {
 
 export function upgradeSectionProps(model: GameModel, types: UpgradeType[]): UpgradeSectionProps {
 
-  const upgrades: UpgradeNode[] = []
-  types.forEach(t => {
-    upgrades.push(...model.upgrades.visibleUpgrades(t, STAYS_AFTER_COMPLETION_DURATION))
-  })
+  const upgrades = model.upgrades.visibleUpgrades(types)
 
 
   return {

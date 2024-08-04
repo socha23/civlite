@@ -93,7 +93,6 @@ const PopHeader = (p: PopBoxProps) => <div style={{
       {isAssignable(p.popType) ? p.unassignedCount + " / " + p.count : p.count}
     </CoordsCatcher>
   </div>
-  <SmallButtonAction {...p.buyAction} buttonLabel={<i className={Icons.Plus}/>}/>
   <SmallButtonAction {...p.sellAction} buttonLabel={<i className={Icons.Minus}/>}/>
   <div style={{
     fontSize: FontSizes.small

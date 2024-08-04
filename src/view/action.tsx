@@ -8,6 +8,7 @@ import { ActionCommonLabels } from './labels';
 import { CoordsCatcher, coordsIdActionWrapper } from './coordsCatcher';
 import { WithTooltip } from './tooltips';
 import { playSound, SoundType } from './sounds';
+import { FlashingBorderEffect, getEffects, RollupEffect } from './actionEffects';
 
 interface ActionParms {
   title?: string,
@@ -70,7 +71,7 @@ export const BUTTON_STYLE_ENABLED = {
   color: "black",
   borderColor: "#666",
   backgroundColor: "#eee",
-  cursor: "pointer",
+  cursor: "default",
 }
 
 const BUTTON_STYLE_DISABLED = {
@@ -296,17 +297,38 @@ const InnerActionRow3 = (p: PropsWithChildren<ActionRowParams>) => {
   </div>
 }
 
-export const ActionRow3 = (p: PropsWithChildren<ActionRowParams>) => <div style={{
+export const ActionRow3 = (p: PropsWithChildren<ActionRowParams>) => { 
+  const wrapperStyle: CSSProperties = {
+    boxShadow: "",
+    borderColor: p.state === ActionState.InProgress ? Colors.active : "transparent",
     borderStyle: "solid",
     borderWidth: 2,
-    borderColor: p.state === ActionState.InProgress ? Colors.active : "transparent",
     borderRadius: p.inTooltip ? 0 : 6,
     fontSize: FontSizes.small,
-  }}>
+    overflow: "clip",
+  }
+  const innerWrapperStyle: CSSProperties = {
+    boxShadow: "",
+  }
+
+  getEffects(p.id).forEach(effect => {
+    if (effect instanceof FlashingBorderEffect) {
+      wrapperStyle.boxShadow = `0 0 ${effect.animation.value("flashRadius")}px ${effect.flashColor}`
+      wrapperStyle.borderColor = effect.flashColor
+      innerWrapperStyle.boxShadow = `inset 0 0 ${effect.animation.value("flashRadius")}px ${effect.flashColor}`
+    }
+    if (effect instanceof RollupEffect) {
+      wrapperStyle.height = effect.animation.value("height")
+    }
+  })
+
+  return <div style={wrapperStyle}>
+    <CoordsCatcher id={coordsIdActionWrapper(p.id)}>
     <div style={{
       position: "relative",
       width: "100%",
       height: "100%",
+      ...innerWrapperStyle,
     }}>
       <div style={{
         position: "absolute",
@@ -319,14 +341,14 @@ export const ActionRow3 = (p: PropsWithChildren<ActionRowParams>) => <div style=
         position: "relative",
         zIndex: 2,
         padding: 2,
-      }}>
-        <CoordsCatcher id={coordsIdActionWrapper(p.id)}>
-          <InnerActionRow3 showButton={!p.inTooltip} {...p}/>
-        </CoordsCatcher>
+      }}>        
+          <InnerActionRow3 showButton={!p.inTooltip} {...p}/>        
       </div>
-      
     </div>
+    </CoordsCatcher>  
+    
   </div>
+}
 
 export const SmallButtonAction = (p: ActionProps) => <WithTooltip tooltip={
   <ActionRow3 {...p} inTooltip={true} displayRewards={true}/>
