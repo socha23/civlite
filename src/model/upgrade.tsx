@@ -12,7 +12,8 @@ function insight(count: number): WorkAmount {
 
 export enum UpgradeType {
     Init = "Init",
-    Research = "Research"
+    Research = "Research",
+    Pack = "Pack",
 }
 
 export const STARTING_UPGRADES = ["enable_insight"]
@@ -20,6 +21,7 @@ export const STARTING_UPGRADES = ["enable_insight"]
 export const UpgradeDefinitions: UpgradeDefinition[] = [
     {
         id: "enable_insight",
+        type: UpgradeType.Init,
         title: "The New Beginning",
         buttonTitle: "Think",
         description: "I think, therefore...",
@@ -48,6 +50,7 @@ export const UpgradeDefinitions: UpgradeDefinition[] = [
     {
         id: "research_pack_primitive",
         title: "Basic Tribe Pack",
+        type: UpgradeType.Pack,
         flavorText: "I am not alone",
         description: "Enables basic tribal upgrades",
         initialCost: [resources(ResourceType.Food, 3)],
@@ -90,7 +93,7 @@ export const UpgradeDefinitions: UpgradeDefinition[] = [
         flavorText: "What if I ate this?",
         workCost: [insight(5)],
         onComplete: (model) => {
-            model.manualCollection.collectFood.timeAcc.required = 2
+            model.manualCollection.collectFood.timeAcc.required = 0.5
         }
     },
     {

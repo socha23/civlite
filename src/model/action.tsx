@@ -1,8 +1,9 @@
 import { Amount, AmountsAccumulator, ExpectedAmount, SingleAmountAccumulator, WorkAmount, isAmount, rollActualAmount } from "./amount"
 import { WorkType } from "./work"
 import { exclusiveActionsInProgress, registerInProgressAction, unregisterInProgressAction } from "./actionsModel"
-import { spawnEffectAwards } from "../view/effects"
+import { spawnEffectAwards, spawnEffectCost } from "../view/effects"
 import { GameModel } from "./gameModel"
+import { playSound, SoundType } from "../view/sounds"
 
 
 type ActionRewards = (Amount | ExpectedAmount)[]
@@ -18,6 +19,8 @@ export type ActionParams = {
     timeCost?: number
 
     expectedRewards?: PossiblyLazyActionRewards
+
+    soundOnComplete?: SoundType
 }
 
 export interface GameModelInterface {
@@ -61,6 +64,7 @@ export abstract class Action {
     actualRewards: Amount[] = []
     state: ActionState = ActionState.Ready
     exclusivityGroup?: string
+    soundOnComplete?: SoundType
 
     constructor({
         id, 
@@ -70,6 +74,7 @@ export abstract class Action {
         expectedRewards = [], 
         timeCost, 
         exclusivityGroup,
+        soundOnComplete
     
     }: ActionParams) {
         this.id = id
@@ -79,6 +84,7 @@ export abstract class Action {
         this.timeAcc = new SingleAmountAccumulator(timeCost || 0)
         this.requiredWorkAcc = new AmountsAccumulator(workCost)
         this.collectedWorkAcc = new AmountsAccumulator(collectedWork)
+        this.soundOnComplete = soundOnComplete
     }
 
     abstract _onAction(): void
@@ -145,6 +151,7 @@ export abstract class Action {
     onStart(model: GameModel) {
         this.expectedRewardsAtStart = unlazyRewards(this.expectedRewards, model)
         if (this.initialCost.length > 0) {
+            spawnEffectCost(this.id, this.initialCost)
             model.onConsume(this.initialCost)
         }
         this.requiredWorkAcc.reset()
@@ -166,6 +173,9 @@ export abstract class Action {
         if (this.actualRewards.length > 0) {
             spawnEffectAwards(this.id, this.actualRewards)
             model.onProduce(this.actualRewards)
+        }
+        if (this.soundOnComplete) {
+            playSound(this.soundOnComplete)
         }
         this.state = ActionState.Ready
         this.expectedRewardsAtStart = undefined

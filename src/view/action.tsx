@@ -7,7 +7,7 @@ import { AmountWithColorProps, Amounts } from './amount';
 import { ActionCommonLabels } from './labels';
 import { CoordsCatcher } from './elementCoordinatesHolder';
 import { WithTooltip } from './tooltips';
-import { soundClick } from './sounds';
+import { playSound, SoundType } from './sounds';
 
 interface ActionParms {
   title?: string,
@@ -169,7 +169,7 @@ const ActionButton3Inner = (a: PropsWithChildren<ActionProps & {style?: CSSPrope
       if (a.disabled) {
         console.log(a.disabled)
       } else if (enabled) {
-        soundClick()
+        playSound(SoundType.Click)
         a.action()
       }
     }}>
@@ -211,9 +211,13 @@ type ActionRowParams = ActionProps & {
 const InnerActionRow3 = (p: PropsWithChildren<ActionRowParams>) => {
   const costs = p.costs || []
   const work = p.workCost || []
+  const rewards = p.rewards || []
 
-  const totalCostAmounts = [...costs, ...work] as AmountWithColorProps[]
-  const totalRewardAmounts = p.rewards ? p.rewards : []
+  const displayCosts = costs.length > 0 && (p.displayCost === undefined || p.displayCost)
+  const displayWork = work.length > 0 && (p.displayCost === undefined || p.displayCost)
+  const displayRewards = rewards.length > 0 && (p.displayRewards === undefined || p.displayRewards)
+
+  const displayAmountsRow = displayCosts || displayRewards || displayWork || p.timeCost
 
   return <div style={{
     display: "flex",
@@ -231,14 +235,15 @@ const InnerActionRow3 = (p: PropsWithChildren<ActionRowParams>) => {
       }}>
         <ActionRowTitle {...p}/>
         {
-          (totalCostAmounts.length > 0 || totalRewardAmounts.length > 0) &&
+          (displayAmountsRow) &&
           <div style={{
             display: "flex",
             gap: 8,
           }}>
             {p.timeCost && <ActionRowsAmountsRow items={[{count: p.timeCost, postfix: ActionCommonLabels.Second}]} label={ActionCommonLabels.Time}/>}
-            {(p.displayCost === undefined || p.displayCost) && totalCostAmounts.length > 0 && <ActionRowsAmountsRow items={totalCostAmounts} label={ActionCommonLabels.Cost}/>}
-            {p.rewards && p.rewards.length > 0 && (p.displayRewards === undefined || p.displayRewards) && <ActionRowsAmountsRow items={p.rewards} label={ActionCommonLabels.Rewards}/>}
+            {displayCosts && <ActionRowsAmountsRow items={costs} label={ActionCommonLabels.Cost}/>}
+            {displayWork && <ActionRowsAmountsRow items={work} label={ActionCommonLabels.Work}/>}
+            {displayRewards && <ActionRowsAmountsRow items={rewards} label={ActionCommonLabels.Rewards}/>}
           </div>
         }
       </div>

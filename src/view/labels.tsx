@@ -3,6 +3,7 @@ import { PopType } from '../model/pops';
 import { WorkType } from '../model/work';
 import { HuntType } from '../model/huntingModel';
 import { HungerModel, TURNS_PER_FEEDING } from '../model/hungerModel';
+import { UpgradeType } from '../model/upgrade';
 
 export function popLabelSingular(t: PopType): string {
     if (t === PopType.Idler) {
@@ -129,6 +130,7 @@ export const PopBoxLabels = {
 }
 
 export const ActionCommonLabels = {
+    Work: "Required:",
     Cost: "Cost:",
     Rewards: "Rewards:",
     Time: "Time:",
@@ -169,6 +171,17 @@ export const FoodLabels = {
     HungerWarningDesc: "Some people will not have enough to eat at the end of the season",
 }
 
-export const ResearchLabels = {
-    ButtonTitle: "Research"
+export const UpgradeLabels = {
+    [UpgradeType.Init]: {
+        TitlePrefix: "",
+        ButtonTitle: "Research",
+    },
+    [UpgradeType.Research]: {
+        TitlePrefix: "Research: ",
+        ButtonTitle: "Research",
+    },
+    [UpgradeType.Pack]: {
+        TitlePrefix: "Buy: ",
+        ButtonTitle: "Open pack",
+    },
 }

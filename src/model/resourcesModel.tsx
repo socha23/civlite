@@ -33,9 +33,6 @@ class ResourceModel {
 
     sub(amount: number) {
         this.count = Math.max(0, this.count - amount)
-        if (amount > 0) {
-            spawnEffectCost(coordsIdResourceStock(this.type), [resources(this.type, -amount)])
-        }
     }
 
     assign(amount: number) {

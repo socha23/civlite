@@ -1,10 +1,20 @@
+import { spawnEffectAwards } from "../view/effects"
 import { action } from "./action"
+import { resources } from "./amount"
 import { GameModel } from "./gameModel"
+import { ResourceType } from "./resources"
 
 export class CheatsModel {
     model: GameModel
 
     applyCheatsActions = [
+        action({
+            id: "spawnEffect",
+            onComplete: () => {
+                spawnEffectAwards("spawnEffect", [resources(ResourceType.Food, Math.ceil(5 * Math.random()))])
+            }
+        }),
+
         action({
             id: "basicResearch",
             onComplete: () => {

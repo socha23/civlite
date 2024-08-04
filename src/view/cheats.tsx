@@ -22,7 +22,7 @@ export const CheatsPanel = (p: CheatsProps) => <div style={{
   padding: 4,
   fontSize: FontSizes.normal,
 }}>
-  {p.cheatActions.map(a => <ActionButton3 {...a} style={{
+  {p.cheatActions.map(a => <ActionButton3 key={a.id} {...a} style={{
     padding: 4,
     }}/>)}
 </div>

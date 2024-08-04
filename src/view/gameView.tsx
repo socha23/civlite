@@ -65,7 +65,7 @@ export function gameViewProps(model: GameModel, onReset: () => void): GameViewPr
     calendar: calendarProps(model),
     hunting: huntingProps(model),
     gathering: gatheringProps(model),
-    research: upgradeSectionProps(model, UpgradeType.Research),
+    research: upgradeSectionProps(model, [UpgradeType.Init, UpgradeType.Research, UpgradeType.Pack]),
 
     paused: model.paused,
     setPaused: (p) => { model.paused = p },
@@ -132,8 +132,13 @@ const InnerGameView = (p: GameViewProps) =>
           {p.progress.Inventory && <InventoryBox {...p.summary} />}
           {p.progress.Calendar && <CalendarBox {...p.calendar} />}
           {p.progress.ManualCollection && <ManualCollectionBox {...p.resourceGathering} />}
-          {p.research.availableResearchActions.length > 0 && <UpgradeSection {...p.research} />}
           </Column>
+          {
+            p.research.availableResearchActions.length > 0 && <Column>
+              <UpgradeSection {...p.research} />
+            </Column>
+          }
+
         <Column>
           {p.progress.PopEnabled[PopType.Idler] &&
             <PopBox {...popProps(p, PopType.Idler)}>

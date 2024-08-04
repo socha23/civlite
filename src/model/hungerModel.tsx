@@ -2,6 +2,7 @@ import { spawnEffectCost } from "../view/effects"
 import { coordsIdPopCount } from "../view/elementCoordinatesHolder"
 import { HungerMessages } from "../view/logMessages"
 import { PopAmount, pops } from "./amount"
+import { AudioModel } from "./audioModel"
 import { Log } from "./log"
 import { PopulationModel } from "./popModel"
 import { PopType } from "./pops"
@@ -20,16 +21,18 @@ function feedOrder(t: PopType): number {
     }
 }
 const HUNGER_DEATH_CHANCE = 0.5
-export const TURNS_PER_FEEDING = 10
+export const TURNS_PER_FEEDING = 4
 
 export class HungerModel {
     log: Log
+    audio: AudioModel
     population: PopulationModel
     resources: ResourcesModel
     turnsSinceFeeding = 0
 
-    constructor(population: PopulationModel, resources: ResourcesModel, log: Log) {
+    constructor(population: PopulationModel, resources: ResourcesModel, log: Log, audio: AudioModel) {
         this.log = log
+        this.audio = audio
         this.population = population
         this.resources = resources
     
@@ -94,6 +97,9 @@ export class HungerModel {
 
     feedPops() {
         const results = this.simulateConsumption()
+        if (results.foodConsumed > 0) {
+            this.audio.onFeed()
+        }
         this.resources.resource(ResourceType.Food).sub(results.foodConsumed)
         results.hungerDeaths.forEach(d => {
             let deaths = 0

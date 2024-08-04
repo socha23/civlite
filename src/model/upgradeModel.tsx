@@ -1,8 +1,10 @@
 import { Action, action } from "./action"
 import { UpgradeDefinition, UpgradeDefinitions, UpgradeType } from "./upgrade"
 import { GameModel } from "./gameModel"
+import { playSound, SoundType } from "../view/sounds"
 
-class UpgradeNode {
+
+export class UpgradeNode {
     model: GameModel
     definition: UpgradeDefinition
     completed: boolean = false
@@ -37,6 +39,7 @@ class UpgradeNode {
         if (this.definition.onComplete) {
             this.definition.onComplete(this.model)
         }
+        this.model.audio.onUpgradeComplete(this)
         this.model.log.info(this.definition.title + " discovered")
     }
 

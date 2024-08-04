@@ -19,6 +19,7 @@ import { UpgradeModel } from "./upgradeModel"
 import { resetProgress } from "./progress"
 import { CheatsModel } from "./cheatsModel"
 import { STARTING_UPGRADES } from "./upgrade"
+import { AudioModel } from "./audioModel"
 
 export class GameModel implements GameModelInterface {
 
@@ -26,6 +27,7 @@ export class GameModel implements GameModelInterface {
 
   civName: string = "The Tribe"
   log = new Log()
+  audio = new AudioModel(this)
   calendar = new CalendarModel(this)
   resources = new ResourcesModel()
   population = new PopulationModel()
@@ -34,7 +36,7 @@ export class GameModel implements GameModelInterface {
   military = new MilitaryModel(this.population)
   civilizations = new CivilizationsModel()
   wars = new WarModel(this)
-  hunger = new HungerModel(this.population, this.resources, this.log)
+  hunger = new HungerModel(this.population, this.resources, this.log, this.audio)
   hunting = new HuntingModel(this.population, this.resources, this.log)
   gathering = new GatheringModel(this.population, this.resources, this.calendar, this.log)
   upgrades = new UpgradeModel(this)
@@ -88,9 +90,11 @@ export class GameModel implements GameModelInterface {
   }
 
   onEndOfSeason() {
+    this.audio.onEndOfSeason()
   }
 
   onEndOfTurn() {
+    this.audio.onEndOfTurn()
     this.hunger.onEndOfTurn()
     this.hunting.multiplyAnimals()
   }

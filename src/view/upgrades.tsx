@@ -2,25 +2,32 @@ import React from 'react';
 import { Box } from './box'
 import { GameModel } from '../model/gameModel'
 import { ActionProps, ActionRow3, propsForAction } from './action';
-import { ResearchLabels } from './labels';
+import { UpgradeLabels } from './labels';
 import { ActionState } from '../model/action';
-import { UpgradeType } from '../model/upgrade';
+import { UpgradeType, } from '../model/upgrade';
+import { UpgradeNode } from '../model/upgradeModel';
 
 export type UpgradeSectionProps = {
   availableResearchActions: ActionProps[]
 }
 
-export function upgradeSectionProps(model: GameModel, type: UpgradeType): UpgradeSectionProps {
+export function upgradeSectionProps(model: GameModel, types: UpgradeType[]): UpgradeSectionProps {
+
+  const upgrades: UpgradeNode[] = []
+  types.forEach(t => {
+    upgrades.push(...model.upgrades.uncompletedAvailableUpgrades(t))
+  })
+
 
   return {
-    availableResearchActions: model.upgrades.uncompletedAvailableUpgrades(type).map(node => propsForAction(
+    availableResearchActions: upgrades.map(node => propsForAction(
       model, node.action, {
-        title: node.title,
+        title: UpgradeLabels[node.type].TitlePrefix + node.title,
         description: <div style={{display: "flex", flexDirection: "column", gap: 4}}>
           <div>{node.description}</div>
           <div style={{fontStyle: "italic"}}>{node.flavorText}</div>
         </div>,
-        buttonLabel: node.definition.buttonTitle || ResearchLabels.ButtonTitle
+        buttonLabel: node.definition.buttonTitle || UpgradeLabels[node.type].ButtonTitle
       }
     ))
   }

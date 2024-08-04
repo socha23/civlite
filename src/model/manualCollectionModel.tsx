@@ -1,3 +1,4 @@
+import { SoundType } from "../view/sounds";
 import { action, Action } from "./action";
 import { isWorkNeeded } from "./actionsModel";
 import { resources, work } from "./amount";
@@ -14,8 +15,9 @@ export class ManualCollectionModel {
         this.collectFood = action({
             id: "collect_food",
             expectedRewards: [resources(ResourceType.Food, 1)],
-            timeCost: 3,
-            exclusivityGroup: "manualCollection"
+            timeCost: 1,
+            exclusivityGroup: "manualCollection",
+            soundOnComplete: SoundType.CollectFood,
         })
         this.collectInsight = action({
             id: "collect_insight",
@@ -24,7 +26,8 @@ export class ManualCollectionModel {
             exclusivityGroup: "manualCollection",
             disabled: (model) => {
                 return !isWorkNeeded(WorkType.Insight)
-            }
+            },
+            soundOnComplete: SoundType.CollectInsight,
         })
         this.collectLabor = action({
             id: "collect_labor",
