@@ -12,8 +12,8 @@ import { CalendarModel } from "./calendarModel"
 import { Season } from "./calendarConsts"
 import { SoundType } from "../view/sounds"
 
-const GATHERING_DURATION = 5
-const GATHERING_WORK_FOR_FOOD = 5
+const GATHERING_DURATION = 2
+const GATHERING_WORK_FOR_FOOD = 2
 
 export type GatheringActionStats = {
     gatherersCount: number

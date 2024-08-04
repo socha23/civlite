@@ -4,6 +4,13 @@ import { GameModel } from "./gameModel"
 import { SoundType } from "../view/sounds"
 
 
+
+const SOUNDS_ON_COMPLETE = {
+    [UpgradeType.Init]: SoundType.ResearchComplete,
+    [UpgradeType.Research]: SoundType.ResearchComplete,
+    [UpgradeType.Pack]: SoundType.OpenPack,
+}
+
 export class UpgradeNode {
     model: GameModel
     definition: UpgradeDefinition
@@ -23,7 +30,7 @@ export class UpgradeNode {
             initialCost: definition.initialCost,
             workCost: definition.workCost,
 
-            soundOnComplete: SoundType.ResearchComplete,
+            soundOnComplete: SOUNDS_ON_COMPLETE[this.type],
 
             onComplete: (self, model) => {
                 this.complete()

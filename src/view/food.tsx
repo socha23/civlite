@@ -28,7 +28,7 @@ export function foodProps(model: GameModel): FoodProps {
     foodCap: food.cap || 0,
     expectedConsumption: model.hunger.foodConsumptionPerSeason,
     timeUntilHunger: model.hunger.timeUntilHunger,
-    expectedHungerDeaths: model.hunger.simulateConsumption().hungerDeaths,
+    expectedHungerDeaths: model.hunger.simulateConsumption().hunger,
   }
 }
 

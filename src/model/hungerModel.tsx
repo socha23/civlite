@@ -1,7 +1,7 @@
 import { spawnEffectCost } from "../view/effects"
 import { coordsIdPopCount } from "../view/elementCoordinatesHolder"
 import { HungerMessages } from "../view/logMessages"
-import { PopAmount, pops } from "./amount"
+import { PopAmount, pops, resources } from "./amount"
 import { AudioModel } from "./audioModel"
 import { Log } from "./log"
 import { PopulationModel } from "./popModel"
@@ -63,27 +63,32 @@ export class HungerModel {
 
     simulateConsumption(): {
         foodConsumed: number,
-        hungerDeaths: PopAmount[]
+        consumption: {type: PopType, value: number}[],
+        hunger: PopAmount[]
     } {
         const listInOrder = Object.values(PopType).sort((a, b) => feedOrder(a) - feedOrder(b))
+        const consumption: {type: PopType, value: number}[] = []
         let foodConsumed = 0
         let foodLeft = this.resources.resource(ResourceType.Food).count
-        const deaths = [] as PopAmount[]
+        const hunger = [] as PopAmount[]
         listInOrder.forEach(t => {
             const pop = this.population.pop(t)
             const peopleFed = pop.singlePopFoodConsumption > 0 
                 ? Math.min(Math.floor(foodLeft / pop.singlePopFoodConsumption), pop.count) 
                 : pop.count
-            foodConsumed += peopleFed * pop.singlePopFoodConsumption
-            foodLeft -= peopleFed * pop.singlePopFoodConsumption
+            const popConsumption = peopleFed * pop.singlePopFoodConsumption
+            consumption.push({type: t, value: popConsumption})
+            foodConsumed += popConsumption
+            foodLeft -= popConsumption
             if (peopleFed < pop.count) {
                 const hungerDeaths = pop.count - peopleFed
-                deaths.push(pops(t, hungerDeaths))
+                hunger.push(pops(t, hungerDeaths))
             }
         })
         return {
             foodConsumed: foodConsumed,
-            hungerDeaths: deaths
+            consumption: consumption,
+            hunger: hunger
         }
     }
 
@@ -101,7 +106,7 @@ export class HungerModel {
             this.audio.onFeed()
         }
         this.resources.resource(ResourceType.Food).sub(results.foodConsumed)
-        results.hungerDeaths.forEach(d => {
+        results.hunger.forEach(d => {
             let deaths = 0
             for (let i = 0; i < d.count; i++) {
                 if (Math.random() < HUNGER_DEATH_CHANCE) {
@@ -113,6 +118,9 @@ export class HungerModel {
                 this.log.info(<HungerMessages.HungerDeaths type={d.type} count={deaths}/>)
                 spawnEffectCost(coordsIdPopCount(d.type), [pops(d.type, -deaths)])    
             }
+        })
+        results.consumption.forEach(c => {
+            spawnEffectCost(coordsIdPopCount(c.type), [resources(ResourceType.Food, c.value)])
         })
     }
 

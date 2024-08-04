@@ -6,6 +6,7 @@ export enum SoundType {
   CollectFood = "CollectFood",
   CollectInsight = "CollectInsight",
   ResearchComplete = "ResearchComplete",
+  OpenPack = "OpenPack",
   FeedPops = "FeedPops",
   EndOfSeason = "EndOfSeason",
 }
@@ -49,6 +50,7 @@ const DjembeBass = new Sound("djembe_bass.wav")
 const DjembeTone = new Sound("djembe_tone.wav")
 const DjembeRoll1 = new Sound("djembe_roll1.wav")
 const AztecBass = new Sound("bass_drum_aztec1.wav")
+const CongaRoll1 = new Sound("conga_roll1.wav")
 
 
 export function playSound(type: SoundType) {
@@ -59,6 +61,7 @@ export function playSound(type: SoundType) {
     case SoundType.ResearchComplete: {return DjembeRoll1.play()} 
     case SoundType.FeedPops: {return AztecBass.play()} 
     case SoundType.FeedPops: {return AztecBass.play()}   
+    case SoundType.OpenPack: {return CongaRoll1.play()}
   }
 }
 
