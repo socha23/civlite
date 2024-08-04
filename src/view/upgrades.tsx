@@ -6,30 +6,44 @@ import { UpgradeLabels } from './labels';
 import { ActionState } from '../model/action';
 import { UpgradeType, } from '../model/upgrade';
 import { UpgradeNode } from '../model/upgradeModel';
+import { CoordsCatcher, coordsIdActionWrapper } from './coordsCatcher';
+
+export const STAYS_AFTER_COMPLETION_DURATION = 3
+
+export type UpgradeProps = {
+  action: ActionProps
+  completed: boolean
+}
+
 
 export type UpgradeSectionProps = {
-  availableResearchActions: ActionProps[]
+  upgrades: UpgradeProps[]
 }
+
+
+
 
 export function upgradeSectionProps(model: GameModel, types: UpgradeType[]): UpgradeSectionProps {
 
   const upgrades: UpgradeNode[] = []
   types.forEach(t => {
-    upgrades.push(...model.upgrades.uncompletedAvailableUpgrades(t))
+    upgrades.push(...model.upgrades.visibleUpgrades(t, STAYS_AFTER_COMPLETION_DURATION))
   })
 
 
   return {
-    availableResearchActions: upgrades.map(node => propsForAction(
-      model, node.action, {
-        title: UpgradeLabels[node.type].TitlePrefix + node.title,
-        description: <div style={{display: "flex", flexDirection: "column", gap: 4}}>
-          <div>{node.description}</div>
-          <div style={{fontStyle: "italic"}}>{node.flavorText}</div>
-        </div>,
-        buttonLabel: node.definition.buttonTitle || UpgradeLabels[node.type].ButtonTitle
-      }
-    ))
+    upgrades: upgrades.map(node => {
+      const description = <div style={{display: "flex", flexDirection: "column", gap: 4}}>
+        <div>{node.description}</div>
+        <div style={{fontStyle: "italic"}}>{node.flavorText}</div>
+      </div>
+      const title = UpgradeLabels[node.type].TitlePrefix + node.title
+      const buttonLabel = node.definition.buttonTitle || UpgradeLabels[node.type].ButtonTitle
+      
+      return {
+        action: propsForAction(model, node.action, {description, title, buttonLabel}),
+        completed: node.completed,
+      }}),
   }
 }
 
@@ -44,7 +58,11 @@ export const UpgradeSection = (p: UpgradeSectionProps) =>
       marginTop: 4,
       marginBottom: 4,
     }}> {
-      p.availableResearchActions.map(a => <ActionRow3 key={a.id} {...a} displayCost={a.state !== ActionState.InProgress }/>)
+      p.upgrades.map(a => <ActionRow3 
+        key={a.action.id} 
+        {...a.action} 
+        displayCost={a.action.state !== ActionState.InProgress }
+        />)
     }
     </div>
   </Box>

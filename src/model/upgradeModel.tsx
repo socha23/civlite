@@ -17,6 +17,8 @@ export class UpgradeNode {
     completed: boolean = false
     action: Action
 
+    timeSinceCompleted: number = 0
+
     constructor(model: GameModel, definition: UpgradeDefinition) {
         this.model = model
         this.definition = definition
@@ -84,6 +86,12 @@ export class UpgradeNode {
     get flavorText() {
         return this.definition.flavorText || ""
     }
+
+    onTick(deltaS: number) {
+        if (this.completed) {
+            this.timeSinceCompleted += deltaS
+        }
+    }
 }
 
 export class UpgradeModel {
@@ -110,7 +118,13 @@ export class UpgradeModel {
         return this.allNodes.get(id)!!
     }
 
-    uncompletedAvailableUpgrades(type: UpgradeType): UpgradeNode[] {
-        return this.availableUpgrades.filter(n => !n.completed && n.type === type)
+    visibleUpgrades(type: UpgradeType, timeSinceCompleted: number): UpgradeNode[] {
+        return this.availableUpgrades.filter(n => 
+            (n.timeSinceCompleted < timeSinceCompleted)
+            && n.type === type)
+    }
+
+    onTick(deltaS: number) {
+        this.allNodesA.forEach(n => {n.onTick(deltaS)})
     }
 }

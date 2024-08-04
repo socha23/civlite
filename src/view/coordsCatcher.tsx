@@ -54,3 +54,7 @@ export function coordsIdHuntStock(t: ResourceType) {
 export function coordsIdResourceStock(t: ResourceType) {
   return `resource_stock_${t}`
 }
+
+export function coordsIdActionWrapper(actionId: string) {
+  return `action_wrapper_${actionId}`
+}

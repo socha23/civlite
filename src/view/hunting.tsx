@@ -4,7 +4,7 @@ import { ActionProps, propsForAction, ActionRow3 } from './action';
 import { HuntingLabels, } from './labels';
 import { AnimalStock, } from '../model/huntingModel';
 import { FontSizes } from './icons';
-import { CoordsCatcher, coordsIdHuntStock } from './elementCoordinatesHolder';
+import { CoordsCatcher, coordsIdHuntStock } from './coordsCatcher';
 
 export type HuntingProps = {
   stocks: AnimalStock[],

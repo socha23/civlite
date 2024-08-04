@@ -2,7 +2,7 @@ import React, {createContext, useContext, useState} from 'react';
 import { BUTTON_STYLE, BUTTON_STYLE_ENABLED } from './action';
 import { FontSizes, Icons } from './icons';
 import { useSpring, animated } from '@react-spring/web';
-import { CoordsCatcher, getCoords } from './elementCoordinatesHolder';
+import { CoordsCatcher, getCoords } from './coordsCatcher';
 
 type SwitchPanelProps = { children?: React.ReactNode }
 

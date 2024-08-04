@@ -3,7 +3,7 @@ import { Amount } from "../model/amount"
 import { addTickListener } from "../model/timer"
 import { gaussRandom } from "../model/utils"
 import { Colors, FontSizes } from "./icons"
-import { getCoords } from "./elementCoordinatesHolder"
+import { getCoords } from "./coordsCatcher"
 import { Amounts, AmountWithColorProps } from "./amount"
 import { SoundDing } from "./sounds"
 

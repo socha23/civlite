@@ -1,8 +1,7 @@
 import React, { PropsWithChildren, ReactNode } from 'react';
-import { FontSizes, TrendColors } from './icons';
 import { formatNumber } from '../model/utils';
 import { SwitchExpandToggle, SwitchPanel, SwitchParent } from './switchPanel';
-import { CoordsCatcher } from './elementCoordinatesHolder';
+import { CoordsCatcher } from './coordsCatcher';
 
 export const LinePanel = (p: PropsWithChildren<{
   icon?: string,

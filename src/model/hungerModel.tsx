@@ -1,5 +1,5 @@
 import { spawnEffectCost } from "../view/effects"
-import { coordsIdPopCount } from "../view/elementCoordinatesHolder"
+import { coordsIdPopCount } from "../view/coordsCatcher"
 import { HungerMessages } from "../view/logMessages"
 import { PopAmount, pops, resources } from "./amount"
 import { AudioModel } from "./audioModel"

@@ -89,6 +89,7 @@ export class GameModel implements GameModelInterface {
     this.applyWorkAndProduction(deltaS)
     this.wars.onTick(deltaS)
     tickInProgressActions(this, deltaS)
+    this.upgrades.onTick(deltaS)
 
     this.checkGameLostCondition()
 

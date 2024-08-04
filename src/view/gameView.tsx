@@ -134,7 +134,7 @@ const InnerGameView = (p: GameViewProps) =>
           {p.progress.ManualCollection && <ManualCollectionBox {...p.resourceGathering} />}
           </Column>
           {
-            p.research.availableResearchActions.length > 0 && <Column>
+            p.research.upgrades.length > 0 && <Column>
               <UpgradeSection {...p.research} />
             </Column>
           }

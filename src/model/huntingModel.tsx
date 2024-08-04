@@ -1,5 +1,5 @@
 import { spawnEffectNumberIncrease } from "../view/effects"
-import { coordsIdHuntStock } from "../view/elementCoordinatesHolder"
+import { coordsIdHuntStock } from "../view/coordsCatcher"
 import { HuntingMessages } from "../view/logMessages"
 import { Action, action } from "./action"
 import { ExpectedResourceAmount, resources } from "./amount"

@@ -8,7 +8,7 @@ import { WorkType } from "./work"
 import { isWorkNeeded } from "./actionsModel"
 import { SoundType } from "../view/sounds"
 import { spawnEffectAwards } from "../view/effects"
-import { coordsIdPopCount } from "../view/elementCoordinatesHolder"
+import { coordsIdPopCount } from "../view/coordsCatcher"
 
 export class PopModel {
 

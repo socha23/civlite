@@ -5,7 +5,7 @@ import { Action, ActionState, unlazyRewards } from '../model/action'
 import { Colors, FontSizes } from './icons';
 import { AmountWithColorProps, Amounts } from './amount';
 import { ActionCommonLabels } from './labels';
-import { CoordsCatcher } from './elementCoordinatesHolder';
+import { CoordsCatcher, coordsIdActionWrapper } from './coordsCatcher';
 import { WithTooltip } from './tooltips';
 import { playSound, SoundType } from './sounds';
 
@@ -320,7 +320,9 @@ export const ActionRow3 = (p: PropsWithChildren<ActionRowParams>) => <div style=
         zIndex: 2,
         padding: 2,
       }}>
-        <InnerActionRow3 showButton={!p.inTooltip} {...p}/>
+        <CoordsCatcher id={coordsIdActionWrapper(p.id)}>
+          <InnerActionRow3 showButton={!p.inTooltip} {...p}/>
+        </CoordsCatcher>
       </div>
       
     </div>

@@ -2,7 +2,7 @@ import React, {createContext, useContext, useEffect, useRef, useState} from 'rea
 import { createPortal } from 'react-dom';
 import { Colors } from './icons';
 import { getMouseY, getMouseX } from './mouseCatcher';
-import { CoordsCatcher, getCoords } from './elementCoordinatesHolder';
+import { CoordsCatcher, getCoords } from './coordsCatcher';
 
 type TooltipContextType = {
   node?: HTMLDivElement,

@@ -7,7 +7,7 @@ import { FontSizes, TrendColors, DividerColors, Icons, Colors, Labels } from './
 import { formatNumber } from '../model/utils';
 import { Amount, ResourceAmount, WorkAmount } from '../model/amount';
 import { PopBoxLabels, popLabelPlural, PopulationRecruitLabels, PopulationUnrecruitLabels } from './labels';
-import { CoordsCatcher, coordsIdPopCount } from './elementCoordinatesHolder';
+import { CoordsCatcher, coordsIdPopCount } from './coordsCatcher';
 import { Row } from './line';
 import { Amounts } from './amount';
 import { ResourceType } from '../model/resources';

@@ -1,7 +1,7 @@
 import { ResourceType, resourceDefinition } from "./resources"
 import { Amount, isResourceAmount, isResourceType, resources, } from "./amount"
 import { spawnEffectCost } from "../view/effects"
-import { coordsIdResourceStock } from "../view/elementCoordinatesHolder"
+import { coordsIdResourceStock } from "../view/coordsCatcher"
 
 class ResourceModel {
     type: ResourceType

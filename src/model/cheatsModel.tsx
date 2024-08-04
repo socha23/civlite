@@ -9,9 +9,14 @@ export class CheatsModel {
 
     applyCheatsActions = [
         action({
-            id: "spawnEffect",
+            id: "upToPrimitive",
             onComplete: () => {
-                spawnEffectAwards("spawnEffect", [resources(ResourceType.Food, Math.ceil(5 * Math.random()))])
+                this.completeUpgrade([
+                    "enable_insight",
+                    "enable_calendar",
+                    "enable_food_gathering",
+                ])
+                this.model.resources.food.add(20)
             }
         }),
 
@@ -19,10 +24,11 @@ export class CheatsModel {
             id: "basicResearch",
             onComplete: () => {
                 this.completeUpgrade([
-                    "enable_calendar",
                     "enable_insight",
-                    "research_pack_primitive",
+                    "enable_calendar",
                     "enable_food_gathering",
+
+                    "research_pack_primitive",
                     "basic_tribe",
                     "upgrade_manual_food_collection",
                     "enable_idler_insight",
